@@ -103,7 +103,7 @@ String -> String
 
 Wait, what? The `string` function has multiple types? That's exactly correct!
 
-Unlike most functional languages, Funky supports **ad-hoc overloading**. That means that you can define many functions with the same name, provided they are _distinguishible_ by their types.
+Unlike most functional languages, Funky supports **overloading**. That means that you can define many functions with the same name, provided they are _distinguishible_ by their types.
 
 Back to the printing. This now works:
 

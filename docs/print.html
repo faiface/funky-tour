@@ -228,7 +228,7 @@ Char -&gt; String
 String -&gt; String
 </code></pre>
 <p>Wait, what? The <code>string</code> function has multiple types? That's exactly correct!</p>
-<p>Unlike most functional languages, Funky supports <strong>ad-hoc overloading</strong>. That means that you can define many functions with the same name, provided they are <em>distinguishible</em> by their types.</p>
+<p>Unlike most functional languages, Funky supports <strong>overloading</strong>. That means that you can define many functions with the same name, provided they are <em>distinguishible</em> by their types.</p>
 <p>Back to the printing. This now works:</p>
 <pre><code class="language-funky">func main : IO =
     println (string 13);
