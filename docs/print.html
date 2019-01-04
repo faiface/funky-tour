@@ -159,6 +159,88 @@ Hello, world!
 <p>There we go!</p>
 <p>It should work. If it doesn't, go back and see if you set everything up correctly. If you did and it still doesn't work, <a href="https://github.com/faiface/funky">file an issue</a>.</p>
 <a class="header" href="#expressions-and-types" id="expressions-and-types"><h1>Expressions and types</h1></a>
+<p>Funky is a strongly typed language. To explore types, Funky provides a <em>types sandbox</em>. It's kind of like a REPL, but it doesn't evaluate anything - just tells you types.</p>
+<p>Here's how we fire it up:</p>
+<pre><code>$ funkycmd -types
+&gt;
+</code></pre>
+<p>It opens up a little prompt where we can type expressions. Let's try it!</p>
+<pre><code>$ funkycmd -types
+&gt; 5
+Int
+&gt; 3.14
+Float
+&gt; pi
+Float
+&gt; 'x'
+Char
+</code></pre>
+<p>How about using some operators and functions?</p>
+<pre><code>&gt; 13 + 48
+Int
+&gt; sqrt 4
+sandbox:1:6: type-checking error
+</code></pre>
+<p>Ugh, what? A <em>type-checking error</em>? Yeah, that's right.</p>
+<pre><code>&gt; sqrt
+Float -&gt; Float
+&gt; 4
+Int
+</code></pre>
+<p>As we can see, the type of the <code>sqrt</code> function is <code>Float -&gt; Float</code> (a function that takes a <code>Float</code> and returns a <code>Float</code>), while the value we supplied is an <code>Int</code>. This doesn't match. Instead, we need to supply a <code>Float</code> value:</p>
+<pre><code>&gt; sqrt 4.0
+Float
+</code></pre>
+<p>Now this works.</p>
+<blockquote>
+<p><strong>Note</strong>. The compiler error messages will get better and more descriptive.</p>
+</blockquote>
+<a class="header" href="#printing-various-values" id="printing-various-values"><h2>Printing various values</h2></a>
+<p>We've already printed <code>&quot;Hello, world!&quot;</code>, how about printing other stuff? Let's try:</p>
+<pre><code class="language-funky">func main : IO =
+    println 13;
+    quit
+</code></pre>
+<p>Try running it:</p>
+<pre><code>$ funkycmd hello.fn
+hello.fn:2:13: type-checking error
+</code></pre>
+<p>A type-checking error again? Let's see where we went wrong. Start up the types sandbox:</p>
+<pre><code>$ funkycmd -types
+&gt;
+</code></pre>
+<p>And let's examine the type of the <code>println</code> function:</p>
+<pre><code>&gt; println
+String -&gt; IO -&gt; IO
+</code></pre>
+<p>Oh, so the <code>println</code> function only takes strings. Could've guessed that!</p>
+<blockquote>
+<p><strong>Note.</strong> Althought it might not seem like it at first, <code>println</code> is a completely pure function. It takes two arguments: a <code>String</code> and an <code>IO</code>. The <code>IO</code> is a continuation - it says what should be done after the string gets printed. In our case, the continuation is <code>quit</code> (which has the type <code>IO</code> itself). This <em>instructs</em> the program to quit after printing the string. The precise workings of this will be explained soon.</p>
+</blockquote>
+<p>So, how do we convert an <code>Int</code> or a <code>Float</code> to a <code>String</code> so that we can print it?</p>
+<p>The <code>string</code> function is for that purpose. Let's see what's the type of this <code>string</code> function:</p>
+<pre><code>$ funkycmd -types
+&gt; string
+Int -&gt; String
+Float -&gt; String
+Bool -&gt; String
+Char -&gt; String
+String -&gt; String
+</code></pre>
+<p>Wait, what? The <code>string</code> function has multiple types? That's exactly correct!</p>
+<p>Unlike most functional languages, Funky supports <strong>ad-hoc overloading</strong>. That means that you can define many functions with the same name, provided they are <em>distinguishible</em> by their types.</p>
+<p>Back to the printing. This now works:</p>
+<pre><code class="language-funky">func main : IO =
+    println (string 13);
+    quit
+</code></pre>
+<p>Runs as expected:</p>
+<pre><code>$ funkycmd hello.fn
+13
+</code></pre>
+<blockquote>
+<p><strong>Exercise.</strong> Play with various functions. Try operators like <code>*</code>, <code>^</code>, <code>%</code>, math functions like <code>sqrt</code>, <code>sin</code>, <code>log</code>, booleans <code>true</code> and <code>false</code>, string functions <code>++</code>, <code>*</code>, and so on. The types sandbox tells you what exists and what types it has.</p>
+</blockquote>
 
                     </main>
 
