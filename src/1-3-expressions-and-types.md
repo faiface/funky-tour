@@ -1,6 +1,6 @@
 # Expressions and types
 
-Funky is a strongly typed language. To explore types, Funky provides a _types sandbox_. It's kind of like a REPL, but it doesn't evaluate anything - just tells you types.
+Funky is a strongly typed language. To explore types, Funky provides a _types sandbox_. It's kind of like a [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop), but it doesn't evaluate anything - just tells you the types.
 
 Here's how we fire it up:
 
