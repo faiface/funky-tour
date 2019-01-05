@@ -102,7 +102,7 @@ That's it. A backslash, the name the variable, and an expression to evaluate to.
 
 > **Important.** All identifiers in Funky are allowed contain almost arbitrary Unicode characters. That's because tokens are generally separated by whitespace. The only exceptions are the symbols `(`, `)`, `[`, `]`, `{`, `}`, `,`, `;`, `\`, and `#` that are always parsed as separate tokens.
 >
-> Therefore, **idiomatic naming** in Funky is very similar to the one in LISP. Dashes `are-used` instead `of_underscores`, functions returning `Bool` (predicates) usually end with the `?` symbol, and partial functions (can crash) end with the `!` symbol.
+> Therefore, **idiomatic naming** in Funky is very similar to the one in LISP. Dashes `are-used` instead `of_underscores`, functions returning `Bool` (predicates) usually end with the `?` symbol, and partial functions (those that can crash) end with the `!` symbol.
 
 Functions of multiple arguments are just functions that take the first argument and return a function taking the rest of the arguments (currying):
 
@@ -124,3 +124,59 @@ Also, the factorial of 10 is only computed once, not twice here:
 
 ## The `let` function
 
+The `let` function? Not a `let` keyword? Let's verify this:
+
+```
+$ funkycmd -types
+> let
+a -> (a -> c) -> c
+```
+
+> **Note.** It really should be `a -> (a -> b) -> b`. Will be fixed.
+
+Uhm, so `let` takes a value and a function. Yep, and then it passes the value to the function and evaluates to whatever the function evaluates to. Maybe a bit hard to understand, so let's see:
+
+```funky
+func main : IO =
+    println (string; let 7 (\x x + x));
+    quit
+```
+
+See that `let 7 (\x x + x)` there? From what I've said, `let` should pass the `7` to the `(\x x + x)` function and thus the program should print `14`. And in fact that's exactly what happens:
+
+```
+$ funkycmd let.fn
+14
+```
+
+But as you've probably guessed, this is not the idiomatic use of `let`. Let's take a closer look:
+
+```funky
+let 7 (\x x + x)
+```
+
+That's pretty ugly! There's one syntactic feature, though, that we haven't talked about yet. If a lambda is the last argument to a function, which it is in our case, we can drop the parentheses. Like this:
+
+```funky
+let 7 \x x + x
+```
+
+And what now? Split it into multiple lines!
+
+```funky
+let 7 \x
+x + x
+```
+
+Now it starts looking like something. It looks like we've assigned the value `7` to the variable `x` and then went on to the next code. And that's precisely how we should think about it. In fact, we can restructure our little program above like this:
+
+```funky
+func main : IO =
+    let 7 \x
+    println (string; x + x);
+    quit
+```
+
+In this case, the type of the `let` function got specialized to `Int -> (Int -> IO) -> IO`, but the result is the same.
+
+So, that's how you assign variables in Funky.
