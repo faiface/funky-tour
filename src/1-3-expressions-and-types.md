@@ -23,6 +23,8 @@ Float
 Char
 ```
 
+> **Details.** Funky has three built-in types: `Int`, `Float`, and `Char`. `Int`s are arbitrary-precision integers. `Float`s are IEEE-754 64-bit floating-point numbers. `Char`s are [Unicode](https://en.wikipedia.org/wiki/Unicode) characters. All other types are either from the standard library or defined by the programmer.
+
 How about using some operators and functions?
 
 ```
@@ -49,6 +51,8 @@ Float
 ```
 
 Now this works.
+
+> **Details.** There are many built-in functions for each of these built-in types. Arithmetic operators (`+`, `-`, `*`, `/`, `^`, `%`), comparison operators (`==`, `!=`, `<`, `>`, `<=`, `>=`), math functions (`sin`, `cos`, `sqrt`, `atan2`, etc.). One notable thing is that you can't add characters - `'a' + 'b'` is not valid - but you can add an integer to a character: `'a' + 2` results in `'c'`.
 
 > **Note**. The compiler error messages will get better and more descriptive.
 
