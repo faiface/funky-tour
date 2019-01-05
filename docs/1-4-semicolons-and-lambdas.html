@@ -205,7 +205,7 @@ if (guess &lt; correct) &quot;More.&quot;;
 <p>That's it. A backslash, the name the variable, and an expression to evaluate to.</p>
 <blockquote>
 <p><strong>Important.</strong> All identifiers in Funky are allowed contain almost arbitrary Unicode characters. That's because tokens are generally separated by whitespace. The only exceptions are the symbols <code>(</code>, <code>)</code>, <code>[</code>, <code>]</code>, <code>{</code>, <code>}</code>, <code>,</code>, <code>;</code>, <code>\</code>, and <code>#</code> that are always parsed as separate tokens.</p>
-<p>Therefore, <strong>idiomatic naming</strong> in Funky is very similar to the one in LISP. Dashes <code>are-used</code> instead <code>of_underscores</code>, functions returning <code>Bool</code> (predicates) usually end with the <code>?</code> symbol, and partial functions (can crash) end with the <code>!</code> symbol.</p>
+<p>Therefore, <strong>idiomatic naming</strong> in Funky is very similar to the one in LISP. Dashes <code>are-used</code> instead <code>of_underscores</code>, functions returning <code>Bool</code> (predicates) usually end with the <code>?</code> symbol, and partial functions (those that can crash) end with the <code>!</code> symbol.</p>
 </blockquote>
 <p>Functions of multiple arguments are just functions that take the first argument and return a function taking the rest of the arguments (currying):</p>
 <pre><code class="language-funky">\x \y x + y
@@ -217,6 +217,41 @@ if (guess &lt; correct) &quot;More.&quot;;
 <pre><code class="language-funky">(\n n + n) (factorial 10)
 </code></pre>
 <a class="header" href="#the-let-function" id="the-let-function"><h2>The <code>let</code> function</h2></a>
+<p>The <code>let</code> function? Not a <code>let</code> keyword? Let's verify this:</p>
+<pre><code>$ funkycmd -types
+&gt; let
+a -&gt; (a -&gt; c) -&gt; c
+</code></pre>
+<blockquote>
+<p><strong>Note.</strong> It really should be <code>a -&gt; (a -&gt; b) -&gt; b</code>. Will be fixed.</p>
+</blockquote>
+<p>Uhm, so <code>let</code> takes a value and a function. Yep, and then it passes the value to the function and evaluates to whatever the function evaluates to. Maybe a bit hard to understand, so let's see:</p>
+<pre><code class="language-funky">func main : IO =
+    println (string; let 7 (\x x + x));
+    quit
+</code></pre>
+<p>See that <code>let 7 (\x x + x)</code> there? From what I've said, <code>let</code> should pass the <code>7</code> to the <code>(\x x + x)</code> function and thus the program should print <code>14</code>. And in fact that's exactly what happens:</p>
+<pre><code>$ funkycmd let.fn
+14
+</code></pre>
+<p>But as you've probably guessed, this is not the idiomatic use of <code>let</code>. Let's take a closer look:</p>
+<pre><code class="language-funky">let 7 (\x x + x)
+</code></pre>
+<p>That's pretty ugly! There's one syntactic feature, though, that we haven't talked about yet. If a lambda is the last argument to a function, which it is in our case, we can drop the parentheses. Like this:</p>
+<pre><code class="language-funky">let 7 \x x + x
+</code></pre>
+<p>And what now? Split it into multiple lines!</p>
+<pre><code class="language-funky">let 7 \x
+x + x
+</code></pre>
+<p>Now it starts looking like something. It looks like we've assigned the value <code>7</code> to the variable <code>x</code> and then went on to the next code. And that's precisely how we should think about it. In fact, we can restructure our little program above like this:</p>
+<pre><code class="language-funky">func main : IO =
+    let 7 \x
+    println (string; x + x);
+    quit
+</code></pre>
+<p>In this case, the type of the <code>let</code> function got specialized to <code>Int -&gt; (Int -&gt; IO) -&gt; IO</code>, but the result is the same.</p>
+<p>So, that's how you assign variables in Funky.</p>
 
                     </main>
 
