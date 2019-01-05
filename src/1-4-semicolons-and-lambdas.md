@@ -168,7 +168,7 @@ let 7 \x
 x + x
 ```
 
-Now it starts looking like something. It looks like we've assigned the value `7` to the variable `x` and then went on to the next code. And that's precisely how we should think about it. In fact, we can restructure our little program above like this:
+Now it starting to look like something. It looks like we've assigned the value `7` to the variable `x` and then went on to the next code. And that's precisely how we should think about it. In fact, we can restructure our little program above like this:
 
 ```funky
 func main : IO =
