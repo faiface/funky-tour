@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li></ol></li></ol>
+            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.5.</strong> Putting it together: a calculator</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -175,6 +175,9 @@ Float
 &gt; 'x'
 Char
 </code></pre>
+<blockquote>
+<p><strong>Details.</strong> Funky has three built-in types: <code>Int</code>, <code>Float</code>, and <code>Char</code>. <code>Int</code>s are arbitrary-precision integers. <code>Float</code>s are IEEE-754 64-bit floating-point numbers. <code>Char</code>s are <a href="https://en.wikipedia.org/wiki/Unicode">Unicode</a> characters. All other types are either from the standard library or defined by the programmer.</p>
+</blockquote>
 <p>How about using some operators and functions?</p>
 <pre><code>&gt; 13 + 48
 Int
@@ -182,6 +185,9 @@ Int
 sandbox:1:6: type-checking error
 </code></pre>
 <p>Ugh, what? A <em>type-checking error</em>? Yeah, that's right.</p>
+<blockquote>
+<p><strong>Note</strong>. The compiler error messages will get better and more descriptive.</p>
+</blockquote>
 <pre><code>&gt; sqrt
 Float -&gt; Float
 &gt; 4
@@ -193,7 +199,7 @@ Float
 </code></pre>
 <p>Now this works.</p>
 <blockquote>
-<p><strong>Note</strong>. The compiler error messages will get better and more descriptive.</p>
+<p><strong>Details.</strong> There are many built-in functions for each of these built-in types. Arithmetic operators (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code>, <code>%</code>), comparison operators (<code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>), math functions (<code>sin</code>, <code>cos</code>, <code>sqrt</code>, <code>atan2</code>, etc.), and conversion functions (<code>float</code>, <code>int</code>, etc.). One notable thing is that you can't add characters - <code>'a' + 'b'</code> is not valid - but you can add an integer to a character: <code>'a' + 2</code> results in <code>'c'</code>.</p>
 </blockquote>
 <a class="header" href="#printing-various-values" id="printing-various-values"><h2>Printing various values</h2></a>
 <p>We've already printed <code>&quot;Hello, world!&quot;</code>, how about printing other stuff? Let's try:</p>
@@ -241,6 +247,104 @@ String -&gt; String
 <blockquote>
 <p><strong>Exercise.</strong> Play with various functions. Try operators like <code>*</code>, <code>^</code>, <code>%</code>, math functions like <code>sqrt</code>, <code>sin</code>, <code>log</code>, booleans <code>true</code> and <code>false</code>, string functions <code>++</code>, <code>*</code>, and so on. The types sandbox tells you what exists and what types it has.</p>
 </blockquote>
+<a class="header" href="#semicolons-and-lambdas" id="semicolons-and-lambdas"><h1>Semicolons and lambdas</h1></a>
+<p>You've probably noticed the semicolon we used in the previous part and wondered what that's for. Its meaning is actually very simple. It's used to <strong>separate the last argument</strong> to a function <em>without</em> the need to put it in parentheses. Let's see. Say we have an expression like this:</p>
+<pre><code class="language-funky">string (sqrt 4.0 + sqrt 9.0)
+</code></pre>
+<p>We can omit the parentheses and use the semicolon instead:</p>
+<pre><code class="language-funky">string; sqrt 4.0 + sqrt 9.0
+</code></pre>
+<blockquote>
+<p><strong>Note.</strong> If you're familiar with Haskell, you'll notice that the semicolon is just like Haskell's <code>$</code> operator. That's correct. Funky uses the semicolon instead of the dollar to avoid clutter, because it's used very frequently.</p>
+</blockquote>
+<p>The semicolon becomes very useful when structuring code. We could write this:</p>
+<pre><code class="language-funky">func main : IO =
+    println &quot;A&quot; (println &quot;B&quot; (println &quot;C&quot; quit))
+</code></pre>
+<p>That's a completely valid code that prints three lines:</p>
+<pre><code>$ funkycmd abc.fn
+A
+B
+C
+</code></pre>
+<blockquote>
+<p><strong>Explanation.</strong> If you're having trouble understand the code above, here's an explanation. The <code>IO</code> is a data structure that describes what the program should do. The simplest <code>IO</code> value is <code>quit</code>. It simply instructs the program to quit.</p>
+<p>The type of the <code>println</code> function is <code>String -&gt; IO -&gt; IO</code>. That means that <code>println</code> takes two arguments, a <code>String</code> and an <code>IO</code>, and evaluates to an <code>IO</code>. The resulting <code>IO</code> describes a program that first prints the provided string, then does whatever the second argument says.</p>
+<p>Let's look at the inner-most (last) usage of <code>println</code> in the above code: <code>println &quot;C&quot; quit</code>. This expression of type <code>IO</code> describes a program that prints the string <code>&quot;C&quot;</code> and then quits. Since it is an <code>IO</code>, we can pass it as the second argument to another <code>println</code> and we get <code>println &quot;B&quot; (println &quot;C&quot; quit)</code>. And using the same technique once again, we end up with the code above.</p>
+</blockquote>
+<p>But, we have a lot of parentheses there! Let's get rid of them with those semicolons:</p>
+<pre><code class="language-funky">func main : IO =
+    println &quot;A&quot;; println &quot;B&quot;; println &quot;C&quot;; quit
+</code></pre>
+<blockquote>
+<p><strong>Note.</strong> We technically don't need the last semicolon as <code>quit</code> is just a single word, but we'll leave it there for <em>style</em>.</p>
+</blockquote>
+<p>And finally, we can split it into mutliple lines:</p>
+<pre><code class="language-funky">func main : IO =
+    println &quot;A&quot;;
+    println &quot;B&quot;;
+    println &quot;C&quot;;
+    quit
+</code></pre>
+<p>Now that's cool! It's got lines, it's got semicolons, looks just like an imperative code! Of course, I'm joking a bit here, but it's not that bad, is it?</p>
+<a class="header" href="#the-if-function" id="the-if-function"><h2>The <code>if</code> function</h2></a>
+<p><strong>Booleans</strong> have type <code>Bool</code>, two values - <code>true</code> and <code>false</code> - and a handy <code>if</code> function for making a choice. What's its type? The beloved types sandbox comes to rescue:</p>
+<pre><code>$ funkycmd -types
+&gt; if
+Bool -&gt; a -&gt; a -&gt; a
+</code></pre>
+<p>The little <code>a</code> is a type variable. You can replace it with any type whatsoever and <code>if</code> will conform to that type. Of course, you must replace all occurences of <code>a</code> consistently. So <code>if</code> can be used as <code>Bool -&gt; Int -&gt; Int -&gt; Int</code>, or as <code>Bool -&gt; IO -&gt; IO -&gt; IO</code>, but <strong>not</strong> as <code>Bool -&gt; Int -&gt; IO -&gt; Float</code>.</p>
+<p>The <code>if</code> function checks whether the condition (the first argument) is <code>true</code> or <code>false</code>. If it's <code>true</code>, the second argument is returned. Otherwise, the third argument is returned. For example:</p>
+<pre><code>&gt; if true 1 3            # evaluates to 1
+Int
+&gt; if (4 &lt; 1) &quot;YES&quot; &quot;NO&quot;  # evaluates to &quot;NO&quot;
+List Char
+</code></pre>
+<blockquote>
+<p><strong>Note.</strong> Comments start with the <code>#</code> symbol. Also notice that <code>String</code> and <code>List Char</code> are synonyms.</p>
+</blockquote>
+<p>Combining the <code>if</code> function with the semicolon, we create an <em>if, else if, else</em> chain:</p>
+<pre><code class="language-funky">if (guess &gt; correct) &quot;Less.&quot;;
+if (guess &lt; correct) &quot;More.&quot;;
+&quot;Correct!&quot;
+</code></pre>
+<p>Isn't this beautiful? A single function suitable both for a one-line choices and for a series of mutually exclusive branches.</p>
+<a class="header" href="#lambdas" id="lambdas"><h2>Lambdas</h2></a>
+<p>Funky has a very concise syntax for anonymous functions. That's crucial because just like semicolons, anonymous functions are used all over the place. Here's how you write them:</p>
+<pre><code class="language-funky">\variable result
+</code></pre>
+<p>That's it. A backslash, the name the variable, and an expression to evaluate to.</p>
+<blockquote>
+<p><strong>Important.</strong> All identifiers in Funky are allowed contain almost arbitrary Unicode characters. That's because tokens are generally separated by whitespace. The only exceptions are the symbols <code>(</code>, <code>)</code>, <code>[</code>, <code>]</code>, <code>{</code>, <code>}</code>, <code>,</code>, <code>;</code>, <code>\</code>, and <code>#</code> that are always parsed as separate tokens.</p>
+<p>Therefore, <strong>idiomatic naming</strong> in Funky is very similar to the one in LISP. Dashes <code>are-used</code> instead <code>of_underscores</code>, functions returning <code>Bool</code> (predicates) usually end with the <code>?</code> symbol, and partial functions (can crash) end with the <code>!</code> symbol.</p>
+</blockquote>
+<p>Functions of multiple arguments are just functions that take the first argument and return a function taking the rest of the arguments (currying):</p>
+<pre><code class="language-funky">\x \y x + y
+</code></pre>
+<p>Funky uses <strong>lazy evaluation</strong>. That means that arguments to functions are only evaluated when their value is needed. For example, the factorial of 20 is never calculated here:</p>
+<pre><code class="language-funky">(\n 3) (factorial 20)  # evaluates to 3
+</code></pre>
+<p>Also, the factorial of 10 is only computed once, not twice here:</p>
+<pre><code class="language-funky">(\n n + n) (factorial 10)
+</code></pre>
+<a class="header" href="#the-let-function" id="the-let-function"><h2>The <code>let</code> function</h2></a>
+<a class="header" href="#putting-it-together-a-calculator" id="putting-it-together-a-calculator"><h1>Putting it together: a calculator</h1></a>
+<pre><code class="language-funky">func main : IO =
+    print &quot;Type X op Y: &quot;;
+    scan \x-str
+    scan \op
+    scan \y-str
+    let (float x-str) \x
+    let (float y-str) \y
+    println (
+        if (op == &quot;+&quot;) (string (x + y));
+        if (op == &quot;-&quot;) (string (x - y));
+        if (op == &quot;*&quot;) (string (x * y));
+        if (op == &quot;/&quot;) (string (x / y));
+        &quot;invalid operator: &quot; ++ op
+    );
+    quit
+</code></pre>
 
                     </main>
 
