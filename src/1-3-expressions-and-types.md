@@ -36,6 +36,8 @@ sandbox:1:6: type-checking error
 
 Ugh, what? A _type-checking error_? Yeah, that's right.
 
+> **Note**. The compiler error messages will get better and more descriptive.
+
 ```
 > sqrt
 Float -> Float
@@ -52,9 +54,7 @@ Float
 
 Now this works.
 
-> **Details.** There are many built-in functions for each of these built-in types. Arithmetic operators (`+`, `-`, `*`, `/`, `^`, `%`), comparison operators (`==`, `!=`, `<`, `>`, `<=`, `>=`), math functions (`sin`, `cos`, `sqrt`, `atan2`, etc.). One notable thing is that you can't add characters - `'a' + 'b'` is not valid - but you can add an integer to a character: `'a' + 2` results in `'c'`.
-
-> **Note**. The compiler error messages will get better and more descriptive.
+> **Details.** There are many built-in functions for each of these built-in types. Arithmetic operators (`+`, `-`, `*`, `/`, `^`, `%`), comparison operators (`==`, `!=`, `<`, `>`, `<=`, `>=`), math functions (`sin`, `cos`, `sqrt`, `atan2`, etc.), and conversion functions (`float`, `int`, etc.). One notable thing is that you can't add characters - `'a' + 'b'` is not valid - but you can add an integer to a character: `'a' + 2` results in `'c'`.
 
 ## Printing various values
 
