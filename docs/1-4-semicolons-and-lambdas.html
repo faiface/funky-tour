@@ -204,7 +204,7 @@ if (guess &lt; correct) &quot;More.&quot;;
 </code></pre>
 <p>That's it. A backslash, the name the variable, and an expression to evaluate to.</p>
 <blockquote>
-<p><strong>Important.</strong> All identifiers in Funky are allowed contain almost arbitrary Unicode characters. That's because tokens are generally separated by whitespace. The only exceptions are the symbols <code>(</code>, <code>)</code>, <code>[</code>, <code>]</code>, <code>{</code>, <code>}</code>, <code>,</code>, <code>;</code>, <code>\</code>, and <code>#</code> that are always parsed as separate tokens.</p>
+<p><strong>Important.</strong> All identifiers in Funky are allowed to contain almost arbitrary Unicode characters. That's because tokens are generally separated by whitespace. The only exceptions are the symbols <code>(</code>, <code>)</code>, <code>[</code>, <code>]</code>, <code>{</code>, <code>}</code>, <code>,</code>, <code>;</code>, <code>\</code>, and <code>#</code> that are always parsed as separate tokens.</p>
 <p>Therefore, <strong>idiomatic naming</strong> in Funky is very similar to the one in LISP. Dashes <code>are-used</code> instead <code>of_underscores</code>, functions returning <code>Bool</code> (predicates) usually end with the <code>?</code> symbol, and partial functions (those that can crash) end with the <code>!</code> symbol.</p>
 </blockquote>
 <p>Functions of multiple arguments are just functions that take the first argument and return a function taking the rest of the arguments (currying):</p>
