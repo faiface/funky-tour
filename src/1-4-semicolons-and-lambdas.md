@@ -100,7 +100,7 @@ Funky has a very concise syntax for anonymous functions. That's crucial because 
 
 That's it. A backslash, the name the variable, and an expression to evaluate to.
 
-> **Important.** All identifiers in Funky are allowed contain almost arbitrary Unicode characters. That's because tokens are generally separated by whitespace. The only exceptions are the symbols `(`, `)`, `[`, `]`, `{`, `}`, `,`, `;`, `\`, and `#` that are always parsed as separate tokens.
+> **Important.** All identifiers in Funky are allowed to contain almost arbitrary Unicode characters. That's because tokens are generally separated by whitespace. The only exceptions are the symbols `(`, `)`, `[`, `]`, `{`, `}`, `,`, `;`, `\`, and `#` that are always parsed as separate tokens.
 >
 > Therefore, **idiomatic naming** in Funky is very similar to the one in LISP. Dashes `are-used` instead `of_underscores`, functions returning `Bool` (predicates) usually end with the `?` symbol, and partial functions (those that can crash) end with the `!` symbol.
 
