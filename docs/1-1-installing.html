@@ -137,7 +137,24 @@
                 <div id="content" class="content">
                     <main>
                         <a class="header" href="#installing" id="installing"><h1>Installing</h1></a>
-<p>TODO</p>
+<blockquote>
+<p><strong>Note.</strong> This instructions are for Linux. If you're on another operating system, you can try to follow them doing analogous actions on your OS.</p>
+</blockquote>
+<p>Funky is currently implemented in <a href="https://golang.org/">Go</a> and there are no pre-compiled binaries provided yet.</p>
+<p>Therefore, the first step is to install the Go language either from the <a href="https://golang.org/">official website</a> or from your package manager.</p>
+<p>Go uses <code>$GOPATH</code> directory to download packages and install Go programs. If you installed a recent version of Go, you don't have to set it up, it defaults to <code>~/go</code>.</p>
+<p>Next you need to download Funky. You do that with the Go package manager:</p>
+<pre><code>$ go get -u github.com/faiface/funky/...
+</code></pre>
+<p>This downloads Funky repository to the <code>$GOPATH/src</code> directory and installs the binaries to the <code>$GOPATH/bin/</code> directory.</p>
+<p>To make the binaries easily runnable from the command line, you need to add <code>$GOPATH/bin</code> (or <code>~/go/bin</code> if <code>$GOPATH</code> is not set) to the <code>$PATH</code> environment variable. Add this to your <code>~/.bashrc</code> file (or an equivalent of that for your shell):</p>
+<pre><code># replace $GOPATH with /home/yourname/go if $GOPATH is not set up
+export PATH=$PATH:$GOPATH/bin
+</code></pre>
+<p>Now, one last thing. Funky uses the <code>$FUNKY</code> environment variable to indentify the location of the standard library. Add this to your <code>.bashrc</code> file:</p>
+<pre><code>export FUNKY=$GOPATH/src/github.com/faiface/funky/stdlib
+</code></pre>
+<p><strong>And that's it!</strong> Let's get ready for some action!</p>
 
                     </main>
 
