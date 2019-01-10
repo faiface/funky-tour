@@ -181,6 +181,9 @@ Hello, world!
 <pre><code>$ funkycmd -types
 &gt;
 </code></pre>
+<blockquote>
+<p><strong>Note.</strong> <code>funkycmd -types</code> currenty doesn't implement convenient things like 'arrow up' to go back to the previous entry, and so on. To get those, I highly recommend using the <code>rlwrap</code> utility. Just install it and run <code>rlwrap funkycmd -types</code> and you'll get all those convenient features.</p>
+</blockquote>
 <p>It opens up a little prompt where we can type expressions. Let's try it!</p>
 <pre><code>$ funkycmd -types
 &gt; 5
@@ -250,6 +253,9 @@ Bool -&gt; String
 Char -&gt; String
 String -&gt; String
 </code></pre>
+<blockquote>
+<p><strong>Details.</strong> <code>Bool</code> and <code>String</code> are not built-in, they're implemented in the standard library.</p>
+</blockquote>
 <p>Wait, what? The <code>string</code> function has multiple types? That's exactly correct!</p>
 <p>Unlike most functional languages, Funky supports <strong>overloading</strong>. That means that you can define many functions with the same name, provided they are <em>distinguishible</em> by their types.</p>
 <p>Back to the printing. This now works:</p>
