@@ -9,6 +9,8 @@ $ funkycmd -types
 >
 ```
 
+> **Note.** `funkycmd -types` currenty doesn't implement convenient things like 'arrow up' to go back to the previous entry, and so on. To get those, I highly recommend using the `rlwrap` utility. Just install it and run `rlwrap funkycmd -types` and you'll get all those convenient features.
+
 It opens up a little prompt where we can type expressions. Let's try it!
 
 ```
@@ -104,6 +106,8 @@ Bool -> String
 Char -> String
 String -> String
 ```
+
+> **Details.** `Bool` and `String` are not built-in, they're implemented in the standard library.
 
 Wait, what? The `string` function has multiple types? That's exactly correct!
 
