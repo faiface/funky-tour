@@ -460,6 +460,64 @@ What's your name? Michal Štrba
 Hello, Michal Štrba!
 </code></pre>
 <a class="header" href="#putting-it-together-a-calculator" id="putting-it-together-a-calculator"><h1>Putting it together: a calculator</h1></a>
+<p>We've covered a few basic functions, now we'll put them to the test! We'll make a little calculator. The program is simple but nicely demonstrates how all the functions we've talked about work <em>together</em>. Let's see!</p>
+<p>The calculator will work something like this:</p>
+<pre><code>$ funkycmd calculator.fn
+2 + 2
+4
+9 / 2
+4.5
+12 * 12
+144
+</code></pre>
+<p>It will support four operators: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>. It will only support one operator per expression.</p>
+<p>The first thing will be to scan the expression. The expression consists of three words on a single line, so it'll be best to use <code>scan</code> three times:</p>
+<pre><code class="language-funky">func main : IO =
+    scan \x-str
+    scan \op
+    scan \y-str
+    # TODO
+</code></pre>
+<p>Good. Now, <code>x-str</code> and <code>y-str</code> are strings, because that's what <code>scan</code> gives us. In order to perform computations, we need to convert them to floats first.</p>
+<pre><code>$ funkycmd -types
+&gt; float
+Int -&gt; Float
+String -&gt; Float
+</code></pre>
+<p>The second overload of the <code>float</code> function seems to be doing just that, so let's use it (there's an analogous function for integers called <code>int</code>):</p>
+<pre><code class="language-funky">func main : IO =
+    scan \x-str
+    scan \op
+    scan \y-str
+    let (float x-str) \x
+    let (float y-str) \y
+    # TODO
+</code></pre>
+<p>We saved the converted numbers in the <code>x</code> and <code>y</code> variables.</p>
+<p>Now we need to compute the result and print it. For example, if the operator is <code>+</code>, the result will be <code>string; x + y</code>. Here we can exploit the <code>if</code> function's ability to form if/else chains:</p>
+<pre><code class="language-funky">if (op == &quot;+&quot;) (string; x + y);
+if (op == &quot;-&quot;) (string; x - y);
+if (op == &quot;*&quot;) (string; x * y);
+if (op == &quot;/&quot;) (string; x / y);
+&quot;invalid operator: &quot; ++ op
+</code></pre>
+<p>The last line becomes the result if the operator is not among the supported ones. Now that we've got the result, all that's left it to print it and continue the loop:</p>
+<pre><code class="language-funky">func main : IO =
+    scan \x-str
+    scan \op
+    scan \y-str
+    let (float x-str) \x
+    let (float y-str) \y
+    println (
+        if (op == &quot;+&quot;) (string; x + y);
+        if (op == &quot;-&quot;) (string; x - y);
+        if (op == &quot;*&quot;) (string; x * y);
+        if (op == &quot;/&quot;) (string; x / y);
+        &quot;invalid operator: &quot; ++ op
+    );
+    main
+</code></pre>
+<p><strong>And that's it!</strong> Now go and experiment yourself! When you come back, you'll learn about making your own functions and types.</p>
 
                     </main>
 
