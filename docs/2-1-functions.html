@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>A bit more about IO - A Tour of Funky</title>
+        <title>Functions - A Tour of Funky</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html" class="active"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li></ol></li></ol>
+            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html" class="active"><strong aria-hidden="true">2.1.</strong> Functions</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -136,94 +136,89 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="#a-bit-more-about-io" id="a-bit-more-about-io"><h1>A bit more about IO</h1></a>
-<p>Funky has an unusual approach to side-effects. There's no notion of them in the language itself. What looked like side-effecting functions in the previous sections (<code>println</code>, <code>quit</code>, etc.) were in fact data structure constructors. The <code>IO</code> type is <em>not magic</em> at all. It's just a plain data structure defined in the Funky language itself. Here's its definition (you can also find it in the standard library in the <code>cmd</code> folder):</p>
-<pre><code class="language-funky">union IO = quit | putc Char IO | getc (Char -&gt; IO)
+                        <a class="header" href="#functions" id="functions"><h1>Functions</h1></a>
+<p>So far, we've only seen one function defined: the <code>main</code> function. But even from that alone I'm sure you've already guessed how function definitions look. They're quite simple:</p>
+<pre><code class="language-funky">func name : type = body
 </code></pre>
-<p>We haven't covered <code>union</code> yet but think algebraic data types (e.g. <code>data</code> in Haskell). This <code>IO</code> data structure serves as a description of what the program should do. However, in contrast with the control flow of traditional imperative languages, the <code>IO</code> data structure can be arbitrarily manipulated - e.g. it's no problem to implement input/ouput encryption just by implementing a single <code>IO -&gt; IO</code> function.</p>
+<p>That's it!</p>
+<p>The <strong>name</strong> can be any string of non-whitespace characters excluding keyword symbols like parentheses, a backslash, a semicolon, and a few others.</p>
+<p>The <strong>type</strong> specifies the type that the function name will aquire.</p>
+<p>The <strong>body</strong> is an arbitrary Funky expression, functions, lambda, etc. can be used. The only limitation is that it must conform to the type.</p>
 <blockquote>
-<p><strong>Note.</strong> The <code>IO</code> data structure is very limited. All it can express is printing and scanning characters. The thing we haven't talked about yet is that <code>funkycmd</code> is just one of the many possible <em>side-effect interpreters</em>. Specifically, <code>funkycmd</code> interprets (executes) the above <code>IO</code> data structure. There's another interpreter called <code>funkygame</code> that interprets an entirely different data structure which describes sprite-based games. You can actually make your own side-effect interpreter fairly easily. The specifics of that are explained in the <a href="">TODO</a> section.</p>
+<p><strong>Details.</strong> Let's talk a bit about types.</p>
+<p>As we've already learned, there are three built-in types: <code>Int</code>, <code>Float</code>, and <code>Char</code>. There are also a few types from the standard library, such as <code>Bool</code>, or <code>String</code>.</p>
+<p>Then there are types that take other types as arguments - a types that are, so called, generic. The <em>most important</em> of such generic types is the function type. This is also actually built-in, but since it's a type constructor, rather than a full, distinct type, I haven't included it among the built-in types previously.</p>
+<p>The function type constructor is called 'the arrow', written as: <code>-&gt;</code>. It takes two arguments, the input type on the left and the output type on the right. For example, <code>Int -&gt; Bool</code> is a function that takes an <code>Int</code> and evaluates to a <code>Bool</code>.</p>
 </blockquote>
-<p>The <code>IO</code> looks like a linked list with two kinds of nodes (not counting <code>quit</code>). The <code>funkycmd</code> interpreter loads the <code>main</code> function, walks the <code>IO</code> nodes, and does as they say.</p>
-<p>Let's talk about the nodes individually.</p>
-<p><strong>Quit.</strong> We've seen this one before - it marks the end of the program.</p>
-<p><strong>Putc.</strong> This node has two arguments: a <code>Char</code> and an <code>IO</code>. The <code>Char</code> is the character to be printed. The <code>IO</code> tells what should be done next.</p>
-<p><strong>Getc.</strong> Now this one looks strange. It has one argument: a function. The function takes a <code>Char</code> and returns an <code>IO</code>. Here's how <code>funkycmd</code> deals with <code>getc</code>: Upon encountering the <code>getc</code> node, <code>funkycmd</code> scans a character from the standard input. Then it takes the function under <code>getc</code> and applies it to the scanned character, passes it inside. The function gives back an <code>IO</code>. This <code>IO</code> tells what should be done next.</p>
-<p>Now let's see them in action!</p>
-<p>How about a very exciting program that reads a character and prints it back?</p>
-<pre><code class="language-funky">func main : IO =
-    getc (\c putc c quit)
-</code></pre>
-<p>Run it:</p>
-<pre><code>$ funkycmd getcputc.fn
-x
-x
-</code></pre>
-<p>It worked!</p>
-<p>Now, we can structure the code better using the same tricks we used with <code>if</code> and <code>let</code>. How does this look?</p>
-<pre><code class="language-funky">func main : IO =
-    getc \c
-    putc c;
+<p>So, let's define a function! Every functional language tutorial <em>must</em> include a factorial example, so let's get that behind us:</p>
+<pre><code class="language-funky">func factorial : Int -&gt; Int =
+    \n
+    if (n &lt;= 0) 1;
+    n * factorial (n - 1)
+
+func main : IO =
+    print &quot;Type a number: &quot;;
+    scanln \n-str
+    let (int n-str) \n
+    println (string; factorial n);
     quit
 </code></pre>
-<p>Well, that's nice! The first line scans a character, the second line prints it back, the third line quits the program.</p>
-<p>Wait, what would happen if we made it recursive? What if we replaced <code>quit</code> with <code>main</code>?</p>
-<pre><code class="language-funky">func main : IO =
-    getc \c
-    putc c;
-    main
-</code></pre>
-<p>By the looks of it, this program should print back all of its input - it's the <code>cat</code> program.</p>
+<p>A standard, well known, recursive factorial definition.</p>
 <blockquote>
-<p><strong>Note.</strong> But it never quits! Or does it? Currently, <code>funkycmd</code> is made to silently quit when encountering the EOF, so the program quits correctly. Of course, this behavior is not guaranteed to be kept.</p>
+<p><strong>Note.</strong> In Funky it's a convention to put arguments on the next line after <code>=</code> in the function definition. If the function is very short, this convention may be broken and the whole definition may sit on a single line.</p>
 </blockquote>
-<pre><code class="language-funky">$ funkycmd cat.fn
-hello, cat!
-hello, cat!
-do you cat?
-do you cat?
-you do cat!
-you do cat!
-^D
+<blockquote>
+<p><strong>Details.</strong> The order of definitions doesn't matter. A function doesn't have to be 'defined before use'. All that matters is that it is defined.</p>
+</blockquote>
+<p>Let's try it:</p>
+<pre><code>$ funkycmd factorial.fn
+Type a number: 5
+120
 </code></pre>
-<p>The <code>^D</code> sequence at the end is the EOF.</p>
-<a class="header" href="#scanning-more-than-one-character" id="scanning-more-than-one-character"><h2>Scanning more than one character</h2></a>
-<p>The standard library gives us many goods. There's <code>print</code> and <code>println</code> that work by expanding to multiple <code>putc</code> nodes. Are there some analogous high-level functions for scanning? Sure there are! They're called, how unexpected, <code>scan</code> and <code>scanln</code>. What are their types:</p>
+<p>If it gives <code>120</code> for <code>5</code> then it surely works. Let's try something bigger:</p>
+<pre><code>$ funkycmd factorial.fn
+Type a number: 99
+933262154439441526816992388562667004907159682643816214685929638952175999932299156089414639761565182862536979208272237582511852109168640000000000000000000000
+</code></pre>
+<p>Whoa, that's a number! You can try entering even bigger inputs, but don't go too big... you may freeze your system.</p>
+<p><strong>Now, how about functions with multiple arguments?</strong> Say we want to make a function called <code>divides</code> that would tells us whether one integer divides another or not.</p>
+<p>In Funky, as in many other functional languages, there are no functions of more than one argument. Instead, there are functions that return functions. A function of two arguments really is a function that takes the first argument and returns a new function. This new function remembers the first argument and takes the second one.</p>
+<p>What would be the type of such a function?</p>
+<p>The type <code>Int -&gt; (Int -&gt; Bool)</code> would do. It takes the first <code>Int</code>, evaluates to a function taking the second <code>Int</code> and finally evaluates to <code>Bool</code>.</p>
+<p>Great, now how would we call such a function?</p>
+<p>Using <code>(divides 9) 3</code> would obviously work. But, we don't really need the parentheses. If parentheses are not present, they're implicitly from the left, so <code>divides 9 3</code> is good too.</p>
+<p>Furthermore, the parentheses in the type <code>Int -&gt; (Int -&gt; Bool)</code> aren't needed either. Since <code>-&gt;</code> is used infix, it's automatically parenthesized from the right, so <code>Int -&gt; Int -&gt; Bool</code> is equivalent.</p>
+<blockquote>
+<p><strong>Details.</strong> There are two kinds of functions in Funky: prefix and infix. Infix functions can be identified easily: they don't contain any letters. All other functions are prefix.</p>
+<p>Applications of prefix functions are automatically parenthesized from the left if no explicit parenthesis are present. In all cases, <code>f x y</code> is the same as <code>(f x) y</code>.</p>
+<p>Applications of infix functions are, however, automatically parenthesized from the right. Furthermore, all of them have the same precedence. This is to simplify programmer's life: when defining own infix functions, you won't be bothered by specifying precedence levels or associativity. So, <code>3 * 2 + 1</code> is equivalent to <code>3 * (2 + 1)</code>.</p>
+</blockquote>
+<p>After learning about automatic parentheses (also called left/right-associativity), here's the definition of <code>divides</code>:</p>
+<pre><code class="language-funky">func divides : Int -&gt; Int -&gt; Bool =
+    \m \n
+    (n % m) == 0
+</code></pre>
+<p>The body is just two lambdas nested inside one another, which perfectly reflects the type.</p>
+<p>We could've also called the function <code>/?</code>, in which case it would be an infix function. However, the name <code>divides</code> is much more descriptive.</p>
+<p><strong>Function types may also contain type variables</strong>. These are distinguished from actual types by being all lower-case. Actual types must contain an upper-case character - type variables must not.</p>
+<p>When a function has a type variable in its type, that means that this function is fine with whatever type instead of that variable. For example, there's this (probably controversialy named function, usually it's called <code>id</code>) function called <code>self</code>:</p>
 <pre><code>$ funkycmd -types
-&gt; scan
-(String -&gt; IO) -&gt; IO
-&gt; scanln
-(String -&gt; IO) -&gt; IO
+&gt; self
+a -&gt; a
 </code></pre>
-<p>Oh nice, so their type is the same as the type of <code>getc</code>, except the <code>Char</code> is changed to <code>String</code>.</p>
-<p>The <code>scanln</code> function scans a whole line and gives it back to you (not including the newline character). The <code>scan</code> function is a little more clever: it reads the next &quot;word&quot; from the input - it skips all the whitespace and captures a continuous string of non-whitespace characters.</p>
-<p>We'll get to use <code>scan</code> more in the next section. Here's some <code>scanln</code> for the taste:</p>
-<pre><code class="language-funky">func main : IO =
-    print &quot;What's your name? &quot;;
-    scanln \name
-    println (&quot;Hello, &quot; ++ name ++ &quot;!&quot;);
-    quit
-</code></pre>
-<p>And there we go:</p>
-<pre><code>$ funkycmd greeting.fn
-What's your name? Michal Štrba
-Hello, Michal Štrba!
-</code></pre>
+<p>It doesn't do anything. It just returns whatever it was passed. For example, <code>self 4</code> is <code>4</code>. Now, when we passed <code>4</code> to <code>self</code>, its type changed a bit. It specialized. It became <code>Int -&gt; Int</code>. See? We get this specialization just by replacing <code>a</code> with <code>Int</code> in the type. That's how type variables work.</p>
+<a class="header" href="#overloading" id="overloading"><h2>Overloading</h2></a>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="1-4-semicolons-and-lambdas.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="2-making-the-world-our-own.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
-                        
-                            <a rel="next" href="1-6-putting-it-together-a-calculator.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
                         
 
                         <div style="clear: both"></div>
@@ -233,15 +228,11 @@ Hello, Michal Štrba!
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="1-4-semicolons-and-lambdas.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="2-making-the-world-our-own.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
-                
-                    <a href="1-6-putting-it-together-a-calculator.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
                 
             </nav>
 
