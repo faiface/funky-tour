@@ -78,4 +78,4 @@ func main : IO =
     main
 ```
 
-**And that's it!** Now go and experiment yourself! When you come back, you'll learn about making your own functions and types.
+**And that's it!** Now go and experiment yourself! When you come back, we'll start learning about making our own functions and types.
