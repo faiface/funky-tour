@@ -1,4 +1,5 @@
 [book]
-authors = []
+title = "A Tour of Funky"
+author = "Michal Štrba"
 multilingual = false
 src = "src"

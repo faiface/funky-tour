@@ -7,3 +7,5 @@
     - [Semicolons and lambdas](1-4-semicolons-and-lambdas.md)
     - [A bit more about IO](1-5-a-bit-more-about-io.md)
     - [Putting it together: a calculator](1-6-putting-it-together-a-calculator.md)
+- [Making the world our own](2-making-the-world-our-own.md)
+    - [Functions](2-1-functions.md)
