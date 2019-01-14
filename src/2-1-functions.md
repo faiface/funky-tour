@@ -151,7 +151,7 @@ func main : IO =
     quit
 ```
 
-This time, both versions of `zero` fit the contexts because `string` works for both `Int`s and `Float`s. What does the type checker say?
+This time, both versions of `zero` fit the context because `string` works for both `Int`s and `Float`s. What does the type checker say?
 
 ```
 $ funkycmd zeros.fn
