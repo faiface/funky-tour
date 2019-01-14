@@ -62,7 +62,7 @@ Type a number: 99
 
 Whoa, that's a number! You can try entering even bigger inputs, but don't go too big... you may freeze your system.
 
-**Now, how about functions with multiple arguments?** Say we want to make a function called `divides` that would tells us whether one integer divides another or not.
+**Now, how about functions with multiple arguments?** Say we want to make a function called `divides` that tells us whether one integer divides another or not.
 
 In Funky, as in many other functional languages, there are no functions of more than one argument. Instead, there are functions that return functions. A function of two arguments really is a function that takes the first argument and returns a new function. This new function remembers the first argument and takes the second one.
 
@@ -108,3 +108,75 @@ It doesn't do anything. It just returns whatever it was passed. For example, `se
 
 ## Overloading
 
+Words in natural language usually don't have just one meaning: "If only there was a _way_ we could continue that _way_, we could've been _way_ ahead of them, but in a _way_, we haven't done so bad." The previous sentence used four different meanings of the word 'way'.
+
+Using same words for different, or slightly different meanings in different contexts allows for very concise and expressive speach. Imagine that we'd have to invent a brand new word every time we'd like to add a new meaning to an existing word. That would be cumbersome and unnatural.
+
+Programming is no different. When designing Funky, I realized that support for function overloading brings so many benefits that I couldn't ignore it despite the initial difficulty of implementation.
+
+So, let's try it!
+
+```funky
+func double : Int -> Int =
+    \x x * 2
+
+func double : Float -> Float =
+    \x x * 2.0
+
+func main : IO =
+    println (string; double 9);
+    println (string; double 4.3);
+    quit
+```
+
+There we go, two versions of `double`: one for `Int`s, one for `Float`s. Let's run it!
+
+```
+$ funkycmd double.fn
+18
+8.6
+```
+
+Works like charm!
+
+Now, how about defining two functions like this?
+
+```funky
+func zero : Int = 0
+
+func zero : Float = 0.0
+
+func main : IO =
+    println (string zero);
+    quit
+```
+
+This time, both versions of `zero` fit the contexts because `string` works for both `Int`s and `Float`s. What does the type checker say?
+
+```
+$ funkycmd zeros.fn
+zeros.fn:6:21: ambiguous, multiple admissible types:
+  Int
+  Float
+```
+
+That's right, the type checker complains. We can fix this error with a type annotation. You can add an explicit type to any expression using the `:` symbol:
+
+```funky
+func zero : Int = 0
+
+func zero : Float = 0.0
+
+func main : IO =
+    println (string (zero : Int));
+    quit
+```
+
+All is fine this time:
+
+```
+$ funkycmd zeros.fn
+0
+```
+
+**TODO collisions**
