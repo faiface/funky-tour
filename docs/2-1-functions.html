@@ -181,7 +181,7 @@ Type a number: 99
 933262154439441526816992388562667004907159682643816214685929638952175999932299156089414639761565182862536979208272237582511852109168640000000000000000000000
 </code></pre>
 <p>Whoa, that's a number! You can try entering even bigger inputs, but don't go too big... you may freeze your system.</p>
-<p><strong>Now, how about functions with multiple arguments?</strong> Say we want to make a function called <code>divides</code> that would tells us whether one integer divides another or not.</p>
+<p><strong>Now, how about functions with multiple arguments?</strong> Say we want to make a function called <code>divides</code> that tells us whether one integer divides another or not.</p>
 <p>In Funky, as in many other functional languages, there are no functions of more than one argument. Instead, there are functions that return functions. A function of two arguments really is a function that takes the first argument and returns a new function. This new function remembers the first argument and takes the second one.</p>
 <p>What would be the type of such a function?</p>
 <p>The type <code>Int -&gt; (Int -&gt; Bool)</code> would do. It takes the first <code>Int</code>, evaluates to a function taking the second <code>Int</code> and finally evaluates to <code>Bool</code>.</p>
@@ -208,6 +208,56 @@ a -&gt; a
 </code></pre>
 <p>It doesn't do anything. It just returns whatever it was passed. For example, <code>self 4</code> is <code>4</code>. Now, when we passed <code>4</code> to <code>self</code>, its type changed a bit. It specialized. It became <code>Int -&gt; Int</code>. See? We get this specialization just by replacing <code>a</code> with <code>Int</code> in the type. That's how type variables work.</p>
 <a class="header" href="#overloading" id="overloading"><h2>Overloading</h2></a>
+<p>Words in natural language usually don't have just one meaning: &quot;If only there was a <em>way</em> we could continue that <em>way</em>, we could've been <em>way</em> ahead of them, but in a <em>way</em>, we haven't done so bad.&quot; The previous sentence used four different meanings of the word 'way'.</p>
+<p>Using same words for different, or slightly different meanings in different contexts allows for very concise and expressive speach. Imagine that we'd have to invent a brand new word every time we'd like to add a new meaning to an existing word. That would be cumbersome and unnatural.</p>
+<p>Programming is no different. When designing Funky, I realized that support for function overloading brings so many benefits that I couldn't ignore it despite the initial difficulty of implementation.</p>
+<p>So, let's try it!</p>
+<pre><code class="language-funky">func double : Int -&gt; Int =
+    \x x * 2
+
+func double : Float -&gt; Float =
+    \x x * 2.0
+
+func main : IO =
+    println (string; double 9);
+    println (string; double 4.3);
+    quit
+</code></pre>
+<p>There we go, two versions of <code>double</code>: one for <code>Int</code>s, one for <code>Float</code>s. Let's run it!</p>
+<pre><code>$ funkycmd double.fn
+18
+8.6
+</code></pre>
+<p>Works like charm!</p>
+<p>Now, how about defining two functions like this?</p>
+<pre><code class="language-funky">func zero : Int = 0
+
+func zero : Float = 0.0
+
+func main : IO =
+    println (string zero);
+    quit
+</code></pre>
+<p>This time, both versions of <code>zero</code> fit the contexts because <code>string</code> works for both <code>Int</code>s and <code>Float</code>s. What does the type checker say?</p>
+<pre><code>$ funkycmd zeros.fn
+zeros.fn:6:21: ambiguous, multiple admissible types:
+  Int
+  Float
+</code></pre>
+<p>That's right, the type checker complains. We can fix this error with a type annotation. You can add an explicit type to any expression using the <code>:</code> symbol:</p>
+<pre><code class="language-funky">func zero : Int = 0
+
+func zero : Float = 0.0
+
+func main : IO =
+    println (string (zero : Int));
+    quit
+</code></pre>
+<p>All is fine this time:</p>
+<pre><code>$ funkycmd zeros.fn
+0
+</code></pre>
+<p><strong>TODO collisions</strong></p>
 
                     </main>
 
