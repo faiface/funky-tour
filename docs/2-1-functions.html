@@ -238,7 +238,7 @@ func main : IO =
     println (string zero);
     quit
 </code></pre>
-<p>This time, both versions of <code>zero</code> fit the contexts because <code>string</code> works for both <code>Int</code>s and <code>Float</code>s. What does the type checker say?</p>
+<p>This time, both versions of <code>zero</code> fit the context because <code>string</code> works for both <code>Int</code>s and <code>Float</code>s. What does the type checker say?</p>
 <pre><code>$ funkycmd zeros.fn
 zeros.fn:6:21: ambiguous, multiple admissible types:
   Int
