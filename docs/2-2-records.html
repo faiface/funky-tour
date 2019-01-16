@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Taking off the ground - A Tour of Funky</title>
+        <title>Records - A Tour of Funky</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="1-taking-off-the-ground.html" class="active"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li><li><a href="2-2-records.html"><strong aria-hidden="true">2.2.</strong> Records</a></li></ol></li></ol>
+            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li><li><a href="2-2-records.html" class="active"><strong aria-hidden="true">2.2.</strong> Records</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -136,25 +136,91 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="#taking-off-the-ground" id="taking-off-the-ground"><h1>Taking off the ground</h1></a>
-<p><a href="https://github.com/faiface/funky">Funky</a> is a new, small programming language that's like and unlike any other language you've seen before.</p>
-<p>It's purely functional, doesn't cheat, but unlike most languages in this space, Funky lets you structure your code top to bottom. Idiomatic Funky code often reads like a well-written imperative algorithm. This lends code that is natural to read - yet in the end, it's basically just <a href="https://en.wikipedia.org/wiki/Lambda_calculus">λ-calculus</a>.</p>
-<p>Funky aims for simplicity and joy. No categories, no monads, no weird, abstract, math operators. Nothing unnecessary. Funky is a pragmatic language for programmers.</p>
+                        <a class="header" href="#records" id="records"><h1>Records</h1></a>
+<p>Now onto creating our own types!</p>
+<p>I'm sure you're familiar with <code>struct</code>s from C or <code>record</code>s from Pascal. They simply group multiple values into a single value. Records in Funky are very much the same.</p>
+<p>They're defined like this:</p>
+<pre><code class="language-funky">record Name = field-a : type-a, field-b : type-b, ...
+</code></pre>
+<p>For example:</p>
+<pre><code class="language-funky">record Person =
+    name : String,
+    age  : Int,
+</code></pre>
 <blockquote>
-<p><strong>A small warning.</strong> Funky was created from <em>scratch</em>. While the standard, battle-tested, functional core, like <code>map</code>, <code>filter</code>, <code>Maybe</code>, etc. will be familiar to all functional programmers, many things will surprise you. For example, as we'll soon discover, <code>let</code> and <code>if</code> are not built-in to the language. Instead, they're functions just like any other. Many more surprises await you in the tour.</p>
+<p><strong>Note.</strong> Trailing comma is allowed.</p>
 </blockquote>
-<p>So, here we go!</p>
+<p>The <code>Person</code> type is now a new, non-reproductive way of creating people (pretty revolutionary if you think about it). How do we create a person?</p>
+<p>Whenever we define a <code>record</code>, Funky automatically <strong>generates a constructor function with the same name</strong>. Let's see!</p>
+<pre><code>$ funkycmd -types person.fn
+&gt; Person
+String -&gt; Int -&gt; Person
+</code></pre>
+<p>Basically, it takes the value for the name and the age and gives us a fully fledged person. Great!</p>
+<pre><code class="language-funky">record Person =
+    name : String,
+    age  : Int,
+
+func main : IO =
+    let (Person &quot;Joe&quot; 28) \joe
+    quit
+</code></pre>
+<p>We've got Joe! How do we use him?</p>
+<p>In addition to the constructor function, Funky <strong>generates two functions per field: a getter and an updater</strong>. Name of both of the functions is the same as the name of the field:</p>
+<pre><code>$ funkycmd -types person.fn
+&gt; name
+Person -&gt; String
+(String -&gt; String) -&gt; Person -&gt; Person
+</code></pre>
+<p>The type <code>Person -&gt; String</code> is the getter. It works just as you'd expect:</p>
+<pre><code class="language-funky">record Person =
+    name : String,
+    age  : Int,
+
+func main : IO =
+    let (Person &quot;Joe&quot; 28) \joe
+    println (name joe);
+    quit
+</code></pre>
+<p>Running it:</p>
+<pre><code>$ funkycmd person.fn
+Joe
+</code></pre>
+<p>The updater with the type <code>(String -&gt; String) -&gt; Person -&gt; Person</code> is a little more... funky.</p>
+<p>Here's what it does: it takes a function and a person. It returns a new person that is the same as the old one, except with the field modified by the function.</p>
+<p>Let's see:</p>
+<pre><code class="language-funky">record Person =
+    name : String,
+    age  : Int,
+
+func main : IO =
+    let (Person &quot;Joe&quot; 28)       \joe
+    let (name (++ &quot;, yo!&quot;) joe) \joe  # shadows the previous joe variable
+    println (name joe);
+    let (age (+ 1) joe) \joe          # Joe had a birthday!
+    println (string; age joe);
+    quit
+</code></pre>
+<p>And run it:</p>
+<pre><code>$ funkycmd person.fn
+Joe, yo!
+29
+</code></pre>
+<blockquote>
+<p><strong>Note.</strong> If you want to replace the field's value by some other value, you can use the <code>const</code> function like this: <code>name (const &quot;Joseph&quot;) joe</code> (changes the name to <code>&quot;Joseph&quot;</code>).</p>
+</blockquote>
+<a class="header" href="#composing-getters-and-updaters" id="composing-getters-and-updaters"><h2>Composing getters and updaters</h2></a>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-
-                        
-                            <a rel="next" href="1-1-installing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
+                            <a rel="prev" href="2-1-functions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
                             </a>
+                        
+
                         
 
                         <div style="clear: both"></div>
@@ -164,11 +230,11 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-
-                
-                    <a href="1-1-installing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
+                    <a href="2-1-functions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
                     </a>
+                
+
                 
             </nav>
 
