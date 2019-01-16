@@ -80,7 +80,7 @@ Furthermore, the parentheses in the type `Int -> (Int -> Bool)` aren't needed ei
 >
 > Applications of prefix functions are automatically parenthesized from the left if no explicit parenthesis are present. In all cases, `f x y` is the same as `(f x) y`.
 >
-> Applications of infix functions are, however, automatically parenthesized from the right. Furthermore, all of them have the same precedence. This is to simplify programmer's life: when defining own infix functions, you won't be bothered by specifying precedence levels or associativity. So, `3 * 2 + 1` is equivalent to `3 * (2 + 1)`.
+> Applications of infix functions are, however, automatically parenthesized from the right. All of them have the same precedence. This is to simplify programmer's life: when defining own infix functions, you won't be bothered by specifying precedence levels or associativity. So, `3 * 2 + 1` is equivalent to `3 * (2 + 1)`.
 
 After learning about automatic parentheses (also called left/right-associativity), here's the definition of `divides`:
 
@@ -179,4 +179,41 @@ $ funkycmd zeros.fn
 0
 ```
 
-**TODO collisions**
+Well, okay, those two `zero` functions are distinguishible by their type. But what if we put the same type?
+
+```funky
+func lucky-number : Int = 7
+func lucky-number : Int = 3
+
+func main : IO =
+    println (string lucky-number);
+    quit
+```
+
+Which one gets printed? `7` or `3`? Make your guesses, ladies and gentlement...
+
+Here's what happens:
+
+```
+$ funkycmd lucky-number.fn
+lucky-number.fn:2:27: function lucky-number with colliding type exists: test.fn:1:27
+```
+
+Oh, no! It didn't even let us define the second function, because its type collides with the first one.
+
+**Funky doesn't let you overload a function if its type collides with an existing version.**
+
+> **Details.** When exactly do two types collide?
+> 
+> Do these two functions collide?
+> 
+> ```funky
+> func weirdo : a -> a     = self
+> func weirdo : Int -> Int = (* 2)
+> ```
+> 
+> Indeed, they do! You might argue that the second one is more specific than the first one, so if both fit the context, the second one should be selected, but this doesn't fly in Funky, because it brings a whole bag of problems.
+> 
+> Instead, I chose simplicity: **two types collide whenever their type variables can be substituted such that they become the same type**.
+> 
+> For example: `a -> Int` collides with `Float -> a` (substitutes to `Float -> Int`).
