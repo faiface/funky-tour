@@ -191,7 +191,7 @@ Type a number: 99
 <blockquote>
 <p><strong>Details.</strong> There are two kinds of functions in Funky: prefix and infix. Infix functions can be identified easily: they don't contain any letters. All other functions are prefix.</p>
 <p>Applications of prefix functions are automatically parenthesized from the left if no explicit parenthesis are present. In all cases, <code>f x y</code> is the same as <code>(f x) y</code>.</p>
-<p>Applications of infix functions are, however, automatically parenthesized from the right. Furthermore, all of them have the same precedence. This is to simplify programmer's life: when defining own infix functions, you won't be bothered by specifying precedence levels or associativity. So, <code>3 * 2 + 1</code> is equivalent to <code>3 * (2 + 1)</code>.</p>
+<p>Applications of infix functions are, however, automatically parenthesized from the right. All of them have the same precedence. This is to simplify programmer's life: when defining own infix functions, you won't be bothered by specifying precedence levels or associativity. So, <code>3 * 2 + 1</code> is equivalent to <code>3 * (2 + 1)</code>.</p>
 </blockquote>
 <p>After learning about automatic parentheses (also called left/right-associativity), here's the definition of <code>divides</code>:</p>
 <pre><code class="language-funky">func divides : Int -&gt; Int -&gt; Bool =
@@ -257,7 +257,31 @@ func main : IO =
 <pre><code>$ funkycmd zeros.fn
 0
 </code></pre>
-<p><strong>TODO collisions</strong></p>
+<p>Well, okay, those two <code>zero</code> functions are distinguishible by their type. But what if we put the same type?</p>
+<pre><code class="language-funky">func lucky-number : Int = 7
+func lucky-number : Int = 3
+
+func main : IO =
+    println (string lucky-number);
+    quit
+</code></pre>
+<p>Which one gets printed? <code>7</code> or <code>3</code>? Make your guesses, ladies and gentlement...</p>
+<p>Here's what happens:</p>
+<pre><code>$ funkycmd lucky-number.fn
+lucky-number.fn:2:27: function lucky-number with colliding type exists: test.fn:1:27
+</code></pre>
+<p>Oh, no! It didn't even let us define the second function, because its type collides with the first one.</p>
+<p><strong>Funky doesn't let you overload a function if its type collides with an existing version.</strong></p>
+<blockquote>
+<p><strong>Details.</strong> When exactly do two types collide?</p>
+<p>Do these two functions collide?</p>
+<pre><code class="language-funky">func weirdo : a -&gt; a     = self
+func weirdo : Int -&gt; Int = (* 2)
+</code></pre>
+<p>Indeed, they do! You might argue that the second one is more specific than the first one, so if both fit the context, the second one should be selected, but this doesn't fly in Funky, because it brings a whole bag of problems.</p>
+<p>Instead, I chose simplicity: <strong>two types collide whenever their type variables can be substituted such that they become the same type</strong>.</p>
+<p>For example: <code>a -&gt; Int</code> collides with <code>Float -&gt; a</code> (substitutes to <code>Float -&gt; Int</code>).</p>
+</blockquote>
 
                     </main>
 
