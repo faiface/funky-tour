@@ -681,13 +681,13 @@ func weirdo : Int -&gt; Int = (* 2)
 <blockquote>
 <p><strong>Note.</strong> Trailing comma is allowed.</p>
 </blockquote>
-<p>The <code>Person</code> type is now a new, non-reproductive way of creating people (pretty revolutionary if you think about it). How do we create a person?</p>
-<p>Whenever we define a <code>record</code>, Funky automatically <strong>generates a constructor function with the same name</strong>. Let's see!</p>
+<p>The <code>Person</code> type is now a new, non-reproductive way of creating people (pretty revolutionary if you think about it). How do we create one?</p>
+<p>Whenever we define a <code>record</code>, Funky <strong>generates a constructor function with the same name</strong>. Let's see!</p>
 <pre><code>$ funkycmd -types person.fn
 &gt; Person
 String -&gt; Int -&gt; Person
 </code></pre>
-<p>Basically, it takes the value for the name and the age and gives us a fully fledged person. Great!</p>
+<p>Basically, it takes values for the name and the age and gives us a fully fledged person. Great!</p>
 <pre><code class="language-funky">record Person =
     name : String,
     age  : Int,
@@ -741,6 +741,39 @@ Joe, yo!
 <p><strong>Note.</strong> If you want to replace the field's value by some other value, you can use the <code>const</code> function like this: <code>name (const &quot;Joseph&quot;) joe</code> (changes the name to <code>&quot;Joseph&quot;</code>).</p>
 </blockquote>
 <a class="header" href="#composing-getters-and-updaters" id="composing-getters-and-updaters"><h2>Composing getters and updaters</h2></a>
+<p>The signatures of the getters and the updaters are not random. They enable some really cool stuff! We'll check it out now.</p>
+<p>I'll show it to you on these two records:</p>
+<pre><code class="language-funky">record Point =
+    x : Int,
+    y : Int,
+
+record Line =
+    from : Point,
+    to   : Point,
+</code></pre>
+<p>Okay, now, say we have a <code>Point</code>, let's call it <code>pt</code>. To get the X coordinate we do <code>x pt</code> and to get the Y coordinate we do <code>y pt</code>. Easy! To move the X coordinate 10 units to the right, we do <code>x (+ 10) pt</code> and to set the Y coordinate to 0 we do <code>y (const 0) pt</code>.</p>
+<p>Okay, now say we have <code>Line</code>. Let's call it <code>line</code>. The <code>line</code> has two points: <code>from</code> and <code>to</code>. What if we want to move the X coordinate of the first point by 10?</p>
+<p>Now, here comes the cool part! All we need to do it to realize, that</p>
+<pre><code class="language-funky">x (+ 10)
+</code></pre>
+<p>is a partial application of the <code>x</code> updater and has type <code>Point -&gt; Point</code>. But, any <code>Point -&gt; Point</code> can be used in the <code>from</code> updater:</p>
+<pre><code class="language-funky">from (x (+ 10)) line
+</code></pre>
+<p>Lastly, we can clean it up with the function composition operator:</p>
+<pre><code class="language-funky">(from . x) (+ 10) line
+</code></pre>
+<blockquote>
+<p><strong>Note.</strong> The function composition operator <code>.</code> works like this: <code>(f . g) x = f (g x)</code>. So you see we've just rewritten the previous expression using this formula.</p>
+</blockquote>
+<blockquote>
+<p><strong>Details.</strong> In Funky, the function composition operator is overloaded a few times in the standard library, namely for when the second function takes multiple arguments. For example, one of the overloaded versions works like this: <code>(f . g) x y = f (g x y)</code>. That way, writing <code>(concat . map)</code> works exactly as you'd like to. The type checker can always tell which version fits the context.</p>
+</blockquote>
+<p>And that's it! That's pretty clean, isn't it?</p>
+<p>Getters can be composed similarly, except in the opposite order:</p>
+<pre><code class="language-funky">(y . to) line
+</code></pre>
+<p>That's the Y coordinate of the last point.</p>
+<p>Getters and updaters also have a very important role when it comes to expressing state flow with the <code>State</code> type as we'll cover in the <a href="">TODO</a> part. In short, they enable record fields to act as mutable variables in an imperative algorithm.</p>
 
                     </main>
 
