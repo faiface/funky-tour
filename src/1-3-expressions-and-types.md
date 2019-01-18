@@ -58,6 +58,8 @@ Now this works.
 
 > **Details.** There are many built-in functions for each of these built-in types. Arithmetic operators (`+`, `-`, `*`, `/`, `^`, `%`), comparison operators (`==`, `!=`, `<`, `>`, `<=`, `>=`), math functions (`sin`, `cos`, `sqrt`, `atan2`, etc.), and conversion functions (`float`, `int`, etc.). One notable thing is that you can't add characters - `'a' + 'b'` is not valid - but you can add an integer to a character: `'a' + 2` results in `'c'`.
 
+> **Note.** Unary minus is not spelled `-`, but `neg`. The reason is that `-` is always infix because of its name. You can still you `-` in number literals, like `-42`.
+
 ## Printing various values
 
 We've already printed `"Hello, world!"`, how about printing other stuff? Let's try:
