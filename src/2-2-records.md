@@ -7,7 +7,7 @@ I'm sure you're familiar with `struct`s from C or `record`s from Pascal. They si
 They're defined like this:
 
 ```funky
-record Name = field-a : type-a, field-b : type-b, ...
+record Name = field : type, ...
 ```
 
 For example:
