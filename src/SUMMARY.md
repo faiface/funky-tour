@@ -11,3 +11,4 @@
     - [Functions](2-1-functions.md)
     - [Records](2-2-records.md)
     - [Unions](2-3-unions.md)
+    - [Aliases](2-4-aliases.md)
