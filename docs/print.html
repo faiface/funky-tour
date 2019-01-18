@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li><li><a href="2-2-records.html"><strong aria-hidden="true">2.2.</strong> Records</a></li></ol></li></ol>
+            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li><li><a href="2-2-records.html"><strong aria-hidden="true">2.2.</strong> Records</a></li><li><a href="2-3-unions.html"><strong aria-hidden="true">2.3.</strong> Unions</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -671,7 +671,7 @@ func weirdo : Int -&gt; Int = (* 2)
 <p>Now onto creating our own types!</p>
 <p>I'm sure you're familiar with <code>struct</code>s from C or <code>record</code>s from Pascal. They simply group multiple values into a single value. Records in Funky are very much the same.</p>
 <p>They're defined like this:</p>
-<pre><code class="language-funky">record Name = field-a : type-a, field-b : type-b, ...
+<pre><code class="language-funky">record Name = field : type, ...
 </code></pre>
 <p>For example:</p>
 <pre><code class="language-funky">record Person =
@@ -774,6 +774,123 @@ record Line =
 </code></pre>
 <p>That's the Y coordinate of the last point.</p>
 <p>Getters and updaters also have a very important role when it comes to expressing state flow with the <code>State</code> type as we'll cover in the <a href="">TODO</a> part. In short, they enable record fields to act as mutable variables in an imperative algorithm.</p>
+<a class="header" href="#unions" id="unions"><h1>Unions</h1></a>
+<p>The second way of creating <em>new</em> types is unions. While a record is a collection of fields, a union defines multiple alternative forms.</p>
+<p>Here's the general form:</p>
+<pre><code class="language-funky">union Name = alternative argument ... | ...
+</code></pre>
+<p>The three dots after <code>argument</code> mean that a single alternative can contain any number of arguments (fields) and the three dots after <code>|</code> mean that a union can have any number of alternatives.</p>
+<p>Unlike records, arguments for alternatives have no names, only types.</p>
+<p>Here's a simple union:</p>
+<pre><code class="language-funky">union Bool = true | false
+</code></pre>
+<p>This is the actual definition of the type <code>Bool</code> from the standard library. The alternatives have no arguments in this case.</p>
+<p>Here's another example:</p>
+<pre><code class="language-funky">record Point = x : Float, y : Float
+
+union Shape =
+    line Point Point   |
+    circle Point Float |
+</code></pre>
+<blockquote>
+<p><strong>Note.</strong> Trailing <code>|</code> is allowed.</p>
+</blockquote>
+<p>The <code>Shape</code> type has two alternatives: the <code>line</code> alternatives, which is composed of two points, and the <code>circle</code> alternatives, which has a point (the center) and a float (the radius).</p>
+<p>When we define a union, Funky <strong>generates a constructor function for each alternative</strong>. The function simply takes all the arguments in order. Let's check them out!</p>
+<pre><code>$ funkycmd -types shapes.fn
+&gt; line
+Point -&gt; Point -&gt; Shape
+&gt; circle
+Point -&gt; Float -&gt; Shape
+&gt; line (Point 1.0 8.0) (Point 12.5 -4.9)
+Shape
+&gt; circle (Point 0.0 0.0) 7.0
+Shape
+</code></pre>
+<p>They definitely work!</p>
+<p><strong>To examine a <code>Shape</code> value and make a decision based on whether it's a line or a circle, Funky provides the <code>switch</code>/<code>case</code> construct.</strong> It's best shown by an example. Here's a function that calculates the length of a line or a circumference of a circle:</p>
+<pre><code class="language-funky">func length : Shape -&gt; Float =
+    \shape
+    switch shape
+    case line \from \to
+        hypot (x to - x from) (y to - y from)
+    case circle \center \radius
+        2.0 * pi * radius
+</code></pre>
+<blockquote>
+<p><strong>Note.</strong> The <code>hypot</code> function stands for 'hypotenuse' and is used for calculating the length of the long side of a right triangle using the Pythagorean theorem: <code>hypot x y = sqrt ((x ^ 2.0) + (y ^ 2.0))</code>.</p>
+</blockquote>
+<p>As you can see, the <code>switch</code>/<code>case</code> construct begins with the <code>switch</code> keyword followed by the value we're switching on. After that, we see a series of <code>case</code> branches. Each branch starts with the <code>case</code> keyword followed by the name of the alternative. That is followed by a function that takes the arguments to the alternative and evaluates to the overall result.</p>
+<p>Of course, all <code>case</code> branches must evaluate to the same type: <code>Float</code>, in our case.</p>
+<blockquote>
+<p><strong>Note.</strong> Currently, all alternatives must be present in <code>switch</code>/<code>case</code> and they must be listed in the same order as they are in the definition of the union. This will be fixed.</p>
+</blockquote>
+<p><strong>The names of the alternatives can also be infix</strong> if they don't contain any letters. When they are infix, they can be placed between their arguments in the definition.</p>
+<p>For example, here's a nice, recursive union for building up arithmetic expressions:</p>
+<pre><code class="language-funky">union Expr =
+    num Int     |
+    Expr + Expr |
+    Expr * Expr |
+</code></pre>
+<p>It's either just a number, like <code>num 12</code>, or it's an addition, or a multiplication: <code>num 12 + num 7</code>, or <code>(num 1 + num 9) * ((num 4 + num 3) + (num 2 * num 2))</code>.</p>
+<blockquote>
+<p><strong>Note.</strong> The alternatives can be called <code>+</code> and <code>*</code> without a problem thanks to overloading.</p>
+</blockquote>
+<p>To evaluate an expression like that, we make use of <code>switch</code>/<code>case</code> again:</p>
+<pre><code class="language-funky">func eval : Expr -&gt; Int =
+    \expr
+    switch expr
+    case num
+        self
+    case (+) \left \right
+        eval left + eval right
+    case (*) \left \right
+        eval left * eval right
+</code></pre>
+<p>Have you noticed that no lambda comes after <code>case num</code>? That's because the <code>case</code> bodies need not explicitly contain lambdas, all they need is a function. In this case, <code>self</code> (the identity function) is the right choice because it just evaluates to the number under <code>num</code>.</p>
+<p>Let's see if <code>eval</code> works right!</p>
+<pre><code class="language-funky">union Expr =
+    num Int     |
+    Expr + Expr |
+    Expr * Expr |
+
+func eval : Expr -&gt; Int =
+    \expr
+    switch expr
+    case num
+        self
+    case (+) \left \right
+        eval left + eval right
+    case (*) \left \right
+        eval left * eval right
+
+func main : IO =
+    let ((num 1 + num 9) * ((num 4 + num 3) + (num 2 * num 2))) \expr
+    println (string; eval expr);
+    quit
+</code></pre>
+<p>And run it:</p>
+<pre><code>$ funkycmd expr.fn
+110
+</code></pre>
+<p>Works great!</p>
+<a class="header" href="#type-variables-in-types" id="type-variables-in-types"><h2>Type variables in types</h2></a>
+<p>So far we've only defined types that were concrete, with no type variables anywhere. But it's also possible (and very useful) to define <em>generic types</em>: types parameterized by one or more type variables.</p>
+<p>It's really simple.</p>
+<p>All we need to do is to list the type variables after the name of the type in the definition:</p>
+<pre><code class="language-funky">record Pair a b =
+    first  : a,
+    second : b,
+</code></pre>
+<p>That's an actual definition of the <code>Pair</code> type from the standard library.</p>
+<p>Or here's another example:</p>
+<pre><code class="language-funky">union Maybe a = none | some a
+</code></pre>
+<p>That is, likewise, the definition of the <code>Maybe</code> type from the standard library.</p>
+<p>This way, <code>Pair</code> and <code>Maybe</code> don't define a single type each. Instead, each defines a family of types: <code>Pair Int Float</code>, <code>Pair String Bool</code>, <code>Maybe (String -&gt; String)</code>, <code>Maybe (Pair Int Int)</code> all belong to those families.</p>
+<blockquote>
+<p><strong>Note.</strong> 'Type family' is not a concept in Funky, it's just a phrase we use to talk about types. <code>Pair</code> without its type variables filled in is always an error.</p>
+</blockquote>
 
                     </main>
 

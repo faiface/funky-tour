@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>A bit more about IO - A Tour of Funky</title>
+        <title>Unions - A Tour of Funky</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html" class="active"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li><li><a href="2-2-records.html"><strong aria-hidden="true">2.2.</strong> Records</a></li><li><a href="2-3-unions.html"><strong aria-hidden="true">2.3.</strong> Unions</a></li></ol></li></ol>
+            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li><li><a href="2-2-records.html"><strong aria-hidden="true">2.2.</strong> Records</a></li><li><a href="2-3-unions.html" class="active"><strong aria-hidden="true">2.3.</strong> Unions</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -136,94 +136,134 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="#a-bit-more-about-io" id="a-bit-more-about-io"><h1>A bit more about IO</h1></a>
-<p>Funky has an unusual approach to side-effects. There's no notion of them in the language itself. What looked like side-effecting functions in the previous sections (<code>println</code>, <code>quit</code>, etc.) were in fact data structure constructors. The <code>IO</code> type is <em>not magic</em> at all. It's just a plain data structure defined in the Funky language itself. Here's its definition (you can also find it in the standard library in the <code>cmd</code> folder):</p>
-<pre><code class="language-funky">union IO = quit | putc Char IO | getc (Char -&gt; IO)
+                        <a class="header" href="#unions" id="unions"><h1>Unions</h1></a>
+<p>The second way of creating <em>new</em> types is unions. While a record is a collection of fields, a union defines multiple alternative forms.</p>
+<p>Here's the general form:</p>
+<pre><code class="language-funky">union Name = alternative argument ... | ...
 </code></pre>
-<p>We haven't covered <code>union</code> yet but think algebraic data types (e.g. <code>data</code> in Haskell). This <code>IO</code> data structure serves as a description of what the program should do. However, in contrast with the control flow of traditional imperative languages, the <code>IO</code> data structure can be arbitrarily manipulated - e.g. it's no problem to implement input/ouput encryption just by implementing a single <code>IO -&gt; IO</code> function.</p>
+<p>The three dots after <code>argument</code> mean that a single alternative can contain any number of arguments (fields) and the three dots after <code>|</code> mean that a union can have any number of alternatives.</p>
+<p>Unlike records, arguments for alternatives have no names, only types.</p>
+<p>Here's a simple union:</p>
+<pre><code class="language-funky">union Bool = true | false
+</code></pre>
+<p>This is the actual definition of the type <code>Bool</code> from the standard library. The alternatives have no arguments in this case.</p>
+<p>Here's another example:</p>
+<pre><code class="language-funky">record Point = x : Float, y : Float
+
+union Shape =
+    line Point Point   |
+    circle Point Float |
+</code></pre>
 <blockquote>
-<p><strong>Note.</strong> The <code>IO</code> data structure is very limited. All it can express is printing and scanning characters. The thing we haven't talked about yet is that <code>funkycmd</code> is just one of the many possible <em>side-effect interpreters</em>. Specifically, <code>funkycmd</code> interprets (executes) the above <code>IO</code> data structure. There's another interpreter called <code>funkygame</code> that interprets an entirely different data structure which describes sprite-based games. You can actually make your own side-effect interpreter fairly easily. The specifics of that are explained in the <a href="">TODO</a> section.</p>
+<p><strong>Note.</strong> Trailing <code>|</code> is allowed.</p>
 </blockquote>
-<p>The <code>IO</code> looks like a linked list with two kinds of nodes (not counting <code>quit</code>). The <code>funkycmd</code> interpreter loads the <code>main</code> function, walks the <code>IO</code> nodes, and does as they say.</p>
-<p>Let's talk about the nodes individually.</p>
-<p><strong>Quit.</strong> We've seen this one before - it marks the end of the program.</p>
-<p><strong>Putc.</strong> This node has two arguments: a <code>Char</code> and an <code>IO</code>. The <code>Char</code> is the character to be printed. The <code>IO</code> tells what should be done next.</p>
-<p><strong>Getc.</strong> Now this one looks strange. It has one argument: a function. The function takes a <code>Char</code> and returns an <code>IO</code>. Here's how <code>funkycmd</code> deals with <code>getc</code>: Upon encountering the <code>getc</code> node, <code>funkycmd</code> scans a character from the standard input. Then it takes the function under <code>getc</code> and applies it to the scanned character, passes it inside. The function gives back an <code>IO</code>. This <code>IO</code> tells what should be done next.</p>
-<p>Now let's see them in action!</p>
-<p>How about a very exciting program that reads a character and prints it back?</p>
-<pre><code class="language-funky">func main : IO =
-    getc (\c putc c quit)
+<p>The <code>Shape</code> type has two alternatives: the <code>line</code> alternatives, which is composed of two points, and the <code>circle</code> alternatives, which has a point (the center) and a float (the radius).</p>
+<p>When we define a union, Funky <strong>generates a constructor function for each alternative</strong>. The function simply takes all the arguments in order. Let's check them out!</p>
+<pre><code>$ funkycmd -types shapes.fn
+&gt; line
+Point -&gt; Point -&gt; Shape
+&gt; circle
+Point -&gt; Float -&gt; Shape
+&gt; line (Point 1.0 8.0) (Point 12.5 -4.9)
+Shape
+&gt; circle (Point 0.0 0.0) 7.0
+Shape
 </code></pre>
-<p>Run it:</p>
-<pre><code>$ funkycmd getcputc.fn
-x
-x
+<p>They definitely work!</p>
+<p><strong>To examine a <code>Shape</code> value and make a decision based on whether it's a line or a circle, Funky provides the <code>switch</code>/<code>case</code> construct.</strong> It's best shown by an example. Here's a function that calculates the length of a line or a circumference of a circle:</p>
+<pre><code class="language-funky">func length : Shape -&gt; Float =
+    \shape
+    switch shape
+    case line \from \to
+        hypot (x to - x from) (y to - y from)
+    case circle \center \radius
+        2.0 * pi * radius
 </code></pre>
-<p>It worked!</p>
-<p>Now, we can structure the code better using the same tricks we used with <code>if</code> and <code>let</code>. How does this look?</p>
-<pre><code class="language-funky">func main : IO =
-    getc \c
-    putc c;
+<blockquote>
+<p><strong>Note.</strong> The <code>hypot</code> function stands for 'hypotenuse' and is used for calculating the length of the long side of a right triangle using the Pythagorean theorem: <code>hypot x y = sqrt ((x ^ 2.0) + (y ^ 2.0))</code>.</p>
+</blockquote>
+<p>As you can see, the <code>switch</code>/<code>case</code> construct begins with the <code>switch</code> keyword followed by the value we're switching on. After that, we see a series of <code>case</code> branches. Each branch starts with the <code>case</code> keyword followed by the name of the alternative. That is followed by a function that takes the arguments to the alternative and evaluates to the overall result.</p>
+<p>Of course, all <code>case</code> branches must evaluate to the same type: <code>Float</code>, in our case.</p>
+<blockquote>
+<p><strong>Note.</strong> Currently, all alternatives must be present in <code>switch</code>/<code>case</code> and they must be listed in the same order as they are in the definition of the union. This will be fixed.</p>
+</blockquote>
+<p><strong>The names of the alternatives can also be infix</strong> if they don't contain any letters. When they are infix, they can be placed between their arguments in the definition.</p>
+<p>For example, here's a nice, recursive union for building up arithmetic expressions:</p>
+<pre><code class="language-funky">union Expr =
+    num Int     |
+    Expr + Expr |
+    Expr * Expr |
+</code></pre>
+<p>It's either just a number, like <code>num 12</code>, or it's an addition, or a multiplication: <code>num 12 + num 7</code>, or <code>(num 1 + num 9) * ((num 4 + num 3) + (num 2 * num 2))</code>.</p>
+<blockquote>
+<p><strong>Note.</strong> The alternatives can be called <code>+</code> and <code>*</code> without a problem thanks to overloading.</p>
+</blockquote>
+<p>To evaluate an expression like that, we make use of <code>switch</code>/<code>case</code> again:</p>
+<pre><code class="language-funky">func eval : Expr -&gt; Int =
+    \expr
+    switch expr
+    case num
+        self
+    case (+) \left \right
+        eval left + eval right
+    case (*) \left \right
+        eval left * eval right
+</code></pre>
+<p>Have you noticed that no lambda comes after <code>case num</code>? That's because the <code>case</code> bodies need not explicitly contain lambdas, all they need is a function. In this case, <code>self</code> (the identity function) is the right choice because it just evaluates to the number under <code>num</code>.</p>
+<p>Let's see if <code>eval</code> works right!</p>
+<pre><code class="language-funky">union Expr =
+    num Int     |
+    Expr + Expr |
+    Expr * Expr |
+
+func eval : Expr -&gt; Int =
+    \expr
+    switch expr
+    case num
+        self
+    case (+) \left \right
+        eval left + eval right
+    case (*) \left \right
+        eval left * eval right
+
+func main : IO =
+    let ((num 1 + num 9) * ((num 4 + num 3) + (num 2 * num 2))) \expr
+    println (string; eval expr);
     quit
 </code></pre>
-<p>Well, that's nice! The first line scans a character, the second line prints it back, the third line quits the program.</p>
-<p>Wait, what would happen if we made it recursive? What if we replaced <code>quit</code> with <code>main</code>?</p>
-<pre><code class="language-funky">func main : IO =
-    getc \c
-    putc c;
-    main
+<p>And run it:</p>
+<pre><code>$ funkycmd expr.fn
+110
 </code></pre>
-<p>By the looks of it, this program should print back all of its input - it's the <code>cat</code> program.</p>
+<p>Works great!</p>
+<a class="header" href="#type-variables-in-types" id="type-variables-in-types"><h2>Type variables in types</h2></a>
+<p>So far we've only defined types that were concrete, with no type variables anywhere. But it's also possible (and very useful) to define <em>generic types</em>: types parameterized by one or more type variables.</p>
+<p>It's really simple.</p>
+<p>All we need to do is to list the type variables after the name of the type in the definition:</p>
+<pre><code class="language-funky">record Pair a b =
+    first  : a,
+    second : b,
+</code></pre>
+<p>That's an actual definition of the <code>Pair</code> type from the standard library.</p>
+<p>Or here's another example:</p>
+<pre><code class="language-funky">union Maybe a = none | some a
+</code></pre>
+<p>That is, likewise, the definition of the <code>Maybe</code> type from the standard library.</p>
+<p>This way, <code>Pair</code> and <code>Maybe</code> don't define a single type each. Instead, each defines a family of types: <code>Pair Int Float</code>, <code>Pair String Bool</code>, <code>Maybe (String -&gt; String)</code>, <code>Maybe (Pair Int Int)</code> all belong to those families.</p>
 <blockquote>
-<p><strong>Note.</strong> But it never quits! Or does it? Currently, <code>funkycmd</code> is made to silently quit when encountering the EOF, so the program quits correctly. Of course, this behavior is not guaranteed to be kept.</p>
+<p><strong>Note.</strong> 'Type family' is not a concept in Funky, it's just a phrase we use to talk about types. <code>Pair</code> without its type variables filled in is always an error.</p>
 </blockquote>
-<pre><code class="language-funky">$ funkycmd cat.fn
-hello, cat!
-hello, cat!
-do you cat?
-do you cat?
-you do cat!
-you do cat!
-^D
-</code></pre>
-<p>The <code>^D</code> sequence at the end is the EOF.</p>
-<a class="header" href="#scanning-more-than-one-character" id="scanning-more-than-one-character"><h2>Scanning more than one character</h2></a>
-<p>The standard library gives us many goods. There's <code>print</code> and <code>println</code> that work by expanding to multiple <code>putc</code> nodes. Are there some analogous high-level functions for scanning? Sure there are! They're called, how unexpected, <code>scan</code> and <code>scanln</code>. What are their types:</p>
-<pre><code>$ funkycmd -types
-&gt; scan
-(String -&gt; IO) -&gt; IO
-&gt; scanln
-(String -&gt; IO) -&gt; IO
-</code></pre>
-<p>Oh nice, so their type is the same as the type of <code>getc</code>, except the <code>Char</code> is changed to <code>String</code>.</p>
-<p>The <code>scanln</code> function scans a whole line and gives it back to you (not including the newline character). The <code>scan</code> function is a little more clever: it reads the next &quot;word&quot; from the input - it skips all the whitespace and captures a continuous string of non-whitespace characters.</p>
-<p>We'll get to use <code>scan</code> more in the next section. Here's some <code>scanln</code> for the taste:</p>
-<pre><code class="language-funky">func main : IO =
-    print &quot;What's your name? &quot;;
-    scanln \name
-    println (&quot;Hello, &quot; ++ name ++ &quot;!&quot;);
-    quit
-</code></pre>
-<p>And there we go:</p>
-<pre><code>$ funkycmd greeting.fn
-What's your name? Michal Štrba
-Hello, Michal Štrba!
-</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="1-4-semicolons-and-lambdas.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="2-2-records.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
-                        
-                            <a rel="next" href="1-6-putting-it-together-a-calculator.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
                         
 
                         <div style="clear: both"></div>
@@ -233,15 +273,11 @@ Hello, Michal Štrba!
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="1-4-semicolons-and-lambdas.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="2-2-records.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
-                
-                    <a href="1-6-putting-it-together-a-calculator.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
                 
             </nav>
 
