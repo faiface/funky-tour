@@ -221,6 +221,9 @@ Float
 <blockquote>
 <p><strong>Details.</strong> There are many built-in functions for each of these built-in types. Arithmetic operators (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code>, <code>%</code>), comparison operators (<code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>), math functions (<code>sin</code>, <code>cos</code>, <code>sqrt</code>, <code>atan2</code>, etc.), and conversion functions (<code>float</code>, <code>int</code>, etc.). One notable thing is that you can't add characters - <code>'a' + 'b'</code> is not valid - but you can add an integer to a character: <code>'a' + 2</code> results in <code>'c'</code>.</p>
 </blockquote>
+<blockquote>
+<p><strong>Note.</strong> Unary minus is not spelled <code>-</code>, but <code>neg</code>. The reason is that <code>-</code> is always infix because of its name. You can still you <code>-</code> in number literals, like <code>-42</code>.</p>
+</blockquote>
 <a class="header" href="#printing-various-values" id="printing-various-values"><h2>Printing various values</h2></a>
 <p>We've already printed <code>&quot;Hello, world!&quot;</code>, how about printing other stuff? Let's try:</p>
 <pre><code class="language-funky">func main : IO =
