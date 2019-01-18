@@ -10,3 +10,4 @@
 - [Making the world our own](2-making-the-world-our-own.md)
     - [Functions](2-1-functions.md)
     - [Records](2-2-records.md)
+    - [Unions](2-3-unions.md)
