@@ -101,7 +101,7 @@ Joe, yo!
 29
 ```
 
-> **Note.** If you want to replace the field's value by some other value, you can use the `const` function like this: `name (const "Joseph") joe` (changes the name to `"Joseph"`).
+> **Note.** If you want to replace the field's value by some other value, you can use the `const` function like this: `name (const "Joseph") joe` (changes the name to `"Joseph"`). The function `const` makes a function that, taking any input, always evaluates to a constant. So, `(const "Joseph") 12` evaluates to `"Joseph"`.
 
 ## Composing getters and updaters
 
