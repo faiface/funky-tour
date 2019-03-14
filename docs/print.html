@@ -953,9 +953,10 @@ zip (++) [&quot;he&quot;, &quot;wo&quot;] [&quot;llo&quot;, &quot;rld&quot;]  # 
 <p><strong>Details.</strong> The <code>rest!</code> function returns the list except its first element and crashes if the list is empty, therefore the <code>!</code> sign. For example, <code>rest! [1, 2, 3]</code> evaluates to <code>[2, 3]</code>. Similarly, there is a <code>first!</code> function that evaluates to the first element of the list.</p>
 <p>These functions also have their non-crashing versions without the <code>!</code> signs that return <code>Maybe</code>s (optional values, we'll learn more about them). For example, <code>first [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]</code> evaluates to <code>some &quot;a&quot;</code>, while <code>first []</code> evaluates to <code>none</code>.</p>
 </blockquote>
-<p>There are a few more list functions, like <code>fold&lt;</code> and <code>fold&gt;</code> (those are same as <code>foldr</code> and <code>foldl'</code> in Haskell), but we'll not give them too much attention, you can try them out on your own. For example, here's how you'd sum a list of numbers with <code>fold&gt;</code>:</p>
+<p>There are  more list functions, like <code>fold&lt;</code> and <code>fold&gt;</code> (those are same as <code>foldr</code> and <code>foldl'</code> in Haskell), but we'll not give them too much attention, you can try them out on your own. For example, here's how you'd sum a list of numbers with <code>fold&gt;</code>:</p>
 <pre><code class="language-funky">fold&gt; (+) 0 (range 1 15)  # =&gt; 120
 </code></pre>
+<p>Other list functions include <code>reverse</code>, <code>take</code>, <code>drop</code>, <code>any</code>, <code>all</code>, <code>iterate</code>, and so on. The usual ones.</p>
 <a class="header" href="#how-to-print-a-list-meet-the-for-loop" id="how-to-print-a-list-meet-the-for-loop"><h2>How to print a list? Meet the for loop</h2></a>
 <p>Now, all that stuff is cool, but if we can't print a list, it's all useless, right? Well, this leads us to a very interesting function from the standard library called <code>for</code>. Yes, the name is intentionally chosen to match the name of the old imperative concept - the for loop. Of course, loops in imperative programming rely on mutation of the loop variables. We can't do that in functional programming, but we'll come pretty close.</p>
 <p>So, what's the type of this mighty <code>for</code> function?</p>
@@ -1047,6 +1048,9 @@ next
         println;
     quit
 </code></pre>
+<blockquote>
+<p><strong>Details.</strong> The <code>range</code> function takes the lower and the upper bound and evaluates to a list of all integers in between, including the bounds.</p>
+</blockquote>
 <p>Trying to run this gives us an error:</p>
 <pre><code>$ funkycmd for.fn
 for.fn:3:9: type-checking error
