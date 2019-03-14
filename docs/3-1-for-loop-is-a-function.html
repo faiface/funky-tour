@@ -189,17 +189,17 @@ zip (++) [&quot;he&quot;, &quot;wo&quot;] [&quot;llo&quot;, &quot;rld&quot;]  # 
 </code></pre>
 <p>Other list functions include <code>reverse</code>, <code>take</code>, <code>drop</code>, <code>any</code>, <code>all</code>, <code>iterate</code>, and so on. The usual ones.</p>
 <a class="header" href="#how-to-print-a-list-meet-the-for-loop" id="how-to-print-a-list-meet-the-for-loop"><h2>How to print a list? Meet the for loop</h2></a>
-<p>Now, all that stuff is cool, but if we can't print a list, it's all useless, right? Well, this leads us to a very interesting function from the standard library called <code>for</code>. Yes, the name is intentionally chosen to match the name of the old imperative concept - the for loop. Of course, loops in imperative programming rely on mutation of the loop variables. We can't do that in functional programming, but we'll come pretty close.</p>
+<p>Now, all that stuff is cool, but if we can't print a list, it's all useless, right? Well, this leads us to a very interesting function from the standard library called <code>for</code>. Yes, the name is intentionally chosen to match the name of the old imperative concept - the for loop. Of course, loops in imperative programming rely on mutation of the loop variables. We can't do that in functional programming, but our for loop will be just as ergonomic as the imperative one.</p>
 <p>So, what's the type of this mighty <code>for</code> function?</p>
 <pre><code>$ funkycmd -types
 &gt; for
 List a -&gt; (a -&gt; c -&gt; c) -&gt; c -&gt; c
 </code></pre>
-<p>So, it takes three arguments. Here's what they are and how you can think about them:</p>
+<p>It takes three arguments. Here's what they are and how you can think about them:</p>
 <ul>
-<li><strong>List.</strong> This is the list of things we want to loop over.</li>
-<li><strong>Body.</strong> You can think of this as something we want to &quot;do&quot; for each element.</li>
-<li><strong>Next.</strong> This will get &quot;done&quot; after getting over with all the elements.</li>
+<li><strong>List</strong> (type <code>List a</code>). This is the list of things we want to loop over.</li>
+<li><strong>Body</strong> (type <code>a -&gt; c -&gt; c</code>). You can think of this as something we want to &quot;do&quot; for each element.</li>
+<li><strong>Next</strong> (type <code>c</code>). This will get &quot;done&quot; after getting over with all the elements.</li>
 </ul>
 <p>Obviously, the descriptions above are rather innacurate. We can't <em>do</em> anything, we can only make values and data structures.</p>
 <p>The best way to explain what <code>for</code> does is by an example. So, <strong>let's print the list</strong>:</p>
@@ -215,9 +215,9 @@ B
 C
 </code></pre>
 <p>It does!</p>
-<p>We've passed <code>[&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]</code> as the list to <code>for</code>. Then we passed <code>println</code> as the body argument. The <code>println</code> function perfectly fits the required type of the argument: <code>a -&gt; c -&gt; c</code>, specialized to <code>String -&gt; IO -&gt; IO</code> in our case. Because <code>println</code> takes and returns <code>IO</code>, the last argument to <code>for</code> must be an <code>IO</code>. So we passed <code>quit</code>.</p>
+<p>We've passed <code>[&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]</code> as the list to <code>for</code>. Then we passed <code>println</code> as the body. The <code>println</code> function perfectly fits the required type of the argument: <code>a -&gt; c -&gt; c</code>, specialized to <code>String -&gt; IO -&gt; IO</code> in our case. Because <code>println</code> takes and returns <code>IO</code>, the last argument to <code>for</code> must be an <code>IO</code>. So we passed <code>quit</code>.</p>
 <p>As we already know, <code>println</code> constructs the <code>IO</code> data structure and the same goes for <code>quit</code>. So <code>for</code> is in fact just applying functions in some way. What could that way be?</p>
-<p>So, first of all, if we pass an empty list, we just get the <strong>next</strong> back.</p>
+<p>First of all, if we pass an empty list, we just get the <strong>next</strong> back.</p>
 <pre><code class="language-funky">for [] body next  # =&gt; next
 </code></pre>
 <p>If we pass a single element list, we get the <strong>body</strong> applied to the element and the next:</p>
@@ -240,13 +240,16 @@ C
 for xs body;
 next
 </code></pre>
+<blockquote>
+<p><strong>Note.</strong> Yes, <code>for</code> is exactly the same function as <code>fold&lt;</code>, except with a different order of arguments.</p>
+</blockquote>
 <p>Knowing this, it's easy to see that our list printing program:</p>
 <pre><code class="language-funky">func main : IO =
     for [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]
         println;
     quit
 </code></pre>
-<p>basically expands to this (during runtime, of course):</p>
+<p>basically expands to this:</p>
 <pre><code class="language-funky">func main : IO =
     println &quot;A&quot;;
     println &quot;B&quot;;
@@ -286,14 +289,14 @@ next
 <pre><code>$ funkycmd for.fn
 for.fn:3:9: type-checking error
 </code></pre>
-<p>That's quite obvious. We have a list of <code>Int</code>s, but <code>println</code> takes a <code>String</code>. This can be fixed by composing the <code>println</code> function with the <code>string</code> function, which converts <code>Int</code>s (and is overloaded for other types) to <code>String</code>s:</p>
+<p>That's quite obvious. We have a list of <code>Int</code>s, but <code>println</code> takes a <code>String</code>. This can be fixed by composing <code>println</code> with <code>string</code>, which converts <code>Int</code>s (and is overloaded for other types) to <code>String</code>s:</p>
 <pre><code class="language-funky">func main : IO =
     for (range 1 5)
         (println . string);
     quit
 </code></pre>
 <p>This time, it works!</p>
-<pre><code>$ funkycmd for.go
+<pre><code>$ funkycmd for.fn
 1
 2
 3
@@ -324,7 +327,7 @@ for.fn:3:9: type-checking error
     );
     quit
 </code></pre>
-<p>The body of the <code>for</code> loop takes two arguments: the <em>element</em> of type <code>String</code>, and the <em>continuation</em> of type <code>IO</code>. In our case, the continuation is <code>quit</code> for the last element of the list, and for the rest of the elements it works just as described above. We pass both of these to the <code>println</code> function, recreating the original, short for loop. This doesn't at all change the behavior of the program.</p>
+<p>The body of the <code>for</code> loop takes two arguments: the <em>element</em> of type <code>String</code>, and the <em>continuation</em> of type <code>IO</code>. We pass both of these to the <code>println</code> function, recreating the original, short for loop. This doesn't at all change the behavior of the program.</p>
 <p>However, as you can surely see, it's very straightforward to add more &quot;statements&quot; to the body:</p>
 <pre><code class="language-funky">func main : IO =
     for [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;] (
@@ -409,7 +412,7 @@ The answer: IDK.
 7 x 5 = 35
 ...
 </code></pre>
-<p>It works! It's the whole output, because that's too large, but you get the idea.</p>
+<p>It works! I didn't show the whole output, because that's too large, but you get the idea.</p>
 <p>That's it for this part, in the next part, we'll learn more list tricks!</p>
 
                     </main>
