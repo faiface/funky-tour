@@ -83,11 +83,13 @@ func fibonacci : List Int =
 >
 > These functions also have their non-crashing versions without the `!` signs that return `Maybe`s (optional values, we'll learn more about them). For example, `first ["a", "b", "c"]` evaluates to `some "a"`, while `first []` evaluates to `none`.
 
-There are a few more list functions, like `fold<` and `fold>` (those are same as `foldr` and `foldl'` in Haskell), but we'll not give them too much attention, you can try them out on your own. For example, here's how you'd sum a list of numbers with `fold>`:
+There are  more list functions, like `fold<` and `fold>` (those are same as `foldr` and `foldl'` in Haskell), but we'll not give them too much attention, you can try them out on your own. For example, here's how you'd sum a list of numbers with `fold>`:
 
 ```funky
 fold> (+) 0 (range 1 15)  # => 120
 ```
+
+Other list functions include `reverse`, `take`, `drop`, `any`, `all`, `iterate`, and so on. The usual ones.
 
 ## How to print a list? Meet the for loop
 
@@ -233,6 +235,8 @@ func main : IO =
         println;
     quit
 ```
+
+> **Details.** The `range` function takes the lower and the upper bound and evaluates to a list of all integers in between, including the bounds.
 
 Trying to run this gives us an error:
 
