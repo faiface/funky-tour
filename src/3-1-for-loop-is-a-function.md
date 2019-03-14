@@ -93,7 +93,7 @@ Other list functions include `reverse`, `take`, `drop`, `any`, `all`, `iterate`,
 
 ## How to print a list? Meet the for loop
 
-Now, all that stuff is cool, but if we can't print a list, it's all useless, right? Well, this leads us to a very interesting function from the standard library called `for`. Yes, the name is intentionally chosen to match the name of the old imperative concept - the for loop. Of course, loops in imperative programming rely on mutation of the loop variables. We can't do that in functional programming, but we'll come pretty close.
+Now, all that stuff is cool, but if we can't print a list, it's all useless, right? Well, this leads us to a very interesting function from the standard library called `for`. Yes, the name is intentionally chosen to match the name of the old imperative concept - the for loop. Of course, loops in imperative programming rely on mutation of the loop variables. We can't do that in functional programming, but our for loop will be just as ergonomic as the imperative one.
 
 So, what's the type of this mighty `for` function?
 
@@ -103,11 +103,11 @@ $ funkycmd -types
 List a -> (a -> c -> c) -> c -> c
 ```
 
-So, it takes three arguments. Here's what they are and how you can think about them:
+It takes three arguments. Here's what they are and how you can think about them:
 
-- **List.** This is the list of things we want to loop over.
-- **Body.** You can think of this as something we want to "do" for each element.
-- **Next.** This will get "done" after getting over with all the elements.
+- **List** (type `List a`). This is the list of things we want to loop over.
+- **Body** (type `a -> c -> c`). You can think of this as something we want to "do" for each element.
+- **Next** (type `c`). This will get "done" after getting over with all the elements.
 
 Obviously, the descriptions above are rather innacurate. We can't _do_ anything, we can only make values and data structures.
 
@@ -131,11 +131,11 @@ C
 
 It does!
 
-We've passed `["A", "B", "C"]` as the list to `for`. Then we passed `println` as the body argument. The `println` function perfectly fits the required type of the argument: `a -> c -> c`, specialized to `String -> IO -> IO` in our case. Because `println` takes and returns `IO`, the last argument to `for` must be an `IO`. So we passed `quit`.
+We've passed `["A", "B", "C"]` as the list to `for`. Then we passed `println` as the body. The `println` function perfectly fits the required type of the argument: `a -> c -> c`, specialized to `String -> IO -> IO` in our case. Because `println` takes and returns `IO`, the last argument to `for` must be an `IO`. So we passed `quit`.
 
 As we already know, `println` constructs the `IO` data structure and the same goes for `quit`. So `for` is in fact just applying functions in some way. What could that way be?
 
-So, first of all, if we pass an empty list, we just get the **next** back.
+First of all, if we pass an empty list, we just get the **next** back.
 
 ```funky
 for [] body next  # => next
@@ -179,6 +179,8 @@ for xs body;
 next
 ```
 
+> **Note.** Yes, `for` is exactly the same function as `fold<`, except with a different order of arguments.
+
 Knowing this, it's easy to see that our list printing program:
 
 ```funky
@@ -188,7 +190,7 @@ func main : IO =
     quit
 ```
 
-basically expands to this (during runtime, of course):
+basically expands to this:
 
 ```funky
 func main : IO =
@@ -245,7 +247,7 @@ $ funkycmd for.fn
 for.fn:3:9: type-checking error
 ```
 
-That's quite obvious. We have a list of `Int`s, but `println` takes a `String`. This can be fixed by composing the `println` function with the `string` function, which converts `Int`s (and is overloaded for other types) to `String`s:
+That's quite obvious. We have a list of `Int`s, but `println` takes a `String`. This can be fixed by composing `println` with `string`, which converts `Int`s (and is overloaded for other types) to `String`s:
 
 ```funky
 func main : IO =
@@ -257,7 +259,7 @@ func main : IO =
 This time, it works!
 
 ```
-$ funkycmd for.go
+$ funkycmd for.fn
 1
 2
 3
@@ -301,7 +303,7 @@ func main : IO =
     quit
 ```
 
-The body of the `for` loop takes two arguments: the _element_ of type `String`, and the _continuation_ of type `IO`. In our case, the continuation is `quit` for the last element of the list, and for the rest of the elements it works just as described above. We pass both of these to the `println` function, recreating the original, short for loop. This doesn't at all change the behavior of the program.
+The body of the `for` loop takes two arguments: the _element_ of type `String`, and the _continuation_ of type `IO`. We pass both of these to the `println` function, recreating the original, short for loop. This doesn't at all change the behavior of the program.
 
 However, as you can surely see, it's very straightforward to add more "statements" to the body:
 
@@ -404,6 +406,6 @@ $ funkycmd multiplications.fn
 ...
 ```
 
-It works! It's the whole output, because that's too large, but you get the idea.
+It works! I didn't show the whole output, because that's too large, but you get the idea.
 
 That's it for this part, in the next part, we'll learn more list tricks!
