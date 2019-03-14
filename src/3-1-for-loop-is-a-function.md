@@ -348,7 +348,7 @@ The answer: IDK.
 Your question #2: How are you doing IDK?
 The answer: IDK.
 Your question #3: Do you know anything?
-The answer: IDK
+The answer: IDK.
 ```
 
 And you can even nest loops! Here's a program that prints out the small multiplications table... in a non-tabular form, but that's okay.
