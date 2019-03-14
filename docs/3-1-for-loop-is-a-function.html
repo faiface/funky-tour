@@ -1,0 +1,470 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>For loop is a function - A Tour of Funky</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">var path_to_root = "";</script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li><li><a href="2-2-records.html"><strong aria-hidden="true">2.2.</strong> Records</a></li><li><a href="2-3-unions.html"><strong aria-hidden="true">2.3.</strong> Unions</a></li><li><a href="2-4-aliases.html"><strong aria-hidden="true">2.4.</strong> Aliases</a></li></ol></li><li><a href="3-the-other-half-of-the-language.html"><strong aria-hidden="true">3.</strong> The other half of the language</a></li><li><ol class="section"><li><a href="3-1-for-loop-is-a-function.html" class="active"><strong aria-hidden="true">3.1.</strong> For loop is a function</a></li><li><a href="3-2-pick-it-and-yield-it.html"><strong aria-hidden="true">3.2.</strong> Pick it and yield it</a></li><li><a href="3-3-isn't-colon-equals-imperative.html"><strong aria-hidden="true">3.3.</strong> Isn't := imperative?</a></li><li><a href="3-4-maybe-some-pairs.html"><strong aria-hidden="true">3.4.</strong> Maybe some pairs</a></li><li><a href="3-5-appendix-a-list-of-useful-functions.html"><strong aria-hidden="true">3.5.</strong> Appendix: a list of useful functions</a></li></ol></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">A Tour of Funky</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#for-loop-is-a-function" id="for-loop-is-a-function"><h1>For loop is a function</h1></a>
+<p><em>Lists</em>. They are the butter and bread of functional programming and possibly my favorite data structure ever.</p>
+<p>This is how they are defined in the standard library:</p>
+<pre><code class="language-funky">union List a = empty | a :: List a
+</code></pre>
+<p>It's a trivial linked list, which means you can't access elements randomly, you always have to traverse them in order.</p>
+<p>As you can see, lists can either be empty, or have a first element and a rest of the list. Using the <code>::</code> constructor repeatedly allows for creating longer and longer lists:</p>
+<pre><code class="language-funky">empty
+1 :: empty
+1 :: 2 :: empty
+1 :: 2 :: 3 :: 4 :: 5 :: 6 :: 7 :: empty
+</code></pre>
+<p>And using recursion, one can even create infinite ones:</p>
+<pre><code class="language-funky">func one-two-three : List Int = 1 :: 2 :: 3 :: one-two-three
+</code></pre>
+<p>This doesn't enter an infinite loop because Funky is a <a href="https://en.wikipedia.org/wiki/Lazy_evaluation">lazily evaluated language</a>.</p>
+<p>Of course, typing colons all the time would be tiresome, and so Funky provides a nice syntax suggar with the usual square brackets.</p>
+<pre><code class="language-funky">[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;]
+</code></pre>
+<p>Expands to:</p>
+<pre><code class="language-funky">&quot;a&quot; :: &quot;b&quot; :: &quot;c&quot; :: &quot;d&quot; :: empty
+</code></pre>
+<p><a href="https://www.urbandictionary.com/define.php?term=well%20actually">Well, actually</a>... since the <code>String</code> type is defined as <code>List Char</code>, the string literals must also get expanded to colons, right? Yep, so the full expansion actually is this monstrosity:</p>
+<pre><code class="language-funky">('a' :: empty) :: ('b' :: empty) :: ('c' :: empty) :: ('d' :: empty) :: empty
+</code></pre>
+<p>After seeing this, I'm sure you're way more grateful for all the string and list syntax suggar than you've ever been before.</p>
+<a class="header" href="#all-the-cool-functional-stuff" id="all-the-cool-functional-stuff"><h2>All the <em>&quot;cool functional stuff&quot;</em></h2></a>
+<p>With lists comes the legacy of tools, perfected and sharpened for long generations. Let me (re)introduce you to <code>map</code> and <code>filter</code>.</p>
+<p>The function <code>map</code> simply applies a function to all of the elements of the list:</p>
+<pre><code class="language-funky">map sqrt [1.0, 4.0, 9.0, 16.0]  # =&gt; [1.0, 2.0, 3.0, 4.0]
+map (* 3) [5, 1, 3, 2]          # =&gt; [15, 3, 9, 6]
+</code></pre>
+<p>The function <code>filter</code> takes a predicate and filters out all the elements that don't satisfy it:</p>
+<pre><code class="language-funky">filter (&lt; 5) [9, 3, 4, 7, 5, 10, 1]  # =&gt; [3, 4, 1]
+filter even? [1, 2, 3, 4, 5, 6, 7]   # =&gt; [2, 4, 6]
+</code></pre>
+<p>Then there is a nice <code>zip</code> function which &quot;zips&quot; two lists with some binary function (it's like <code>zipWith</code> from Haskell; the <code>zip</code> function from Haskell can be done with <code>zip pair</code> in Funky). It takes the first elements from both lists, applies the function to them, and goes on, like this:</p>
+<pre><code class="language-funky">zip (*) [1, 2, 3] [2, 3, 4]           # =&gt; [2, 6, 12]
+zip (++) [&quot;he&quot;, &quot;wo&quot;] [&quot;llo&quot;, &quot;rld&quot;]  # =&gt; [&quot;hello&quot;, &quot;world&quot;]
+</code></pre>
+<p>The <code>zip</code> function enables this ultra cool hipster fibonacci one liner:</p>
+<pre><code class="language-funky">func fibonacci : List Int =
+    0 :: 1 :: zip (+) fibonacci (rest! fibonacci)
+</code></pre>
+<blockquote>
+<p><strong>Details.</strong> The <code>rest!</code> function returns the list except its first element and crashes if the list is empty, therefore the <code>!</code> sign. For example, <code>rest! [1, 2, 3]</code> evaluates to <code>[2, 3]</code>. Similarly, there is a <code>first!</code> function that evaluates to the first element of the list.</p>
+<p>These functions also have their non-crashing versions without the <code>!</code> signs that return <code>Maybe</code>s (optional values, we'll learn more about them). For example, <code>first [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]</code> evaluates to <code>some &quot;a&quot;</code>, while <code>first []</code> evaluates to <code>none</code>.</p>
+</blockquote>
+<p>There are a few more list functions, like <code>fold&lt;</code> and <code>fold&gt;</code> (those are same as <code>foldr</code> and <code>foldl'</code> in Haskell), but we'll not give them too much attention, you can try them out on your own. For example, here's how you'd sum a list of numbers with <code>fold&gt;</code>:</p>
+<pre><code class="language-funky">fold&gt; (+) 0 (range 1 15)  # =&gt; 120
+</code></pre>
+<a class="header" href="#how-to-print-a-list-meet-the-for-loop" id="how-to-print-a-list-meet-the-for-loop"><h2>How to print a list? Meet the for loop</h2></a>
+<p>Now, all that stuff is cool, but if we can't print a list, it's all useless, right? Well, this leads us to a very interesting function from the standard library called <code>for</code>. Yes, the name is intentionally chosen to match the name of the old imperative concept - the for loop. Of course, loops in imperative programming rely on mutation of the loop variables. We can't do that in functional programming, but we'll come pretty close.</p>
+<p>So, what's the type of this mighty <code>for</code> function?</p>
+<pre><code>$ funkycmd -types
+&gt; for
+List a -&gt; (a -&gt; c -&gt; c) -&gt; c -&gt; c
+</code></pre>
+<p>So, it takes three arguments. Here's what they are and how you can think about them:</p>
+<ul>
+<li><strong>List.</strong> This is the list of things we want to loop over.</li>
+<li><strong>Body.</strong> You can think of this as something we want to &quot;do&quot; for each element.</li>
+<li><strong>Next.</strong> This will get &quot;done&quot; after getting over with all the elements.</li>
+</ul>
+<p>Obviously, the descriptions above are rather innacurate. We can't <em>do</em> anything, we can only make values and data structures.</p>
+<p>The best way to explain what <code>for</code> does is by an example. So, <strong>let's print the list</strong>:</p>
+<pre><code class="language-funky">func main : IO =
+    for [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]
+        println;
+    quit
+</code></pre>
+<p>Oh man, that looks imperative! Does it even work?</p>
+<pre><code>$ funkycmd for.fn
+A
+B
+C
+</code></pre>
+<p>It does!</p>
+<p>We've passed <code>[&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]</code> as the list to <code>for</code>. Then we passed <code>println</code> as the body argument. The <code>println</code> function perfectly fits the required type of the argument: <code>a -&gt; c -&gt; c</code>, specialized to <code>String -&gt; IO -&gt; IO</code> in our case. Because <code>println</code> takes and returns <code>IO</code>, the last argument to <code>for</code> must be an <code>IO</code>. So we passed <code>quit</code>.</p>
+<p>As we already know, <code>println</code> constructs the <code>IO</code> data structure and the same goes for <code>quit</code>. So <code>for</code> is in fact just applying functions in some way. What could that way be?</p>
+<p>So, first of all, if we pass an empty list, we just get the <strong>next</strong> back.</p>
+<pre><code class="language-funky">for [] body next  # =&gt; next
+</code></pre>
+<p>If we pass a single element list, we get the <strong>body</strong> applied to the element and the next:</p>
+<pre><code class="language-funky">for [a] body next  # =&gt; body a next
+</code></pre>
+<p>What about a two element list? Well, that looks like this:</p>
+<pre><code class="language-funky">for [a, b] body next  # =&gt; body a (body b next)
+</code></pre>
+<p>Three elements?</p>
+<pre><code class="language-funky">for [a, b, c] body next  # =&gt; body a (body b (body c next))
+</code></pre>
+<p>In other words:</p>
+<pre><code class="language-funky">for (x :: xs) body next
+</code></pre>
+<p>is equivalent to:</p>
+<pre><code class="language-funky">body x (for xs body next)
+</code></pre>
+<p>which can be easily rewritten to:</p>
+<pre><code class="language-funky">body x;
+for xs body;
+next
+</code></pre>
+<p>Knowing this, it's easy to see that our list printing program:</p>
+<pre><code class="language-funky">func main : IO =
+    for [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]
+        println;
+    quit
+</code></pre>
+<p>basically expands to this (during runtime, of course):</p>
+<pre><code class="language-funky">func main : IO =
+    println &quot;A&quot;;
+    println &quot;B&quot;;
+    println &quot;C&quot;;
+    quit
+</code></pre>
+<p>It's all very clear now!</p>
+<p>The <strong>next</strong> argument doesn't have to be just a <code>quit</code>. It can be more complex:</p>
+<pre><code class="language-funky">func main : IO =
+    for [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]
+        println;
+    println &quot;Done!&quot;;
+    quit
+</code></pre>
+<p>or even another <code>for</code> loop:</p>
+<pre><code class="language-funky">func main : IO =
+    for [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]
+        println;
+    println &quot;First half!&quot;;
+    for [&quot;D&quot;, &quot;E&quot;, &quot;F&quot;]
+        println;
+    println &quot;Second half!&quot;;
+    quit
+</code></pre>
+<p>With the semicolon, we can get much of the convenient code structuring of imperative programming. <strong>Without monads!</strong></p>
+<a class="header" href="#how-to-print-lists-of-numbers" id="how-to-print-lists-of-numbers"><h3>How to print lists of numbers?</h3></a>
+<p>If we change the list to a list of numbers, the scheme no longer works:</p>
+<pre><code class="language-funky">func main : IO =
+    for (range 1 5)
+        println;
+    quit
+</code></pre>
+<p>Trying to run this gives us an error:</p>
+<pre><code>$ funkycmd for.fn
+for.fn:3:9: type-checking error
+</code></pre>
+<p>That's quite obvious. We have a list of <code>Int</code>s, but <code>println</code> takes a <code>String</code>. This can be fixed by composing the <code>println</code> function with the <code>string</code> function, which converts <code>Int</code>s (and is overloaded for other types) to <code>String</code>s:</p>
+<pre><code class="language-funky">func main : IO =
+    for (range 1 5)
+        (println . string);
+    quit
+</code></pre>
+<p>This time, it works!</p>
+<pre><code>$ funkycmd for.go
+1
+2
+3
+4
+5
+</code></pre>
+<a class="header" href="#how-to-put-more-things-in-a-body" id="how-to-put-more-things-in-a-body"><h3>How to put more things in a body?</h3></a>
+<p>So far, we've only seen a simple function, or a composition of two functions as the body argument to <code>for</code>. What if we want to have a more elaborate loop body? Say a two <code>println</code>s for the start.</p>
+<p>You might be tempted to try this:</p>
+<pre><code class="language-funky">func main : IO =
+    for (range 1 5)
+        (print &quot;#&quot;; println);
+    quit
+</code></pre>
+<p>But that just doesn't work. We can't pass <code>println</code> as the second argument to <code>print</code>, that's just nonsense, it expects an <code>IO</code>, not <code>String -&gt; IO -&gt; IO</code>.</p>
+<p><strong>Here's what we need to do.</strong> Let's start with the simple for loop on strings.</p>
+<pre><code class="language-funky">func main : IO =
+    for [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]
+        println;
+    quit
+</code></pre>
+<p>Instead of just passing the function <code>println</code> itself, let's make it a lambda:</p>
+<pre><code class="language-funky">func main : IO =
+    for [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;] (
+        \s \next
+        println s;
+        next
+    );
+    quit
+</code></pre>
+<p>The body of the <code>for</code> loop takes two arguments: the <em>element</em> of type <code>String</code>, and the <em>continuation</em> of type <code>IO</code>. In our case, the continuation is <code>quit</code> for the last element of the list, and for the rest of the elements it works just as described above. We pass both of these to the <code>println</code> function, recreating the original, short for loop. This doesn't at all change the behavior of the program.</p>
+<p>However, as you can surely see, it's very straightforward to add more &quot;statements&quot; to the body:</p>
+<pre><code class="language-funky">func main : IO =
+    for [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;] (
+        \s \next
+        print &quot;- &quot;;
+        println s;
+        next
+    );
+    quit
+</code></pre>
+<p>Let's run it!</p>
+<pre><code>$ funkycmd body.fn
+- A
+- B
+- C
+</code></pre>
+<p>We can even add scans to the loop!</p>
+<pre><code class="language-funky">func main : IO =
+    print &quot;What's the number of questions? &quot;;
+    scanln \n-str
+    let (int n-str) \n
+    for (range 1 n) (
+        \i \next
+        print (&quot;Your question #&quot; ++ string i ++ &quot;: &quot;);
+        scanln \question
+        println &quot;The answer: IDK.&quot;;
+        next
+    );
+    quit
+</code></pre>
+<p>Let's run this funny program:</p>
+<pre><code>$ funkycmd questions.fn
+What's the number of questions? 3           
+Your question #1: What's your name?
+The answer: IDK.
+Your question #2: How are you doing IDK?
+The answer: IDK.
+Your question #3: Do you know anything?
+The answer: IDK
+</code></pre>
+<p>And you can even nest loops! Here's a program that prints out the small multiplications table... in a non-tabular form, but that's okay.</p>
+<pre><code class="language-funky">func main : IO =
+    for (range 1 10) (
+        \x \next
+        for (range 1 10) (
+            \y \next
+            print (string x);
+            print &quot; x &quot;;
+            print (string y);
+            print &quot; = &quot;;
+            println (string (x * y));
+            next
+        );
+        next
+    );
+    quit
+</code></pre>
+<blockquote>
+<p><strong>Note.</strong> Those multiple prints aren't necessary, it could've all been done with one long string concatenation. Splitting it into multiple lines just makes it clearer. This problem will go away once there is a better way to format strings.</p>
+</blockquote>
+<p>And run it!</p>
+<pre><code>$ funkycmd multiplications.fn
+...
+5 x 7 = 35
+5 x 8 = 40
+5 x 9 = 45
+5 x 10 = 50
+6 x 1 = 6
+6 x 2 = 12
+6 x 3 = 18
+6 x 4 = 24
+6 x 5 = 30
+6 x 6 = 36
+6 x 7 = 42
+6 x 8 = 48
+6 x 9 = 54
+6 x 10 = 60
+7 x 1 = 7
+7 x 2 = 14
+7 x 3 = 21
+7 x 4 = 28
+7 x 5 = 35
+...
+</code></pre>
+<p>It works! It's the whole output, because that's too large, but you get the idea.</p>
+<p>That's it for this part, in the next part, we'll learn more list tricks!</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="3-the-other-half-of-the-language.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="3-2-pick-it-and-yield-it.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="3-the-other-half-of-the-language.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="3-2-pick-it-and-yield-it.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>
