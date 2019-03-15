@@ -14,7 +14,7 @@
     - [Aliases](2-4-aliases.md)
 - [The other half of the language](3-the-other-half-of-the-language.md)
     - [For loop is a function](3-1-for-loop-is-a-function.md)
-    - [Pick it and yield it](3-2-pick-it-and-yield-it.md)
+    - [Yield it all!](3-2-yield-it-all.md)
     - [Isn't := imperative?](3-3-isn't-colon-equals-imperative.md)
     - [Maybe some pairs](3-4-maybe-some-pairs.md)
     - [Appendix: a list of useful functions](3-5-appendix-a-list-of-useful-functions.md)
