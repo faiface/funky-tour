@@ -1317,7 +1317,7 @@ next
 <p>Let's test it out! We'll print all the primes until 100. First, the prime testing function:</p>
 <pre><code class="language-funky">func prime? : Int -&gt; Bool =
     \n
-    all (\x not; zero?; n % x) (range 2 (n - 1))
+    all (\x not zero?; n % x) (range 2 (n - 1))
 </code></pre>
 <p>It simply tests whether no number between 2 and n-1 divides n. The <code>%</code> sign is the modulo operator. Now we'll make an infinite list of primes:</p>
 <pre><code class="language-funky">func primes : List Int =

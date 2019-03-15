@@ -209,7 +209,7 @@ Let's test it out! We'll print all the primes until 100. First, the prime testin
 ```funky
 func prime? : Int -> Bool =
     \n
-    all (\x not; zero?; n % x) (range 2 (n - 1))
+    all (\x not zero?; n % x) (range 2 (n - 1))
 ```
 
 It simply tests whether no number between 2 and n-1 divides n. The `%` sign is the modulo operator. Now we'll make an infinite list of primes:
