@@ -111,7 +111,7 @@ It takes three arguments. Here's what they are and how you can think about them:
 
 Obviously, the descriptions above are rather innacurate. We can't _do_ anything, we can only make values and data structures.
 
-The best way to explain what `for` does is by an example. So, **let's print the list**:
+The best way to explain what `for` does is to start with an example. So, **let's print a list**:
 
 ```funky
 func main : IO =
