@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li><li><a href="2-2-records.html"><strong aria-hidden="true">2.2.</strong> Records</a></li><li><a href="2-3-unions.html"><strong aria-hidden="true">2.3.</strong> Unions</a></li><li><a href="2-4-aliases.html"><strong aria-hidden="true">2.4.</strong> Aliases</a></li></ol></li><li><a href="3-the-other-half-of-the-language.html"><strong aria-hidden="true">3.</strong> The other half of the language</a></li><li><ol class="section"><li><a href="3-1-for-loop-is-a-function.html"><strong aria-hidden="true">3.1.</strong> For loop is a function</a></li><li><a href="3-2-pick-it-and-yield-it.html"><strong aria-hidden="true">3.2.</strong> Pick it and yield it</a></li><li><a href="3-3-isn't-colon-equals-imperative.html"><strong aria-hidden="true">3.3.</strong> Isn't := imperative?</a></li><li><a href="3-4-maybe-some-pairs.html"><strong aria-hidden="true">3.4.</strong> Maybe some pairs</a></li><li><a href="3-5-appendix-a-list-of-useful-functions.html"><strong aria-hidden="true">3.5.</strong> Appendix: a list of useful functions</a></li></ol></li></ol>
+            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li><li><a href="2-2-records.html"><strong aria-hidden="true">2.2.</strong> Records</a></li><li><a href="2-3-unions.html"><strong aria-hidden="true">2.3.</strong> Unions</a></li><li><a href="2-4-aliases.html"><strong aria-hidden="true">2.4.</strong> Aliases</a></li></ol></li><li><a href="3-the-other-half-of-the-language.html"><strong aria-hidden="true">3.</strong> The other half of the language</a></li><li><ol class="section"><li><a href="3-1-for-loop-is-a-function.html"><strong aria-hidden="true">3.1.</strong> For loop is a function</a></li><li><a href="3-2-yield-it-all.html"><strong aria-hidden="true">3.2.</strong> Yield it all!</a></li><li><a href="3-3-isn't-colon-equals-imperative.html"><strong aria-hidden="true">3.3.</strong> Isn't := imperative?</a></li><li><a href="3-4-maybe-some-pairs.html"><strong aria-hidden="true">3.4.</strong> Maybe some pairs</a></li><li><a href="3-5-appendix-a-list-of-useful-functions.html"><strong aria-hidden="true">3.5.</strong> Appendix: a list of useful functions</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -1183,7 +1183,164 @@ The answer: IDK.
 </code></pre>
 <p>It works! I didn't show the whole output, because that's too large, but you get the idea.</p>
 <p>That's it for this part, in the next part, we'll learn more list tricks!</p>
-<a class="header" href="#pick-it-and-yield-it" id="pick-it-and-yield-it"><h1>Pick it and yield it</h1></a>
+<a class="header" href="#yield-it-all" id="yield-it-all"><h1>Yield it all!</h1></a>
+<p>You though vertical code was just for <code>IO</code>? You were wrong! Vertical code (the one that spans vertically and can be read top to bottom) is quite universal in Funky. In this part, we'll see how it can be applied to lists and their generation.</p>
+<a class="header" href="#the-yield-function" id="the-yield-function"><h2>The <code>yield</code> function</h2></a>
+<p>The basic list constructor, the double colon, is an infix function. That makes it unusable for vertical code. However, the standard library defines a synonym of <code>::</code> called <code>yield</code>:</p>
+<pre><code class="language-funky">func yield : a -&gt; List a -&gt; List a = (::)
+</code></pre>
+<p>It's a literal synonym. But, it's a prefix function. How does that help?</p>
+<p>Take this list:</p>
+<pre><code class="language-funky">[1, 2, 3]
+</code></pre>
+<p>Rewrite it with the colons:</p>
+<pre><code class="language-funky">1 :: 2 :: 3 :: empty
+</code></pre>
+<p>Cool. Now, how would this look if we used <code>yield</code> instead?</p>
+<pre><code class="language-funky">yield 1 (yield 2 (yield 3 empty))
+</code></pre>
+<p>All we did was replace all <code>::</code>s with <code>yield</code>s. And here it comes. Can you see it? We can use the semicolon and make it vertical!</p>
+<pre><code class="language-funky">yield 1;
+yield 2;
+yield 3;
+empty
+</code></pre>
+<p>Beautiful!</p>
+<p>To get to know <code>yield</code> a little better, let's use it to rewrite some well known functions. How would the <code>map</code> function look like using <code>yield</code>? Something like this:</p>
+<pre><code class="language-funky">func my-map : (a -&gt; b) -&gt; List a -&gt; List b =
+    \f \list
+    for list (
+        \x \next
+        yield (f x);
+        next
+    );
+    empty
+</code></pre>
+<p>The <code>for</code> function isn't just for <code>IO</code>. It can be used with anything that composes vertically. We take the function <code>f</code> and the <code>list</code> and we <code>yield</code> all of its elements in order, except we transform them with <code>f</code>.</p>
+<p>We can even make the code shorter with function composition:</p>
+<pre><code class="language-funky">func my-map : (a -&gt; b) -&gt; List a -&gt; List b =
+    \f \list
+    for list (yield . f);
+    empty
+</code></pre>
+<p>That's really nice.</p>
+<a class="header" href="#the-when-function" id="the-when-function"><h2>The <code>when</code> function</h2></a>
+<p>How would <code>filter</code> look like with <code>yield</code>? In the case of <code>filter</code>, we can't <code>yield</code> all the elements of the list. We must only <code>yield</code> those that satisfy the predicate. That's where the <code>when</code> function comes handy:</p>
+<pre><code>$ funkycmd -types
+&gt; when
+Bool -&gt; (a -&gt; a) -&gt; a -&gt; a
+</code></pre>
+<p>It's kinda similar to <code>if</code>, but different. While <code>if</code> chooses between two alternatives, <code>when</code> conditionally applies its second argument (the <strong>body</strong>) to the third (the <strong>next</strong>). Specifically, <code>when</code> works like this:</p>
+<pre><code class="language-funky">when true body next   # =&gt; body next
+when false body next  # =&gt; next
+</code></pre>
+<p>For example:</p>
+<pre><code class="language-funky">when (x &gt; 7) (1 +) x
+</code></pre>
+<p>This expression evaluates to <code>x + 1</code> if <code>x</code> is more than 7, otherwise it evaluates to <code>x</code>.</p>
+<p>So, let's use <code>when</code> to implement <code>my-filter</code>!</p>
+<pre><code class="language-funky">func my-filter : (a -&gt; Bool) -&gt; List a -&gt; List a =
+    \p \list
+    for list (
+        \x \next
+        when (p x) (yield x);
+        next
+    );
+    empty
+</code></pre>
+<p>That's it! Here, we can't easily compress the loop body into some stunning composition, but so what. It isn't that bad anyway.</p>
+<a class="header" href="#formatting-lists" id="formatting-lists"><h2>Formatting lists</h2></a>
+<p>Structuring list generation vertically comes very handy when dealing with complex list generating functions. One of the best examples is a function to format lists so that we can print them with one <code>println</code>. Such function isn't currently present in the standard library. But we'll make our own!</p>
+<p>First, we gotta choose the type. What could it be? Perhaps this one?</p>
+<pre><code class="language-funky">List a -&gt; String
+</code></pre>
+<p>Well, this is what it will be in the future, when the <a href="TODO"><code>with</code> clause</a> gets implemented, but so far, we can't do it that way. Why? We're accepting <code>List a</code>: a list of any type. To convert it to string, we need to convert each of its elements to string. But, there's no general way of converting an arbitrary type to string - the <code>string</code> function is only implemented for a handful of types.</p>
+<p>This will do:</p>
+<pre><code class="language-funky">(a -&gt; String) -&gt; List a -&gt; String
+</code></pre>
+<p>In addition to the list itself, we'll accept a function that helps us convert the elements to strings. Okay, let's get to the code!</p>
+<pre><code class="language-funky">func list-&gt;string : (a -&gt; String) -&gt; List a -&gt; String =
+    \str \list
+    # TODO
+</code></pre>
+<p>The type <code>String</code> is an alias for <code>List Char</code> - the list of characters. That's what we have to produce. We start with the opening square bracket:</p>
+<pre><code class="language-funky">func list-&gt;string : (a -&gt; String) -&gt; List a -&gt; String =
+    \str \list
+    yield '[';
+    # TODO
+</code></pre>
+<p>Now we have to loop over the list and yield the string versions of the elements. We also gotta put commas between them. We gotta put a comma before each element except the first one. How are we going to achieve that?</p>
+<p>We'll learn two more functions: <code>enumerate</code> and <code>for-pair</code>. The <code>enumerate</code> function takes a list and adds an index to each element. Its type is <code>List a -&gt; List (Pair Int a)</code>. For example: <code>enumerate [&quot;A&quot;, &quot;B&quot;, C&quot;]</code> evaluates to <code>[pair 0 &quot;A&quot;, pair 1 &quot;B&quot;, pair 2 &quot;C&quot;]</code>. You get the idea. Now, <code>for-pair</code> lets us easily iterate over a list of pairs. It's just like <code>for</code>, but it's body function takes two elements instead of one - <code>for-pair</code> unpacks the pairs.</p>
+<pre><code class="language-funky">func list-&gt;string : (a -&gt; String) -&gt; List a -&gt; String =
+    \str \list
+    yield '[';
+    for-pair (enumerate list) (
+        \i \x \next
+        # TODO
+    );
+    # TODO
+</code></pre>
+<p>The <code>i</code> variable is the index, the <code>x</code> variable is the original element from <code>list</code>. If the index is zero, we know we're dealing with the first element and we won't add the comma. Otherwise, we'll add it.</p>
+<pre><code class="language-funky">func list-&gt;string : (a -&gt; String) -&gt; List a -&gt; String =
+    \str \list
+    yield '[';
+    for-pair (enumerate list) (
+        \i \x \next
+        when (i &gt; 0) (yield-all &quot;, &quot;);
+        yield-all (str x);
+        next
+    );
+    # TODO
+</code></pre>
+<p>What's that <code>yield-all</code>? It's just like <code>yield</code>, but it yields a whole list of things, instead of just one element. It's a synonym for <code>++</code>. In general:</p>
+<pre><code class="language-funky">yield-all list;
+next
+</code></pre>
+<p>is equivalent to:</p>
+<pre><code class="language-funky">for list yield;
+next
+</code></pre>
+<p>All that remains now is finishing with the closing square bracket:</p>
+<pre><code class="language-funky">func list-&gt;string : (a -&gt; String) -&gt; List a -&gt; String =
+    \str \list
+    yield '[';
+    for-pair (enumerate list) (
+        \i \x \next
+        when (i &gt; 0) (yield-all &quot;, &quot;);
+        yield-all (str x);
+        next
+    );
+    yield ']';
+    empty
+</code></pre>
+<p>And we're done! It's so nice and readable having this function expressed vertically.</p>
+<p>Let's test it out! We'll print all the primes until 100. First, the prime testing function:</p>
+<pre><code class="language-funky">func prime? : Int -&gt; Bool =
+    \n
+    all (\x not; zero?; n % x) (range 2 (n - 1))
+</code></pre>
+<p>It simply tests whether no number between 2 and n-1 divides n. The <code>%</code> sign is the modulo operator. Now we'll make an infinite list of primes:</p>
+<pre><code class="language-funky">func primes : List Int =
+    filter prime? (iterate (+ 1) 2)
+</code></pre>
+<blockquote>
+<p><strong>Details.</strong> The function <code>iterate</code> successively applies the provided function to the provided initial value producing an infinite list of all the results. In our case, <code>iterate (+ 1) 2</code> produces <code>[2, 3, 4, 5, 6, ...]</code>. For example, <code>iterate (* 2) 1</code> would produce <code>[1, 2, 4, 8, 16, 32, ...]</code>.</p>
+</blockquote>
+<p>Okay, now, let's print them up to 100:</p>
+<pre><code class="language-funky">func main : IO =
+    let (take-while (&lt; 100) primes) \primes&lt;100
+    println (list-&gt;string string primes&lt;100);
+    quit
+</code></pre>
+<blockquote>
+<p><strong>Details.</strong> The <code>take-while</code> function is different from <code>filter</code>. While <code>filter</code> takes <em>all</em> the elements that satisfy a predicate, <code>take-while</code> takes elements from the list, but <em>stops</em> taking them the moment it encounters the first element to not satisfy the predicate. That's important here. Had we used <code>filter</code>, the program wouldn't halt. It would continue searching the infinite list of primes for another element less than 100, but it would never find one. Using <code>take-while</code> makes the program halt, because we never search beyond the first wrong one.</p>
+</blockquote>
+<p>Let's run it!</p>
+<pre><code class="language-funky">$ funkycmd primes.fn
+[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+</code></pre>
+<p>Works like charm!</p>
+<p>In the next part, we'll learn how to express state flow. Things will get really imperative... in a purely functional way.</p>
 <a class="header" href="#isnt--imperative" id="isnt--imperative"><h1>Isn't := imperative?</h1></a>
 <a class="header" href="#maybe-some-pairs" id="maybe-some-pairs"><h1>Maybe some pairs</h1></a>
 <a class="header" href="#appendix-a-list-of-useful-functions" id="appendix-a-list-of-useful-functions"><h1>Appendix: a list of useful functions</h1></a>
