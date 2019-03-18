@@ -1,5 +1,7 @@
 # Taking off the ground
 
+![Taking off](taking-off.png)
+
 [Funky](https://github.com/faiface/funky) is a new, small programming language that's like and unlike any other language you've seen before.
 
 It's purely functional, doesn't cheat, but unlike most languages in this space, Funky lets you structure your code top to bottom. Idiomatic Funky code often reads like a well-written imperative algorithm. This lends code that is natural to read - yet in the end, it's basically just [λ-calculus](https://en.wikipedia.org/wiki/Lambda_calculus).
