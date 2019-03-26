@@ -179,6 +179,10 @@ for xs body;
 next
 ```
 
+The working of `for` can also be seen on the following diagram:
+
+![For loop diagram](for-loop-diagram.png)
+
 > **Note.** Yes, `for` is exactly the same function as `fold<`, except with a different order of arguments.
 
 Knowing this, it's easy to see that our list printing program:
