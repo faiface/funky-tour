@@ -1345,6 +1345,162 @@ next
 <p>Works like charm!</p>
 <p>In the next part, we'll learn how to express state flow. Things will get really imperative... in a purely functional way.</p>
 <a class="header" href="#isnt--imperative" id="isnt--imperative"><h1>Isn't := imperative?</h1></a>
+<p>Sometimes, the best way to express a function is by a series of state-changing steps. In other words, by an <em>imperative algorithm</em>. For example, say we want to reverse a list. That's a fairly common thing. Sure, we could use the <code>reverse</code> function from the standard library, but how can we make one ourselves?</p>
+<p>Here's a way to make it happen:</p>
+<ol>
+<li>Have two variables: <code>left</code> and <code>right</code>.</li>
+<li>Store the input list in the <code>left</code> variable.</li>
+<li>Store an empty list in the <code>right</code> variable.</li>
+<li>Repeat until the <code>left</code> list is empty:
+<ol>
+<li>Add the first element of the <code>left</code> list to the beginning of the <code>right</code> list.</li>
+<li>Remove the first element from the <code>left</code> list.</li>
+</ol>
+</li>
+<li>Output the <code>right</code> list.</li>
+</ol>
+<p>For example, let's try and reverse <code>[1, 2, 3, 4, 5]</code>. Here's how the algorithm would proceed:</p>
+<pre><code>           left | right
+[1, 2, 3, 4, 5] | []
+   [2, 3, 4, 5] | [1]
+      [3, 4, 5] | [2, 1]
+         [4, 5] | [3, 2, 1]
+            [5] | [4, 3, 2, 1]
+             [] | [5, 4, 3, 2, 1]
+</code></pre>
+<p>At the end, the <code>left</code> list is empty and the <code>right</code> list contains the reversed version of the original input list.</p>
+<blockquote>
+<p><strong>Note.</strong> Adding/removing an element to/from the beginning of a list is efficient (<a href="https://en.wikipedia.org/wiki/Time_complexity#Constant_time">constant time</a>) with lists. The whole algorithm therefore runs in time <a href="https://en.wikipedia.org/wiki/Time_complexity#Linear_time">linearly proportional</a> to the size of the list.</p>
+</blockquote>
+<p>How could we implement such an algorithm in Funky?</p>
+<p>Well, this one isn't particularly hard. We can utilize recursion to simulate the state flow. We create a function called <code>my-reverse-algo</code>, which has two arguments: <code>left</code> and <code>right</code>. Those represent the two variables used in the algorithm. If the <code>left</code> list is empty, <code>my-reverse-algo</code> simply returns the <code>right</code> list. Otherwise, it returns from a recursive call with the variables updated appropriately.</p>
+<pre><code class="language-funky">func my-reverse-algo : List a -&gt; List a -&gt; List a =
+    \left \right
+    if (empty? left) right;
+    my-reverse-algo (rest! left) (first! left :: right)
+</code></pre>
+<blockquote>
+<p><strong>Details.</strong> In most languages, each recursive call would grow the stack and we would quickly run out of memory. This doesn't happen in Funky thanks to <a href="https://en.wikipedia.org/wiki/Tail_call">tail recursion</a>. If a function should evaluate directly to another function call, it simply jumps to that function, effectively creating an efficient loop.</p>
+</blockquote>
+<p>Now we'll use <code>my-reverse-algo</code> to implement <code>my-reverse</code>. It'll simply pass the correct initial values to <code>my-reverse-algo</code>:</p>
+<pre><code class="language-funky">func my-reverse : List a -&gt; List a =
+    \list
+    my-reverse-algo list []
+</code></pre>
+<p>Let's see if it works!</p>
+<pre><code class="language-funky">func main : IO =
+    for (my-reverse [1, 2, 3, 4, 5])
+        (println . string);
+    quit
+</code></pre>
+<p>And run it:</p>
+<pre><code>$ funkycmd my-reverse.fn
+5
+4
+3
+2
+1
+</code></pre>
+<p>Nice!</p>
+<a class="header" href="#the-recur-function" id="the-recur-function"><h2>The <code>recur</code> function</h2></a>
+<p>Could we somohow get rid of the helper <code>my-reverse-algo</code> function? It isn't really useful on its own, it's just an implementation detail of the <code>my-reverse</code> function. It shouldn't be there.</p>
+<p>What would help would be some way to define recursive functions anonymously, i.e. without making a global <code>func</code> definition. That way we could define <code>my-reverse-algo</code> directly inside <code>my-reverse</code>.</p>
+<p>The function for this job is called <code>recur</code>, otherwise known as the <a href="https://en.wikipedia.org/wiki/Fixed-point_combinator"><em>fixpoint combinator</em></a>, or the <em>Y combinator</em>. It's a pretty mind-blowing function. I won't explain how it works (it took me a long time to figure it out), but I'll explain how you can use it.</p>
+<p>Here's the type, but it won't help you figure out much:</p>
+<pre><code>$ funkycmd -types
+&gt; recur
+(a -&gt; a) -&gt; a
+</code></pre>
+<p>Okay, so how to use it? Let's take this really simple recursive function:</p>
+<pre><code class="language-funky">func ones : List Int = 1 :: ones  # [1, 1, 1, ...]
+</code></pre>
+<p>It isn't even a function, it's just a recursive list.</p>
+<p>We can express the same recursive list using <code>recur</code> like this:</p>
+<pre><code class="language-funky">recur \ones 1 :: ones
+</code></pre>
+<p>The variable <code>ones</code> isn't a global definition in this case, it's just a local bindning. Does it work?</p>
+<pre><code class="language-funky">func main : IO =
+    for (take 5; recur \ones 1 :: ones)
+        (println . string);
+    quit
+</code></pre>
+<p>We only take the first five elements, because the list is infinite.</p>
+<pre><code>$ funkycmd ones.fn
+1
+1
+1
+1
+1
+</code></pre>
+<p>It does work!</p>
+<p>What about this function?</p>
+<pre><code class="language-funky">func count-from : Int -&gt; List Int =
+    \x x :: count-from (x + 1)
+</code></pre>
+<p>For example, <code>count-from 4</code> evaluates to <code>[4, 5, 6, 7, ...]</code>.</p>
+<p>With <code>recur</code>, it looks like this:</p>
+<pre><code class="language-funky">recur \count-from \x
+x :: count-from (x + 1)
+</code></pre>
+<p>You can try it yourself. Remember, that this time it's a function with one argument, so you need to pass it in.</p>
+<p>So, I guess you got it, right? <strong>To define an an anonymous recursive function</strong>, simply type <code>recur</code> and pass it a lambda where the first arguments acts as the name of the recursive function and the rest are its arguments. Simple as that.</p>
+<a class="header" href="#the--function" id="the--function"><h3>The <code>|&gt;</code> function</h3></a>
+<p>What about <a href="https://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci</a>?</p>
+<pre><code class="language-funky">recur \fibs \a \b
+a :: fibs b (a + b)
+</code></pre>
+<p>This defines a function that given two initial numbers produces a Fibonacci-like sequence. If we give it 0 and 1 as the initial numbers, it will produce the Fibonacci sequence precisely:</p>
+<pre><code class="language-funky">(recur \fibs \a \b
+a :: fibs b (a + b)) 0 1
+</code></pre>
+<p>Have you noticed them? The 0 and 1 that we passed in. They are right there, at the end of the expression. Perhaps you saw them, perhaps you didn't, but you surely must admit that it doesn't look very fashionable.</p>
+<p>Instead of simply passing the arguments as usual, we can use the <code>|&gt;</code> function to pass them. It works like this:</p>
+<pre><code class="language-funky">x |&gt; f
+</code></pre>
+<p>is the same as:</p>
+<pre><code class="language-funky">f x
+</code></pre>
+<p>So, with <code>|&gt;</code>, we can rewrite the previos expression like this:</p>
+<pre><code class="language-funky">1 |&gt; 0 |&gt; recur \fibs \a \b
+a :: fibs b (a + b)
+</code></pre>
+<p>This whole expression evaluates to just <code>[0, 1, 1, 2, 3, 5, 8, 13, 21, ...]</code>, the infinite Fibonacci sequence.</p>
+<p>Now, since we're passing the arguments from the left, we need to pass them in the reverse order (actually, we're passing them in the correct order, but it reads as if it was reversed). I admit, this may all look kinda confusing to you, but don't worry, you'll get used it. It's very versatile, and the whole thing didn't require a single language addition.</p>
+<a class="header" href="#back-to-reversing-lists" id="back-to-reversing-lists"><h3>Back to reversing lists</h3></a>
+<p>So, how can we use <code>recur</code> to get rid of the extra <code>my-reverse-algo</code> function?</p>
+<p>If you can, try figure it out yourself.</p>
+<p>Here's how it looks with the extra function:</p>
+<pre><code class="language-funky">func my-reverse-algo : List a -&gt; List a -&gt; List a =
+    \left \right
+    if (empty? left) right;
+    my-reverse-algo (rest! left) (first! left :: right)
+
+func my-reverse : List a -&gt; List a =
+    \list
+    my-reverse-algo list []
+</code></pre>
+<p>Here it is. All we have to do is replace <code>my-reverse-algo</code> in the body of <code>my-reverse</code> with an anonymous definition:</p>
+<pre><code class="language-funky">func my-reverse : List a -&gt; List a =
+    \list
+    (recur \my-reverse-algo \left \right
+    if (empty? left) right;
+    my-reverse-algo (rest! left) (first! left :: right)) list []
+</code></pre>
+<p>And we'll use <code>|&gt;</code> to make it more readable:</p>
+<pre><code class="language-funky">func my-reverse : List a -&gt; List a =
+    \list
+    [] |&gt; list |&gt; recur \my-reverse-algo \left \right
+    if (empty? left) right;
+    my-reverse-algo (rest! left) (first! left :: right)
+</code></pre>
+<p><strong>The last change we'll make</strong> is we'll rename <code>my-reverse-algo</code> to simply <code>loop</code>:</p>
+<pre><code class="language-funky">func my-reverse : List a -&gt; List a =
+    \list
+    [] |&gt; list |&gt; recur \loop \left \right
+    if (empty? left) right;
+    loop (rest! left) (first! left :: right)
+</code></pre>
+<p>This is a little convention. In cases like this, we choose <code>loop</code> as the local name of the recursive function. It makes it immediately clear that we're using <code>recur</code> to simulate a simple stateful loop.</p>
 <a class="header" href="#maybe-some-pairs" id="maybe-some-pairs"><h1>Maybe some pairs</h1></a>
 <a class="header" href="#appendix-a-list-of-useful-functions" id="appendix-a-list-of-useful-functions"><h1>Appendix: a list of useful functions</h1></a>
 
