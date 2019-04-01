@@ -140,7 +140,7 @@
 <p><img src="taking-off.png" alt="Taking off" /></p>
 <p><a href="https://github.com/faiface/funky">Funky</a> is a new, small programming language that's like and unlike any other language you've seen before.</p>
 <p>It's purely functional, doesn't cheat, but unlike most languages in this space, Funky lets you structure your code top to bottom. Idiomatic Funky code often reads like a well-written imperative algorithm. This lends code that is natural to read - yet in the end, it's basically just <a href="https://en.wikipedia.org/wiki/Lambda_calculus">λ-calculus</a>.</p>
-<p>Funky aims for simplicity and joy. No categories, no monads, no weird, abstract, math operators. Nothing unnecessary. Funky is a pragmatic language for programmers.</p>
+<p>Funky aims for simplicity and joy. No categories, no monads, no weird abstract math operators. Nothing unnecessary. Funky is a pragmatic language for programmers.</p>
 <blockquote>
 <p><strong>A small warning.</strong> Funky was created from <em>scratch</em>. While the standard, battle-tested, functional core, like <code>map</code>, <code>filter</code>, <code>Maybe</code>, etc. will be familiar to all functional programmers, many things will surprise you. For example, as we'll soon discover, <code>let</code> and <code>if</code> are not built-in to the language. Instead, they're functions just like any other. Many more surprises await you in the tour.</p>
 </blockquote>
@@ -1370,7 +1370,7 @@ next
 </code></pre>
 <p>At the end, the <code>left</code> list is empty and the <code>right</code> list contains the reversed version of the original input list.</p>
 <blockquote>
-<p><strong>Note.</strong> Adding/removing an element to/from the beginning of a list is efficient (<a href="https://en.wikipedia.org/wiki/Time_complexity#Constant_time">constant time</a>) with lists. The whole algorithm therefore runs in time <a href="https://en.wikipedia.org/wiki/Time_complexity#Linear_time">linearly proportional</a> to the size of the list.</p>
+<p><strong>Note.</strong> Adding/removing an element to/from the beginning of a list is efficient (<a href="https://en.wikipedia.org/wiki/Time_complexity#Constant_time">constant time</a>). The whole algorithm therefore runs in time <a href="https://en.wikipedia.org/wiki/Time_complexity#Linear_time">linearly proportional</a> to the size of the list.</p>
 </blockquote>
 <p>How could we implement such an algorithm in Funky?</p>
 <p>Well, this one isn't particularly hard. We can utilize recursion to simulate the state flow. We create a function called <code>my-reverse-algo</code>, which has two arguments: <code>left</code> and <code>right</code>. Those represent the two variables used in the algorithm. If the <code>left</code> list is empty, <code>my-reverse-algo</code> simply returns the <code>right</code> list. Otherwise, it returns from a recursive call with the variables updated appropriately.</p>
@@ -1382,7 +1382,7 @@ next
 <blockquote>
 <p><strong>Details.</strong> In most languages, each recursive call would grow the stack and we would quickly run out of memory. This doesn't happen in Funky thanks to <a href="https://en.wikipedia.org/wiki/Tail_call">tail recursion</a>. If a function should evaluate directly to another function call, it simply jumps to that function, effectively creating an efficient loop.</p>
 </blockquote>
-<p>Now we'll use <code>my-reverse-algo</code> to implement <code>my-reverse</code>. It'll simply pass the correct initial values to <code>my-reverse-algo</code>:</p>
+<p>Now we'll use <code>my-reverse-algo</code> to implement <code>my-reverse</code>. It'll just pass the correct initial values to <code>my-reverse-algo</code>:</p>
 <pre><code class="language-funky">func my-reverse : List a -&gt; List a =
     \list
     my-reverse-algo list []
@@ -1403,7 +1403,7 @@ next
 </code></pre>
 <p>Nice!</p>
 <a class="header" href="#the-recur-function" id="the-recur-function"><h2>The <code>recur</code> function</h2></a>
-<p>Could we somohow get rid of the helper <code>my-reverse-algo</code> function? It isn't really useful on its own, it's just an implementation detail of the <code>my-reverse</code> function. It shouldn't be there.</p>
+<p>Could we somohow get rid of the helper <code>my-reverse-algo</code> function? It isn't really useful on its own, it's just an implementation detail. It shouldn't be there.</p>
 <p>What would help would be some way to define recursive functions anonymously, i.e. without making a global <code>func</code> definition. That way we could define <code>my-reverse-algo</code> directly inside <code>my-reverse</code>.</p>
 <p>The function for this job is called <code>recur</code>, otherwise known as the <a href="https://en.wikipedia.org/wiki/Fixed-point_combinator"><em>fixpoint combinator</em></a>, or the <em>Y combinator</em>. It's a pretty mind-blowing function. I won't explain how it works (it took me a long time to figure it out), but I'll explain how you can use it.</p>
 <p>Here's the type, but it won't help you figure out much:</p>
