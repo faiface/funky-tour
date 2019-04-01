@@ -26,7 +26,7 @@ For example, let's try and reverse `[1, 2, 3, 4, 5]`. Here's how the algorithm w
 
 At the end, the `left` list is empty and the `right` list contains the reversed version of the original input list.
 
-> **Note.** Adding/removing an element to/from the beginning of a list is efficient ([constant time](https://en.wikipedia.org/wiki/Time_complexity#Constant_time)) with lists. The whole algorithm therefore runs in time [linearly proportional](https://en.wikipedia.org/wiki/Time_complexity#Linear_time) to the size of the list.
+> **Note.** Adding/removing an element to/from the beginning of a list is efficient ([constant time](https://en.wikipedia.org/wiki/Time_complexity#Constant_time)). The whole algorithm therefore runs in time [linearly proportional](https://en.wikipedia.org/wiki/Time_complexity#Linear_time) to the size of the list.
 
 How could we implement such an algorithm in Funky?
 
@@ -41,7 +41,7 @@ func my-reverse-algo : List a -> List a -> List a =
 
 > **Details.** In most languages, each recursive call would grow the stack and we would quickly run out of memory. This doesn't happen in Funky thanks to [tail recursion](https://en.wikipedia.org/wiki/Tail_call). If a function should evaluate directly to another function call, it simply jumps to that function, effectively creating an efficient loop.
 
-Now we'll use `my-reverse-algo` to implement `my-reverse`. It'll simply pass the correct initial values to `my-reverse-algo`:
+Now we'll use `my-reverse-algo` to implement `my-reverse`. It'll just pass the correct initial values to `my-reverse-algo`:
 
 ```funky
 func my-reverse : List a -> List a =
@@ -73,7 +73,7 @@ Nice!
 
 ## The `recur` function
 
-Could we somohow get rid of the helper `my-reverse-algo` function? It isn't really useful on its own, it's just an implementation detail of the `my-reverse` function. It shouldn't be there.
+Could we somohow get rid of the helper `my-reverse-algo` function? It isn't really useful on its own, it's just an implementation detail. It shouldn't be there.
 
 What would help would be some way to define recursive functions anonymously, i.e. without making a global `func` definition. That way we could define `my-reverse-algo` directly inside `my-reverse`.
 
