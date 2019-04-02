@@ -400,9 +400,17 @@ x + x
 </blockquote>
 <p>The <code>IO</code> looks like a linked list with two kinds of nodes (not counting <code>quit</code>). The <code>funkycmd</code> interpreter loads the <code>main</code> function, walks the <code>IO</code> nodes, and does as they say.</p>
 <p>Let's talk about the nodes individually.</p>
-<p><strong>Quit.</strong> We've seen this one before - it marks the end of the program.</p>
-<p><strong>Putc.</strong> This node has two arguments: a <code>Char</code> and an <code>IO</code>. The <code>Char</code> is the character to be printed. The <code>IO</code> tells what should be done next.</p>
-<p><strong>Getc.</strong> Now this one looks strange. It has one argument: a function. The function takes a <code>Char</code> and returns an <code>IO</code>. Here's how <code>funkycmd</code> deals with <code>getc</code>: Upon encountering the <code>getc</code> node, <code>funkycmd</code> scans a character from the standard input. Then it takes the function under <code>getc</code> and applies it to the scanned character, passes it inside. The function gives back an <code>IO</code>. This <code>IO</code> tells what should be done next.</p>
+<ul>
+<li>
+<p><strong><code>quit</code></strong>. We've seen this one before - it marks the end of the program.</p>
+</li>
+<li>
+<p><strong><code>putc</code></strong>. This node has two arguments: a <code>Char</code> and an <code>IO</code>. The <code>Char</code> is the character to be printed. The <code>IO</code> tells what should be done next.</p>
+</li>
+<li>
+<p><strong><code>getc</code></strong>. Now this one looks strange. It has one argument: a function. The function takes a <code>Char</code> and returns an <code>IO</code>. Here's how <code>funkycmd</code> deals with <code>getc</code>: Upon encountering the <code>getc</code> node, <code>funkycmd</code> scans a character from the standard input. Then it takes the function under <code>getc</code> and applies it to the scanned character, passes it inside. The function gives back an <code>IO</code>. This <code>IO</code> tells what should be done next.</p>
+</li>
+</ul>
 <p>Now let's see them in action!</p>
 <p>How about a very exciting program that reads a character and prints it back?</p>
 <pre><code class="language-funky">func main : IO =
@@ -1443,7 +1451,7 @@ next
 x :: count-from (x + 1)
 </code></pre>
 <p>You can try it yourself. Remember, that this time it's a function with one argument, so you need to pass it in.</p>
-<p>So, I guess you got it, right? <strong>To define an an anonymous recursive function</strong>, simply type <code>recur</code> and pass it a lambda where the first arguments acts as the name of the recursive function and the rest are its arguments. Simple as that.</p>
+<p>So, I guess you got it, right? <strong>To define an anonymous recursive function</strong>, simply type <code>recur</code> and pass it a lambda where the first argument acts as the name of the recursive function and the rest are its arguments. Simple as that.</p>
 <a class="header" href="#the--function" id="the--function"><h3>The <code>|&gt;</code> function</h3></a>
 <p>What about <a href="https://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci</a>?</p>
 <pre><code class="language-funky">recur \fibs \a \b
@@ -1465,11 +1473,11 @@ a :: fibs b (a + b)) 0 1
 a :: fibs b (a + b)
 </code></pre>
 <p>This whole expression evaluates to just <code>[0, 1, 1, 2, 3, 5, 8, 13, 21, ...]</code>, the infinite Fibonacci sequence.</p>
-<p>Now, since we're passing the arguments from the left, we need to pass them in the reverse order (actually, we're passing them in the correct order, but it reads as if it was reversed). I admit, this may all look kinda confusing to you, but don't worry, you'll get used it. It's very versatile, and the whole thing didn't require a single language addition.</p>
+<p>Now, since we're passing the arguments from the left, we need to pass them in the reversed order (actually, we're passing them in the correct order, but it reads as if it was reversed). I admit, this may all look kinda confusing to you, but don't worry, you'll get used it. It's very versatile, and the whole thing didn't require a single language addition.</p>
 <a class="header" href="#back-to-reversing-lists" id="back-to-reversing-lists"><h3>Back to reversing lists</h3></a>
 <p>So, how can we use <code>recur</code> to get rid of the extra <code>my-reverse-algo</code> function?</p>
 <p>If you can, try figure it out yourself.</p>
-<p>Here's how it looks with the extra function:</p>
+<p>For the reminder, here's how it looks with the extra function:</p>
 <pre><code class="language-funky">func my-reverse-algo : List a -&gt; List a -&gt; List a =
     \left \right
     if (empty? left) right;
@@ -1479,7 +1487,7 @@ func my-reverse : List a -&gt; List a =
     \list
     my-reverse-algo list []
 </code></pre>
-<p>Here it is. All we have to do is replace <code>my-reverse-algo</code> in the body of <code>my-reverse</code> with an anonymous definition:</p>
+<p>And here's the solution. All we had to do was replace <code>my-reverse-algo</code> in the body of <code>my-reverse</code> with an anonymous definition:</p>
 <pre><code class="language-funky">func my-reverse : List a -&gt; List a =
     \list
     (recur \my-reverse-algo \left \right
@@ -1501,6 +1509,113 @@ func my-reverse : List a -&gt; List a =
     loop (rest! left) (first! left :: right)
 </code></pre>
 <p>This is a little convention. In cases like this, we choose <code>loop</code> as the local name of the recursive function. It makes it immediately clear that we're using <code>recur</code> to simulate a simple stateful loop.</p>
+<a class="header" href="#procedures" id="procedures"><h2>Procedures</h2></a>
+<p>Sometimes, simple loops like the above aren't powerful enough. Of course, they should be preferred whenever possible. But some algorithms require a more nuanced expression.</p>
+<p>A good example is the <strong>imperative version of the <a href="https://en.wikipedia.org/wiki/Quicksort">quicksort algorithm</a></strong>, i.e. quicksort on random-access arrays. That's a little too tough for the start, but we'll come back to it at end of this part.</p>
+<p>First, we need to learn how to express imperative algorithms. The standard library offers a type specifically for this purpose: <code>Proc</code>. That's a short for 'procedure'. It's a simple union, here's its definition:</p>
+<pre><code class="language-funky">union Proc s r =
+    view (s -&gt; Proc s r)       |
+    update (s -&gt; s) (Proc s r) |
+    return r                   |
+</code></pre>
+<blockquote>
+<p><strong>Note.</strong> <code>Proc</code> is the equivalent of the <a href="https://wiki.haskell.org/State_Monad"><code>State monad</code></a> from Haskell (and was initially called the same). But Funky's syntax, overloading capabilities, and composable record accessors make it more enjoyable to use.</p>
+</blockquote>
+<p>So, what's <code>Proc</code> all about? You can think of it as a description of a stateful procedure that (possibly) changes some state and returns some final value.</p>
+<p>First, it has <strong>two type variables</strong>:</p>
+<ul>
+<li><strong><code>s</code></strong>. This is the type of the state context the procedure will run in and change. For example, if <code>s</code> is <code>Int</code>, then the procedure will begin its execution with some initial <code>Int</code>, say <code>4</code>, be able to change it and check its current value during its runtime.</li>
+<li><strong><code>r</code></strong>. This it the return type. When a procedure finishes, it returns some result value, just like procedures in imperative languages.</li>
+</ul>
+<p>Second, it's a union with <strong>three alternatives</strong>, or <strong>three commands</strong>:</p>
+<ul>
+<li><strong><code>view</code></strong>. Used to check the current value of the state. Notice that its signature resembles the signature of <code>scanln</code> and similar functions. It's used the same way.</li>
+<li><strong><code>update</code></strong>. This one is used to change the state. It takes a function of type <code>s -&gt; s</code>. When running the procedure, the current state will be mapped through this function. The second argument is a contination - tells what should be done next. The <code>update</code> function is used in the same way as <code>println</code> and similar functions.</li>
+<li><strong><code>return</code></strong>. Marks the end of the procedure and specifies the return value.</li>
+</ul>
+<p>Using these three instructions together with our already acquired battle-tested tools, like <code>if</code> and <code>for</code>, we can make descriptions of stateful procedures.</p>
+<p>Let's see it in action!</p>
+<p>Our first trivial example will be a procedure who's state context is an <code>Int</code> and which returns an <code>Int</code>. When executed, it will increment the number in the state by 1 and return its new value.</p>
+<pre><code class="language-funky">func increment : Proc Int Int =
+    update (+ 1);
+    view \x
+    return x
+</code></pre>
+<p>First, we update the state using <code>(+ 1)</code> (which is the same as <code>(\x x + 1)</code>). Then we check the current (updated) state and return its value.</p>
+<p>The <strong><code>return</code> function has an overloaded version</strong> with this type:</p>
+<pre><code class="language-funky">func return : (s -&gt; r) -&gt; Proc s r
+</code></pre>
+<p>It takes the current state and makes a return value from it using the supplied function. In our case, we just want to return the state directly, so we can use <code>self</code> (the identity function: <code>\x x</code>):</p>
+<pre><code class="language-funky">func increment : Proc Int Int =
+    update (+ 1);
+    return self
+</code></pre>
+<p>That's quite neat! Now, keep in mind, all we have constructed is a data structure - a description. How do we execute it?</p>
+<p>We need to provide some initial state value. The function <code>start-with</code> is just for that. Here's how it looks like:</p>
+<pre><code class="language-funky">func start-with : s -&gt; Proc s r -&gt; r
+</code></pre>
+<p>So, it takes the initial state, then a procedure, and apparently it executes the procedure and evaluates to its return value. Let's see how that works!</p>
+<pre><code class="language-funky">func main : IO =
+    let (start-with 6 increment) \x
+    println (string x);
+    quit
+</code></pre>
+<p>And run this:</p>
+<pre><code>$ funkycmd increment.fn
+7
+</code></pre>
+<p>What if we want to execute <code>increment</code> multiple times? We can do that using the <code>call</code> function:</p>
+<pre><code class="language-funky">func call : Proc s a -&gt; (a -&gt; Proc s b) -&gt; Proc s b
+</code></pre>
+<p>It takes two arguments: the first is a procedure we'd like to execute. The second one is a continuation that takes the return value of the first procedure and results in another procedure. The whole <code>call</code> then becomes the new procedure. This may sound confusing, so let's try it!</p>
+<pre><code class="language-funky">func main : IO =
+    let (start-with 6 (call increment (\_ increment))) \x
+    println (string x);
+    quit
+</code></pre>
+<p>So, we constructed a new procedure: <code>(call increment (\_ increment))</code>. According to how we described <code>call</code>, it first executes one <code>increment</code>, then is passes its return value to the lambda (which ignores it) and executes the procedure there, which is another <code>increment</code>. So, <code>increment</code> should be executed twice and the final return value should be that one the second <code>increment</code>.</p>
+<pre><code>$ funkycmd call.fn
+8
+</code></pre>
+<p>Yep, it works! The expression <code>(call increment (\_ increment))</code> looks just awful, so let's reorganize it with semicolons:</p>
+<pre><code class="language-funky">func main : IO =
+    let (
+        start-with 6;
+        call increment \_
+        increment
+    ) \x
+    println (string x);
+    quit
+</code></pre>
+<p>Now that looks readable! Start with 6, then increment once, then go on to increment second time. We could even increment four times!</p>
+<pre><code class="language-funky">func main : IO =
+    let (
+        start-with 6;
+        call increment \_
+        call increment \_
+        call increment \_
+        increment
+    ) \x
+    println (string x);
+    quit
+</code></pre>
+<p>And, just for fun, instead of finishing with a dull <code>increment</code>, let's gather all the return values from those three <code>increment</code>s above, and let's return their sum:</p>
+<pre><code class="language-funky">func main : IO =
+    let (
+        start-with 6;
+        call increment \x
+        call increment \y
+        call increment \z
+        return (x + y + z)
+    ) \w
+    println (string w);
+    quit
+</code></pre>
+<p>What will be the result?</p>
+<pre><code>$ funkycmd call.fn
+24
+</code></pre>
+<p>That's because 7+8+9=24.</p>
 <a class="header" href="#maybe-some-pairs" id="maybe-some-pairs"><h1>Maybe some pairs</h1></a>
 <a class="header" href="#appendix-a-list-of-useful-functions" id="appendix-a-list-of-useful-functions"><h1>Appendix: a list of useful functions</h1></a>
 

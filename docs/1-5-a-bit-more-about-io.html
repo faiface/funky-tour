@@ -146,9 +146,17 @@
 </blockquote>
 <p>The <code>IO</code> looks like a linked list with two kinds of nodes (not counting <code>quit</code>). The <code>funkycmd</code> interpreter loads the <code>main</code> function, walks the <code>IO</code> nodes, and does as they say.</p>
 <p>Let's talk about the nodes individually.</p>
-<p><strong>Quit.</strong> We've seen this one before - it marks the end of the program.</p>
-<p><strong>Putc.</strong> This node has two arguments: a <code>Char</code> and an <code>IO</code>. The <code>Char</code> is the character to be printed. The <code>IO</code> tells what should be done next.</p>
-<p><strong>Getc.</strong> Now this one looks strange. It has one argument: a function. The function takes a <code>Char</code> and returns an <code>IO</code>. Here's how <code>funkycmd</code> deals with <code>getc</code>: Upon encountering the <code>getc</code> node, <code>funkycmd</code> scans a character from the standard input. Then it takes the function under <code>getc</code> and applies it to the scanned character, passes it inside. The function gives back an <code>IO</code>. This <code>IO</code> tells what should be done next.</p>
+<ul>
+<li>
+<p><strong><code>quit</code></strong>. We've seen this one before - it marks the end of the program.</p>
+</li>
+<li>
+<p><strong><code>putc</code></strong>. This node has two arguments: a <code>Char</code> and an <code>IO</code>. The <code>Char</code> is the character to be printed. The <code>IO</code> tells what should be done next.</p>
+</li>
+<li>
+<p><strong><code>getc</code></strong>. Now this one looks strange. It has one argument: a function. The function takes a <code>Char</code> and returns an <code>IO</code>. Here's how <code>funkycmd</code> deals with <code>getc</code>: Upon encountering the <code>getc</code> node, <code>funkycmd</code> scans a character from the standard input. Then it takes the function under <code>getc</code> and applies it to the scanned character, passes it inside. The function gives back an <code>IO</code>. This <code>IO</code> tells what should be done next.</p>
+</li>
+</ul>
 <p>Now let's see them in action!</p>
 <p>How about a very exciting program that reads a character and prints it back?</p>
 <pre><code class="language-funky">func main : IO =
