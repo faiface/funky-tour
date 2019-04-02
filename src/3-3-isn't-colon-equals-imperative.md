@@ -368,7 +368,7 @@ func main : IO =
     quit
 ```
 
-And, just for fun, instead of finishing with a dull `increment`, let's gather all the return values from those three `increment`s above, and let's return their sum:
+And, just for fun, instead of finishing with a dull `increment`, let's gather all the return values from those three `increment`s above and return their sum:
 
 ```funky
 func main : IO =
