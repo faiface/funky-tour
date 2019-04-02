@@ -141,7 +141,7 @@ x :: count-from (x + 1)
 
 You can try it yourself. Remember, that this time it's a function with one argument, so you need to pass it in.
 
-So, I guess you got it, right? **To define an an anonymous recursive function**, simply type `recur` and pass it a lambda where the first arguments acts as the name of the recursive function and the rest are its arguments. Simple as that.
+So, I guess you got it, right? **To define an anonymous recursive function**, simply type `recur` and pass it a lambda where the first argument acts as the name of the recursive function and the rest are its arguments. Simple as that.
 
 ### The `|>` function
 
@@ -182,7 +182,7 @@ a :: fibs b (a + b)
 
 This whole expression evaluates to just `[0, 1, 1, 2, 3, 5, 8, 13, 21, ...]`, the infinite Fibonacci sequence.
 
-Now, since we're passing the arguments from the left, we need to pass them in the reverse order (actually, we're passing them in the correct order, but it reads as if it was reversed). I admit, this may all look kinda confusing to you, but don't worry, you'll get used it. It's very versatile, and the whole thing didn't require a single language addition.
+Now, since we're passing the arguments from the left, we need to pass them in the reversed order (actually, we're passing them in the correct order, but it reads as if it was reversed). I admit, this may all look kinda confusing to you, but don't worry, you'll get used it. It's very versatile, and the whole thing didn't require a single language addition.
 
 ### Back to reversing lists
 
@@ -190,7 +190,7 @@ So, how can we use `recur` to get rid of the extra `my-reverse-algo` function?
 
 If you can, try figure it out yourself.
 
-Here's how it looks with the extra function:
+For the reminder, here's how it looks with the extra function:
 
 ```funky
 func my-reverse-algo : List a -> List a -> List a =
@@ -203,7 +203,7 @@ func my-reverse : List a -> List a =
     my-reverse-algo list []
 ```
 
-Here it is. All we have to do is replace `my-reverse-algo` in the body of `my-reverse` with an anonymous definition:
+And here's the solution. All we had to do was replace `my-reverse-algo` in the body of `my-reverse` with an anonymous definition:
 
 ```funky
 func my-reverse : List a -> List a =
@@ -234,3 +234,160 @@ func my-reverse : List a -> List a =
 ```
 
 This is a little convention. In cases like this, we choose `loop` as the local name of the recursive function. It makes it immediately clear that we're using `recur` to simulate a simple stateful loop.
+
+## Procedures
+
+Sometimes, simple loops like the above aren't powerful enough. Of course, they should be preferred whenever possible. But some algorithms require a more nuanced expression.
+
+A good example is the **imperative version of the [quicksort algorithm](https://en.wikipedia.org/wiki/Quicksort)**, i.e. quicksort on random-access arrays. That's a little too tough for the start, but we'll come back to it at end of this part.
+
+First, we need to learn how to express imperative algorithms. The standard library offers a type specifically for this purpose: `Proc`. That's a short for 'procedure'. It's a simple union, here's its definition:
+
+```funky
+union Proc s r =
+    view (s -> Proc s r)       |
+    update (s -> s) (Proc s r) |
+    return r                   |
+```
+
+> **Note.** `Proc` is the equivalent of the [`State monad`](https://wiki.haskell.org/State_Monad) from Haskell (and was initially called the same). But Funky's syntax, overloading capabilities, and composable record accessors make it more enjoyable to use.
+
+So, what's `Proc` all about? You can think of it as a description of a stateful procedure that (possibly) changes some state and returns some final value.
+
+First, it has **two type variables**:
+
+- **`s`**. This is the type of the state context the procedure will run in and change. For example, if `s` is `Int`, then the procedure will begin its execution with some initial `Int`, say `4`, be able to change it and check its current value during its runtime.
+- **`r`**. This it the return type. When a procedure finishes, it returns some result value, just like procedures in imperative languages.
+
+Second, it's a union with **three alternatives**, or **three commands**:
+
+- **`view`**. Used to check the current value of the state. Notice that its signature resembles the signature of `scanln` and similar functions. It's used the same way.
+- **`update`**. This one is used to change the state. It takes a function of type `s -> s`. When running the procedure, the current state will be mapped through this function. The second argument is a contination - tells what should be done next. The `update` function is used in the same way as `println` and similar functions.
+- **`return`**. Marks the end of the procedure and specifies the return value.
+
+Using these three instructions together with our already acquired battle-tested tools, like `if` and `for`, we can make descriptions of stateful procedures.
+
+Let's see it in action!
+
+Our first trivial example will be a procedure who's state context is an `Int` and which returns an `Int`. When executed, it will increment the number in the state by 1 and return its new value.
+
+```funky
+func increment : Proc Int Int =
+    update (+ 1);
+    view \x
+    return x
+```
+
+First, we update the state using `(+ 1)` (which is the same as `(\x x + 1)`). Then we check the current (updated) state and return its value.
+
+The **`return` function has an overloaded version** with this type:
+
+```funky
+func return : (s -> r) -> Proc s r
+```
+
+It takes the current state and makes a return value from it using the supplied function. In our case, we just want to return the state directly, so we can use `self` (the identity function: `\x x`):
+
+```funky
+func increment : Proc Int Int =
+    update (+ 1);
+    return self
+```
+
+That's quite neat! Now, keep in mind, all we have constructed is a data structure - a description. How do we execute it?
+
+We need to provide some initial state value. The function `start-with` is just for that. Here's how it looks like:
+
+```funky
+func start-with : s -> Proc s r -> r
+```
+
+So, it takes the initial state, then a procedure, and apparently it executes the procedure and evaluates to its return value. Let's see how that works!
+
+```funky
+func main : IO =
+    let (start-with 6 increment) \x
+    println (string x);
+    quit
+```
+
+And run this:
+
+```
+$ funkycmd increment.fn
+7
+```
+
+What if we want to execute `increment` multiple times? We can do that using the `call` function:
+
+```funky
+func call : Proc s a -> (a -> Proc s b) -> Proc s b
+```
+
+It takes two arguments: the first is a procedure we'd like to execute. The second one is a continuation that takes the return value of the first procedure and results in another procedure. The whole `call` then becomes the new procedure. This may sound confusing, so let's try it!
+
+```funky
+func main : IO =
+    let (start-with 6 (call increment (\_ increment))) \x
+    println (string x);
+    quit
+```
+
+So, we constructed a new procedure: `(call increment (\_ increment))`. According to how we described `call`, it first executes one `increment`, then is passes its return value to the lambda (which ignores it) and executes the procedure there, which is another `increment`. So, `increment` should be executed twice and the final return value should be that one the second `increment`.
+
+```
+$ funkycmd call.fn
+8
+```
+
+Yep, it works! The expression `(call increment (\_ increment))` looks just awful, so let's reorganize it with semicolons:
+
+```funky
+func main : IO =
+    let (
+        start-with 6;
+        call increment \_
+        increment
+    ) \x
+    println (string x);
+    quit
+```
+
+Now that looks readable! Start with 6, then increment once, then go on to increment second time. We could even increment four times!
+
+```funky
+func main : IO =
+    let (
+        start-with 6;
+        call increment \_
+        call increment \_
+        call increment \_
+        increment
+    ) \x
+    println (string x);
+    quit
+```
+
+And, just for fun, instead of finishing with a dull `increment`, let's gather all the return values from those three `increment`s above, and let's return their sum:
+
+```funky
+func main : IO =
+    let (
+        start-with 6;
+        call increment \x
+        call increment \y
+        call increment \z
+        return (x + y + z)
+    ) \w
+    println (string w);
+    quit
+```
+
+What will be the result?
+
+```
+$ funkycmd call.fn
+24
+```
+
+That's because 7+8+9=24.
