@@ -14,11 +14,11 @@ The `IO` looks like a linked list with two kinds of nodes (not counting `quit`).
 
 Let's talk about the nodes individually.
 
-**Quit.** We've seen this one before - it marks the end of the program.
+- **`quit`**. We've seen this one before - it marks the end of the program.
 
-**Putc.** This node has two arguments: a `Char` and an `IO`. The `Char` is the character to be printed. The `IO` tells what should be done next.
+- **`putc`**. This node has two arguments: a `Char` and an `IO`. The `Char` is the character to be printed. The `IO` tells what should be done next.
 
-**Getc.** Now this one looks strange. It has one argument: a function. The function takes a `Char` and returns an `IO`. Here's how `funkycmd` deals with `getc`: Upon encountering the `getc` node, `funkycmd` scans a character from the standard input. Then it takes the function under `getc` and applies it to the scanned character, passes it inside. The function gives back an `IO`. This `IO` tells what should be done next.
+- **`getc`**. Now this one looks strange. It has one argument: a function. The function takes a `Char` and returns an `IO`. Here's how `funkycmd` deals with `getc`: Upon encountering the `getc` node, `funkycmd` scans a character from the standard input. Then it takes the function under `getc` and applies it to the scanned character, passes it inside. The function gives back an `IO`. This `IO` tells what should be done next.
 
 Now let's see them in action!
 
