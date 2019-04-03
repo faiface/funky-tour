@@ -467,9 +467,9 @@ Using `add` and `average`, we can compose an imperative algorithm for calculatin
 
 ```funky
 func average : List Int -> Int =
-    \list
+    \numbers
     start-with (Average 0 0);
-    for list (call . add);
+    for numbers (call . add);
     call average \avg  # call to the procedure, not a recursive call
     return avg
 ```

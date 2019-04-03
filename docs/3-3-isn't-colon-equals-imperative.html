@@ -448,9 +448,9 @@ func my-reverse : List a -&gt; List a =
 <p>Simple as that.</p>
 <p>Using <code>add</code> and <code>average</code>, we can compose an imperative algorithm for calculating the average of a list:</p>
 <pre><code class="language-funky">func average : List Int -&gt; Int =
-    \list
+    \numbers
     start-with (Average 0 0);
-    for list (call . add);
+    for numbers (call . add);
     call average \avg  # call to the procedure, not a recursive call
     return avg
 </code></pre>
