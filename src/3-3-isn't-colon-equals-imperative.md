@@ -237,11 +237,11 @@ This is a little convention. In cases like this, we choose `loop` as the local n
 
 ## Procedures
 
-Sometimes, simple loops like the above aren't powerful enough. Of course, they should be preferred whenever possible. But some algorithms require a more nuanced expression.
+Sometimes, simple loops like the above aren't powerful enough. Of course, we prefer them whenever possible. But some algorithms require a more nuanced expression.
 
-A good example is the **imperative version of the [quicksort algorithm](https://en.wikipedia.org/wiki/Quicksort)**, i.e. quicksort on random-access arrays. That's a little too tough for the start, but we'll come back to it at end of this part.
+A good example is the **imperative version of the [quicksort algorithm](https://en.wikipedia.org/wiki/Quicksort)**, i.e. quicksort on random-access arrays. That's a little too tough for the start, but we'll come back to it by the end of this part.
 
-First, we need to learn how to express imperative algorithms. The standard library offers a type specifically for this purpose: `Proc`. That's a short for 'procedure'. It's a simple union, here's its definition:
+First, we need to learn how to express imperative algorithms. The standard library offers a type specifically for this purpose: `Proc`. That's a short for _procedure_. It's a simple union, here's its definition:
 
 ```funky
 union Proc s r =
@@ -250,14 +250,14 @@ union Proc s r =
     return r                   |
 ```
 
-> **Note.** `Proc` is the equivalent of the [`State monad`](https://wiki.haskell.org/State_Monad) from Haskell (and was initially called the same). But Funky's syntax, overloading capabilities, and composable record accessors make it more enjoyable to use.
+> **Note.** `Proc` is an equivalent of the [`State` monad](https://wiki.haskell.org/State_Monad) from Haskell (and was initially called the same). But Funky's syntax, overloading capabilities, and composable record accessors make it more enjoyable to use.
 
-So, what's `Proc` all about? You can think of it as a description of a stateful procedure that (possibly) changes some state and returns some final value.
+So, what's `Proc` all about? You can think of it as a description of a stateful procedure that runs in some stateful context, (usually) changes it, and results in some return value. Let's take a close look!
 
 First, it has **two type variables**:
 
-- **`s`**. This is the type of the state context the procedure will run in and change. For example, if `s` is `Int`, then the procedure will begin its execution with some initial `Int`, say `4`, be able to change it and check its current value during its runtime.
-- **`r`**. This it the return type. When a procedure finishes, it returns some result value, just like procedures in imperative languages.
+- **`s`**. This is the type of the state context the procedure will run in. For example, if `s` is `Int`, then the procedure will begin its execution with some initial `Int`, say `4`, be able to change it and check its current value during its execution.
+- **`r`**. This it the return type. When a procedure finishes, it returns some value. Just like procedures in imperative languages.
 
 Second, it's a union with **three alternatives**, or **three commands**:
 
@@ -286,7 +286,7 @@ The **`return` function has an overloaded version** with this type:
 func return : (s -> r) -> Proc s r
 ```
 
-It takes the current state and makes a return value from it using the supplied function. In our case, we just want to return the state directly, so we can use `self` (the identity function: `\x x`):
+It takes the current state and makes a return value from it using the supplied function. In our case, we just want to return the state directly, so we'll use `self` (which is the identity function: `\x x`):
 
 ```funky
 func increment : Proc Int Int =
@@ -296,13 +296,13 @@ func increment : Proc Int Int =
 
 That's quite neat! Now, keep in mind, all we have constructed is a data structure - a description. How do we execute it?
 
-We need to provide some initial state value. The function `start-with` is just for that. Here's how it looks like:
+**We need to provide some initial state value.** The function `start-with` is for just that. Here's how it looks like:
 
 ```funky
 func start-with : s -> Proc s r -> r
 ```
 
-So, it takes the initial state, then a procedure, and apparently it executes the procedure and evaluates to its return value. Let's see how that works!
+It takes the initial state, then a procedure, and apparently it executes the procedure and evaluates to its return value. Let's see how that works!
 
 ```funky
 func main : IO =
@@ -324,7 +324,9 @@ What if we want to execute `increment` multiple times? We can do that using the 
 func call : Proc s a -> (a -> Proc s b) -> Proc s b
 ```
 
-It takes two arguments: the first is a procedure we'd like to execute. The second one is a continuation that takes the return value of the first procedure and results in another procedure. The whole `call` then becomes the new procedure. This may sound confusing, so let's try it!
+This function is used for **executing one procedure inside another procedure**.
+
+It takes two arguments: the first is a procedure we'd like to execute. The second one is a function that receives the return value of the first procedure and results in another procedure. The whole thing then becomes this new procedure.
 
 ```funky
 func main : IO =
@@ -333,14 +335,14 @@ func main : IO =
     quit
 ```
 
-So, we constructed a new procedure: `(call increment (\_ increment))`. According to how we described `call`, it first executes one `increment`, then is passes its return value to the lambda (which ignores it) and executes the procedure there, which is another `increment`. So, `increment` should be executed twice and the final return value should be that one the second `increment`.
+We constructed a new procedure: `call increment (\_ increment)`. According to how we described `call`, it first executes one `increment`, then is passes its return value to the lambda (which ignores it) and executes the procedure there, which is another `increment`. Therefore, `increment` should get executed twice and the final return value should be that one the second `increment`.
 
 ```
 $ funkycmd call.fn
 8
 ```
 
-Yep, it works! The expression `(call increment (\_ increment))` looks just awful, so let's reorganize it with semicolons:
+Yep, it works! The expression `call increment (\_ increment)` looks just awful, so let's reorganize it horizontally:
 
 ```funky
 func main : IO =
@@ -391,3 +393,115 @@ $ funkycmd call.fn
 ```
 
 That's because 7+8+9=24.
+
+### Records as state contexts (`<-`, `->`, and `:=`)
+
+Imperative algorithms usually work with **multiple variables**.
+
+For example, a simple algorithm to accumulate an average must store two variables: the sum and the count. The final average is then obtained by dividing one by the other. To add a number to the average, we add it to the sum and we increase the count by 1.
+
+A natural way to store these two variables in Funky is with a record:
+
+```funky
+record Average =
+    sum   : Int,
+    count : Int,
+```
+
+Then, using the record accessors, we can make a procedure to add a number to the average:
+
+```funky
+func add : Int -> Proc Average Nothing =
+    \number
+    update (sum (+ number));
+    update (count (+ 1));
+    return nothing
+```
+
+We use the `Nothing` return type, which is a type with only a single possible value: `nothing`. We use it to denote a procedure with no (useful) return value.
+
+> **Note.** `Nothing` is the same type as `()` in Haskell or `Unit` in some other languages.
+
+This isn't so bad. But, trust me, writing `update (field ...)` over and over gets tiresome with longer procedures. Using records in procedures is so frequent that standard library provides some special care for them.
+
+**The first function for this purpose is `<-`.** It's used to change a record field (or a nested field) in a procedure. Whenever you write this:
+
+```funky
+update (field function)
+```
+
+you can instead rewrite it to this:
+
+```funky
+field <- function
+```
+
+> **Note.** The `<-` function has type `((a -> a) -> s -> s) -> (a -> a) -> Proc s r -> Proc s r`.
+
+Therefore, we can rewrite our `add` function into this beautiful piece:
+
+```funky
+func add : Int -> Proc Average Nothing =
+    \number
+    sum <- + number;
+    count <- + 1;
+    return nothing
+```
+
+Pretty cool, don't you think?
+
+**Another useful function is `->`.** On the left side, it takes a getter, a function from the state type. Then it passes its result to the lambda on the right. It's like an enhanced `view` - whereas `view` always gives back the entire state, `->` gives you the part of the state you request.
+
+For example, how about a procedure that returns the actual current average as an `Int`?
+
+```funky
+func average : Proc Average Int =
+    sum -> \s
+    count -> \c
+    return (s / c)
+```
+
+Simple as that.
+
+Using `add` and `average`, we can compose an imperative algorithm for calculating the average of a list:
+
+```funky
+func average : List Int -> Int =
+    \list
+    start-with (Average 0 0);
+    for list (call . add);
+    call average \avg  # call to the procedure, not a recursive call
+    return avg
+```
+
+> **Note.** We overloaded the name `average` for two purposes here: one is the procedure and another is the function. No worries, Funky can always tell the difference.
+
+Notice that this `average` function has no `Proc` in the type. All the procedure stuff is encapsulated inside it. To the outside world, it appears simply as another function.
+
+**The last function that the standard library defines for working with records in procedures is `:=`.** It's similar to `<-`, but instead of transforming the original value using a function, it simply overwrites it with a new value.
+
+In other words, you can always replace this:
+
+```funky
+field <- const value
+```
+
+with this:
+
+```funky
+field := value
+```
+
+Say we wanted to reset the average counter. The procedure for that could look like this:
+
+```funky
+func reset : Proc Average Nothing =
+    sum := 0;
+    count := 0;
+    return nothing
+```
+
+> **Details.** There's an overloaded version of `:=` which takes a function from the state instead of a direct value. It can be used to copy one part of the state into another. We could for example write: `sum := count`, even though that wouldn't make any sense. But, be careful. You can't write `sum := count * 2`, because `count` is a getter (a function) here, not a number. You could write `sum := (\s count s * 2)`, though.
+
+### Arrays
+
