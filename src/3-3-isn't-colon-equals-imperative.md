@@ -503,5 +503,23 @@ func reset : Proc Average Nothing =
 
 > **Details.** There's an overloaded version of `:=` which takes a function from the state instead of a direct value. It can be used to copy one part of the state into another. We could for example write: `sum := count`, even though that wouldn't make any sense. But, be careful. You can't write `sum := count * 2`, because `count` is a getter (a function) here, not a number. You could write `sum := (\s count s * 2)`, though.
 
+By the way, **the function `self`** acts as both a getter and an updater for the whole state. Remember this function?
+
+```funky
+func increment : Proc Int Int =
+    update (+ 1);
+    return self
+```
+
+We can rewrite it:
+
+```funky
+func increment : Proc Int Int =
+    self <- + 1;
+    return self
+```
+
+Yes, this usage was one of the motivations for naming it `self` instead of `id`.
+
 ### Arrays
 
