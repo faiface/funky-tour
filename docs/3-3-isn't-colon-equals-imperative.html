@@ -294,22 +294,22 @@ func my-reverse : List a -&gt; List a =
 </code></pre>
 <p>This is a little convention. In cases like this, we choose <code>loop</code> as the local name of the recursive function. It makes it immediately clear that we're using <code>recur</code> to simulate a simple stateful loop.</p>
 <a class="header" href="#procedures" id="procedures"><h2>Procedures</h2></a>
-<p>Sometimes, simple loops like the above aren't powerful enough. Of course, they should be preferred whenever possible. But some algorithms require a more nuanced expression.</p>
-<p>A good example is the <strong>imperative version of the <a href="https://en.wikipedia.org/wiki/Quicksort">quicksort algorithm</a></strong>, i.e. quicksort on random-access arrays. That's a little too tough for the start, but we'll come back to it at end of this part.</p>
-<p>First, we need to learn how to express imperative algorithms. The standard library offers a type specifically for this purpose: <code>Proc</code>. That's a short for 'procedure'. It's a simple union, here's its definition:</p>
+<p>Sometimes, simple loops like the above aren't powerful enough. Of course, we prefer them whenever possible. But some algorithms require a more nuanced expression.</p>
+<p>A good example is the <strong>imperative version of the <a href="https://en.wikipedia.org/wiki/Quicksort">quicksort algorithm</a></strong>, i.e. quicksort on random-access arrays. That's a little too tough for the start, but we'll come back to it by the end of this part.</p>
+<p>First, we need to learn how to express imperative algorithms. The standard library offers a type specifically for this purpose: <code>Proc</code>. That's a short for <em>procedure</em>. It's a simple union, here's its definition:</p>
 <pre><code class="language-funky">union Proc s r =
     view (s -&gt; Proc s r)       |
     update (s -&gt; s) (Proc s r) |
     return r                   |
 </code></pre>
 <blockquote>
-<p><strong>Note.</strong> <code>Proc</code> is the equivalent of the <a href="https://wiki.haskell.org/State_Monad"><code>State monad</code></a> from Haskell (and was initially called the same). But Funky's syntax, overloading capabilities, and composable record accessors make it more enjoyable to use.</p>
+<p><strong>Note.</strong> <code>Proc</code> is an equivalent of the <a href="https://wiki.haskell.org/State_Monad"><code>State</code> monad</a> from Haskell (and was initially called the same). But Funky's syntax, overloading capabilities, and composable record accessors make it more enjoyable to use.</p>
 </blockquote>
-<p>So, what's <code>Proc</code> all about? You can think of it as a description of a stateful procedure that (possibly) changes some state and returns some final value.</p>
+<p>So, what's <code>Proc</code> all about? You can think of it as a description of a stateful procedure that runs in some stateful context, (usually) changes it, and results in some return value. Let's take a close look!</p>
 <p>First, it has <strong>two type variables</strong>:</p>
 <ul>
-<li><strong><code>s</code></strong>. This is the type of the state context the procedure will run in and change. For example, if <code>s</code> is <code>Int</code>, then the procedure will begin its execution with some initial <code>Int</code>, say <code>4</code>, be able to change it and check its current value during its runtime.</li>
-<li><strong><code>r</code></strong>. This it the return type. When a procedure finishes, it returns some result value, just like procedures in imperative languages.</li>
+<li><strong><code>s</code></strong>. This is the type of the state context the procedure will run in. For example, if <code>s</code> is <code>Int</code>, then the procedure will begin its execution with some initial <code>Int</code>, say <code>4</code>, be able to change it and check its current value during its execution.</li>
+<li><strong><code>r</code></strong>. This it the return type. When a procedure finishes, it returns some value. Just like procedures in imperative languages.</li>
 </ul>
 <p>Second, it's a union with <strong>three alternatives</strong>, or <strong>three commands</strong>:</p>
 <ul>
@@ -329,16 +329,16 @@ func my-reverse : List a -&gt; List a =
 <p>The <strong><code>return</code> function has an overloaded version</strong> with this type:</p>
 <pre><code class="language-funky">func return : (s -&gt; r) -&gt; Proc s r
 </code></pre>
-<p>It takes the current state and makes a return value from it using the supplied function. In our case, we just want to return the state directly, so we can use <code>self</code> (the identity function: <code>\x x</code>):</p>
+<p>It takes the current state and makes a return value from it using the supplied function. In our case, we just want to return the state directly, so we'll use <code>self</code> (which is the identity function: <code>\x x</code>):</p>
 <pre><code class="language-funky">func increment : Proc Int Int =
     update (+ 1);
     return self
 </code></pre>
 <p>That's quite neat! Now, keep in mind, all we have constructed is a data structure - a description. How do we execute it?</p>
-<p>We need to provide some initial state value. The function <code>start-with</code> is just for that. Here's how it looks like:</p>
+<p><strong>We need to provide some initial state value.</strong> The function <code>start-with</code> is for just that. Here's how it looks like:</p>
 <pre><code class="language-funky">func start-with : s -&gt; Proc s r -&gt; r
 </code></pre>
-<p>So, it takes the initial state, then a procedure, and apparently it executes the procedure and evaluates to its return value. Let's see how that works!</p>
+<p>It takes the initial state, then a procedure, and apparently it executes the procedure and evaluates to its return value. Let's see how that works!</p>
 <pre><code class="language-funky">func main : IO =
     let (start-with 6 increment) \x
     println (string x);
@@ -351,17 +351,18 @@ func my-reverse : List a -&gt; List a =
 <p>What if we want to execute <code>increment</code> multiple times? We can do that using the <code>call</code> function:</p>
 <pre><code class="language-funky">func call : Proc s a -&gt; (a -&gt; Proc s b) -&gt; Proc s b
 </code></pre>
-<p>It takes two arguments: the first is a procedure we'd like to execute. The second one is a continuation that takes the return value of the first procedure and results in another procedure. The whole <code>call</code> then becomes the new procedure. This may sound confusing, so let's try it!</p>
+<p>This function is used for <strong>executing one procedure inside another procedure</strong>.</p>
+<p>It takes two arguments: the first is a procedure we'd like to execute. The second one is a function that receives the return value of the first procedure and results in another procedure. The whole thing then becomes this new procedure.</p>
 <pre><code class="language-funky">func main : IO =
     let (start-with 6 (call increment (\_ increment))) \x
     println (string x);
     quit
 </code></pre>
-<p>So, we constructed a new procedure: <code>(call increment (\_ increment))</code>. According to how we described <code>call</code>, it first executes one <code>increment</code>, then is passes its return value to the lambda (which ignores it) and executes the procedure there, which is another <code>increment</code>. So, <code>increment</code> should be executed twice and the final return value should be that one the second <code>increment</code>.</p>
+<p>We constructed a new procedure: <code>call increment (\_ increment)</code>. According to how we described <code>call</code>, it first executes one <code>increment</code>, then is passes its return value to the lambda (which ignores it) and executes the procedure there, which is another <code>increment</code>. Therefore, <code>increment</code> should get executed twice and the final return value should be that one the second <code>increment</code>.</p>
 <pre><code>$ funkycmd call.fn
 8
 </code></pre>
-<p>Yep, it works! The expression <code>(call increment (\_ increment))</code> looks just awful, so let's reorganize it with semicolons:</p>
+<p>Yep, it works! The expression <code>call increment (\_ increment)</code> looks just awful, so let's reorganize it horizontally:</p>
 <pre><code class="language-funky">func main : IO =
     let (
         start-with 6;
@@ -400,6 +401,80 @@ func my-reverse : List a -&gt; List a =
 24
 </code></pre>
 <p>That's because 7+8+9=24.</p>
+<a class="header" href="#records-as-state-contexts-----and-" id="records-as-state-contexts-----and-"><h3>Records as state contexts (<code>&lt;-</code>, <code>-&gt;</code>, and <code>:=</code>)</h3></a>
+<p>Imperative algorithms usually work with <strong>multiple variables</strong>.</p>
+<p>For example, a simple algorithm to accumulate an average must store two variables: the sum and the count. The final average is then obtained by dividing one by the other. To add a number to the average, we add it to the sum and we increase the count by 1.</p>
+<p>A natural way to store these two variables in Funky is with a record:</p>
+<pre><code class="language-funky">record Average =
+    sum   : Int,
+    count : Int,
+</code></pre>
+<p>Then, using the record accessors, we can make a procedure to add a number to the average:</p>
+<pre><code class="language-funky">func add : Int -&gt; Proc Average Nothing =
+    \number
+    update (sum (+ number));
+    update (count (+ 1));
+    return nothing
+</code></pre>
+<p>We use the <code>Nothing</code> return type, which is a type with only a single possible value: <code>nothing</code>. We use it to denote a procedure with no (useful) return value.</p>
+<blockquote>
+<p><strong>Note.</strong> <code>Nothing</code> is the same type as <code>()</code> in Haskell or <code>Unit</code> in some other languages.</p>
+</blockquote>
+<p>This isn't so bad. But, trust me, writing <code>update (field ...)</code> over and over gets tiresome with longer procedures. Using records in procedures is so frequent that standard library provides some special care for them.</p>
+<p><strong>The first function for this purpose is <code>&lt;-</code>.</strong> It's used to change a record field (or a nested field) in a procedure. Whenever you write this:</p>
+<pre><code class="language-funky">update (field function)
+</code></pre>
+<p>you can instead rewrite it to this:</p>
+<pre><code class="language-funky">field &lt;- function
+</code></pre>
+<blockquote>
+<p><strong>Note.</strong> The <code>&lt;-</code> function has type <code>((a -&gt; a) -&gt; s -&gt; s) -&gt; (a -&gt; a) -&gt; Proc s r -&gt; Proc s r</code>.</p>
+</blockquote>
+<p>Therefore, we can rewrite our <code>add</code> function into this beautiful piece:</p>
+<pre><code class="language-funky">func add : Int -&gt; Proc Average Nothing =
+    \number
+    sum &lt;- + number;
+    count &lt;- + 1;
+    return nothing
+</code></pre>
+<p>Pretty cool, don't you think?</p>
+<p><strong>Another useful function is <code>-&gt;</code>.</strong> On the left side, it takes a getter, a function from the state type. Then it passes its result to the lambda on the right. It's like an enhanced <code>view</code> - whereas <code>view</code> always gives back the entire state, <code>-&gt;</code> gives you the part of the state you request.</p>
+<p>For example, how about a procedure that returns the actual current average as an <code>Int</code>?</p>
+<pre><code class="language-funky">func average : Proc Average Int =
+    sum -&gt; \s
+    count -&gt; \c
+    return (s / c)
+</code></pre>
+<p>Simple as that.</p>
+<p>Using <code>add</code> and <code>average</code>, we can compose an imperative algorithm for calculating the average of a list:</p>
+<pre><code class="language-funky">func average : List Int -&gt; Int =
+    \list
+    start-with (Average 0 0);
+    for list (call . add);
+    call average \avg  # call to the procedure, not a recursive call
+    return avg
+</code></pre>
+<blockquote>
+<p><strong>Note.</strong> We overloaded the name <code>average</code> for two purposes here: one is the procedure and another is the function. No worries, Funky can always tell the difference.</p>
+</blockquote>
+<p>Notice that this <code>average</code> function has no <code>Proc</code> in the type. All the procedure stuff is encapsulated inside it. To the outside world, it appears simply as another function.</p>
+<p><strong>The last function that the standard library defines for working with records in procedures is <code>:=</code>.</strong> It's similar to <code>&lt;-</code>, but instead of transforming the original value using a function, it simply overwrites it with a new value.</p>
+<p>In other words, you can always replace this:</p>
+<pre><code class="language-funky">field &lt;- const value
+</code></pre>
+<p>with this:</p>
+<pre><code class="language-funky">field := value
+</code></pre>
+<p>Say we wanted to reset the average counter. The procedure for that could look like this:</p>
+<pre><code class="language-funky">func reset : Proc Average Nothing =
+    sum := 0;
+    count := 0;
+    return nothing
+</code></pre>
+<blockquote>
+<p><strong>Details.</strong> There's an overloaded version of <code>:=</code> which takes a function from the state instead of a direct value. It can be used to copy one part of the state into another. We could for example write: <code>sum := count</code>, even though that wouldn't make any sense. But, be careful. You can't write <code>sum := count * 2</code>, because <code>count</code> is a getter (a function) here, not a number. You could write <code>sum := (\s count s * 2)</code>, though.</p>
+</blockquote>
+<a class="header" href="#arrays" id="arrays"><h3>Arrays</h3></a>
 
                     </main>
 
