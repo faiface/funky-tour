@@ -1690,6 +1690,17 @@ func my-reverse : List a -&gt; List a =
 <blockquote>
 <p><strong>Details.</strong> There's an overloaded version of <code>:=</code> which takes a function from the state instead of a direct value. It can be used to copy one part of the state into another. We could for example write: <code>sum := count</code>, even though that wouldn't make any sense. But, be careful. You can't write <code>sum := count * 2</code>, because <code>count</code> is a getter (a function) here, not a number. You could write <code>sum := (\s count s * 2)</code>, though.</p>
 </blockquote>
+<p>By the way, <strong>the function <code>self</code></strong> acts as both a getter and an updater for the whole state. Remember this function?</p>
+<pre><code class="language-funky">func increment : Proc Int Int =
+    update (+ 1);
+    return self
+</code></pre>
+<p>We can rewrite it:</p>
+<pre><code class="language-funky">func increment : Proc Int Int =
+    self &lt;- + 1;
+    return self
+</code></pre>
+<p>Yes, this usage was one of the motivations for naming it <code>self</code> instead of <code>id</code>.</p>
 <a class="header" href="#arrays" id="arrays"><h3>Arrays</h3></a>
 <a class="header" href="#maybe-some-pairs" id="maybe-some-pairs"><h1>Maybe some pairs</h1></a>
 <a class="header" href="#appendix-a-list-of-useful-functions" id="appendix-a-list-of-useful-functions"><h1>Appendix: a list of useful functions</h1></a>
