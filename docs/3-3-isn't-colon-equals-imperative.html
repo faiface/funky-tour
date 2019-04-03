@@ -472,7 +472,7 @@ func my-reverse : List a -&gt; List a =
     return nothing
 </code></pre>
 <blockquote>
-<p><strong>Details.</strong> There's an overloaded version of <code>:=</code> which takes a function from the state instead of a direct value. It can be used to copy one part of the state into another. We could for example write: <code>sum := count</code>, even though that wouldn't make any sense. But, be careful. You can't write <code>sum := count * 2</code>, because <code>count</code> is a getter (a function) here, not a number. You could write <code>sum := (\s count s * 2)</code>, though.</p>
+<p><strong>Details.</strong> There's an overloaded version of <code>:=</code> which takes a function from the state instead of a direct value. It can be used to copy one part of the state into another. We could for example write: <code>sum := count</code>, even though that wouldn't make any sense. But, be careful. You <strong>can't</strong> write <code>sum := count * 2</code>, because <code>count</code> is a getter (a function) here, not a number. You could write <code>sum := (\s count s * 2)</code>, though.</p>
 </blockquote>
 <p>By the way, <strong>the function <code>self</code></strong> acts as both a getter and an updater for the whole state. Remember this function?</p>
 <pre><code class="language-funky">func increment : Proc Int Int =
@@ -486,6 +486,155 @@ func my-reverse : List a -&gt; List a =
 </code></pre>
 <p>Yes, this usage was one of the motivations for naming it <code>self</code> instead of <code>id</code>.</p>
 <a class="header" href="#arrays" id="arrays"><h3>Arrays</h3></a>
+<p>The last piece of puzzle before we can finally implement the quicksort algorithm is random-access arrays.</p>
+<p>Arrays in Funky are a bit different than arrays in imperative language, because we aren't allowed to mutate anything. A function to change an element in an array must evaluate to a new array. But no full copies need to be performed. The new array will always share as much data as possible with the old one and thus the whole operation will be quite cheap.</p>
+<blockquote>
+<p><strong>Details.</strong> Without cheating, there's really no such thing as in-place, mutable, <a href="https://en.wikipedia.org/wiki/Time_complexity#Constant_time">O(1)</a> access arrays in pure functional programming. All data structures have to be primarily tree-based and persistent.</p>
+<p>However, there are efficient ways of implementing persistant arrays with O(log n) access time.</p>
+</blockquote>
+<p>Currently, the <code>Array</code> type in Funky implements an infinite array indexed by <code>Int</code>s (both positive and negative). <strong>To create an empty array, we use the <code>empty</code> function</strong>:</p>
+<pre><code class="language-funky">func empty : a -&gt; Array a
+</code></pre>
+<p>It takes one argument, which is the default initial value for all elements. For example:</p>
+<pre><code class="language-funky">empty 0
+</code></pre>
+<p>is an <code>Array Int</code> full of zeros. Then once we have an array, <strong>we can use <code>at</code> to both get and update any element</strong> in the array. Here are the two overloaded versions:</p>
+<pre><code class="language-funky">func at : Int -&gt; Array a -&gt; a
+func at : Int -&gt; (a -&gt; a) -&gt; Array a -&gt; Array a
+</code></pre>
+<p>As you have surely noticed, they both look very similar to getters and updaters in records, except that they take an additional index argument. For example:</p>
+<pre><code class="language-funky">at 5 array
+</code></pre>
+<p>gets the element at the index 5, while:</p>
+<pre><code class="language-funky">at 5 (+ 3) array
+</code></pre>
+<p>evaluates to a new array, where that element is increased by 3.</p>
+<p>There are two more functions, namely <code>reset</code> and <code>swap</code>. We won't cover the first one, but we'll come back to the second one when we get to the quicksort.</p>
+<p><strong>That's basically all there is to arrays</strong>, the interesting part comes when integrating them with procedures.</p>
+<p>As we've already noticed, both version of <code>at</code> fit very well with the form of record accessors. And we can, in fact, use them the same way in procedures. For example:</p>
+<pre><code class="language-funky">func some-array : Array Int =
+    start-with (empty 0);
+    at 0 := 7;
+    at 1 := 4;
+    at 2 := 9;
+    at 3 := 5;
+    at 4 := 2;
+    return self
+
+func main : IO =
+    for (range 0 4) (
+        \i \next
+        println (string; at i some-array);
+        next
+    );
+    quit
+</code></pre>
+<p>We manually assign values to the elements of an array. Then in <code>main</code>, we loop over the indices from 0 to 4 and print the corresponding elements from the array. Does it work?</p>
+<pre><code>$ funkycmd array.fn
+7
+4
+9
+5
+2
+</code></pre>
+<p>Sure enough it does!</p>
+<p>We can even shorten <code>some-array</code> with a for loop:</p>
+<pre><code class="language-funky">func some-array : Array Int =
+    start-with (empty 0);
+    for-pair (enumerate [7, 4, 9, 5, 2])
+        (\i \x at i := x);
+    return self
+</code></pre>
+<p>Now that we know arrays, let's get on to the quicksort!</p>
+<a class="header" href="#quicksort" id="quicksort"><h3>Quicksort</h3></a>
+<p>If you've ever implemented quicksort, then unless you're a super brilliant genius, you must know that it's quite tricky to get it right. At least the first time.</p>
+<p>Because of that, we'll make our job easier and <strong>simply translate the <a href="https://en.wikipedia.org/wiki/Quicksort#Algorithm">algorithm from Wikipedia</a></strong>:</p>
+<pre><code>algorithm quicksort(A, lo, hi) is
+    if lo &lt; hi then
+        p := partition(A, lo, hi)
+        quicksort(A, lo, p - 1)
+        quicksort(A, p + 1, hi)
+
+algorithm partition(A, lo, hi) is
+    pivot := A[hi]
+    i := lo
+    for j := lo to hi - 1 do
+        if A[j] &lt; pivot then
+            swap A[i] with A[j]
+            i := i + 1
+    swap A[i] with A[hi]
+    return i
+</code></pre>
+<p>That's a pseudocode. We'll try and translate it to Funky. We'll make two procedures: <code>quicksort</code> and <code>partition</code>.</p>
+<p>Since these are imperative, we'll need the array in their mutable state. The <code>partition</code> procedure also uses an index <code>i</code>, so we'll also need that in the state. This will be our state:</p>
+<pre><code class="language-funky">record Vars =
+    array : Array Int,
+    i     : Int,
+</code></pre>
+<p>Okay, now let's try and translate <code>partition</code>. I won't do it step-by-step, this is more of a show-off than a tutorial, but I'm sure you'll be able to follow it. Here it is:</p>
+<pre><code class="language-funky">func partition : Int -&gt; Int -&gt; Proc Vars Int =
+    \lo \hi
+    (at hi . array) -&gt; \pivot
+    i := lo;
+    for (range lo (hi - 1)) (
+        \j \next
+        (at j . array) -&gt; \at-j
+        when (at-j &lt; pivot) (
+            \next
+            i -&gt; \ii
+            array &lt;- swap ii j;
+            i &lt;- + 1;
+            next
+        );
+        next
+    );
+    i -&gt; \ii
+    array &lt;- swap ii hi;
+    return ii
+</code></pre>
+<p>It's definitely a little longer than the pseudocode. Most of the extra lines are from the lambdas and getting the current value of <code>i</code>. But otherwise, it reads just like the pseudocode.</p>
+<p>Now onto the <code>quicksort</code> procedure:</p>
+<pre><code class="language-funky">func quicksort : Int -&gt; Int -&gt; Proc Vars Nothing =
+    \lo \hi
+    if (lo &gt;= hi)
+        (return nothing);
+    call (partition lo hi) \p
+    call (quicksort lo (p - 1)) \_
+    call (quicksort (p + 1) hi) \_
+    return nothing
+</code></pre>
+<p>This one is very straightforward. The only thing we changed from the pseudocode is that we inverted the condition. The pseudocode <em>does</em> something when <code>lo &lt; hi</code>, we instead <em>halt</em> the procedure in the other case.</p>
+<p>Let's see if this all works.</p>
+<pre><code class="language-funky">func main : IO =
+    let (
+        start-with (Vars (empty 0) 0);
+        for-pair (enumerate [2, 6, 1, 0, 4, 3, 5, 9, 7, 8])
+            (\i \x (array . at i) := x);
+        call (quicksort 0 9) \_
+        return array
+    ) \arr
+    for (range 0 9) (
+        \i \next
+        println (string; at i arr);
+        next
+    );
+    quit
+</code></pre>
+<p>In this <code>main</code> function, we first start with an empty array and a zero <code>i</code> variable (which is irrelevant). Then we assign some random numbers to the first 10 indices of the array. Then we quicksort them and bind the resulting array to <code>arr</code> using <code>let</code>. Then we print the first 10 elements and see if it worked:</p>
+<pre><code class="language-funky">$ funkycmd quicksort.fn
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+</code></pre>
+<p>It does work perfectly!</p>
+<p>So, as you can see, we can write imperative algorithms quite straightforwardly in Funky!</p>
 
                     </main>
 
