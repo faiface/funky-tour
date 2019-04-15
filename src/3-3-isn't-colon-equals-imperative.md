@@ -241,7 +241,7 @@ Sometimes, simple loops like the above aren't powerful enough. Of course, we pre
 
 A good example is the **imperative version of the [quicksort algorithm](https://en.wikipedia.org/wiki/Quicksort)**, i.e. quicksort on random-access arrays. That's a little too tough for the start, but we'll come back to it by the end of this part.
 
-First, we need to learn how to express imperative algorithms. The standard library offers a type specifically for this purpose: `Proc`. That's a short for _procedure_. It's a simple union, here's its definition:
+First, we need to learn how to express imperative algorithms. The standard library offers a type specifically for this purpose: `Proc`. That's short for _procedure_. It's a simple union with this definition:
 
 ```funky
 union Proc s r =
@@ -250,26 +250,26 @@ union Proc s r =
     return r                   |
 ```
 
-> **Note.** `Proc` is an equivalent of the [`State` monad](https://wiki.haskell.org/State_Monad) from Haskell (and was initially called the same). But Funky's syntax, overloading capabilities, and composable record accessors make it more enjoyable to use.
+> **Note.** `Proc` is an equivalent of the [`State` monad](https://wiki.haskell.org/State_Monad) from Haskell and was initially called the same.
 
-So, what's `Proc` all about? You can think of it as a description of a stateful procedure that runs in some stateful context, (usually) changes it, and results in some return value. Let's take a close look!
+So, what's `Proc` all about? You can think of it as a description of a procedure that runs in some stateful context, (usually) changes it, and results in some return value. Let's take a close look!
 
 First, it has **two type variables**:
 
 - **`s`**. This is the type of the state context the procedure will run in. For example, if `s` is `Int`, then the procedure will begin its execution with some initial `Int`, say `4`, be able to change it and check its current value during its execution.
-- **`r`**. This it the return type. When a procedure finishes, it returns some value. Just like procedures in imperative languages.
+- **`r`**. This it the return type. When a procedure finishes, it returns some value, just like procedures in imperative languages.
 
-Second, it's a union with **three alternatives**, or **three commands**:
+Second, it's a union with **three alternatives or commands**:
 
 - **`view`**. Used to check the current value of the state. Notice that its signature resembles the signature of `scanln` and similar functions. It's used the same way.
-- **`update`**. This one is used to change the state. It takes a function of type `s -> s`. When running the procedure, the current state will be mapped through this function. The second argument is a contination - tells what should be done next. The `update` function is used in the same way as `println` and similar functions.
+- **`update`**. This one is used to change the state. It takes a function of type `s -> s`. When executing the procedure, the current state will be mapped through this function. The second argument is a contination - tells what should be done next. The `update` function is used in the same way as `println` and similar functions.
 - **`return`**. Marks the end of the procedure and specifies the return value.
 
 Using these three instructions together with our already acquired battle-tested tools, like `if` and `for`, we can make descriptions of stateful procedures.
 
-Let's see it in action!
+Let's see that in action!
 
-Our first trivial example will be a procedure who's state context is an `Int` and which returns an `Int`. When executed, it will increment the number in the state by 1 and return its new value.
+Our first trivial example will be a procedure who's state context is just an `Int` and which returns an `Int` as well. When executed, it will increment the number in the state by 1 and return its new value.
 
 ```funky
 func increment : Proc Int Int =
@@ -335,7 +335,7 @@ func main : IO =
     quit
 ```
 
-We constructed a new procedure: `call increment (\_ increment)`. According to how we described `call`, it first executes one `increment`, then is passes its return value to the lambda (which ignores it) and executes the procedure there, which is another `increment`. Therefore, `increment` should get executed twice and the final return value should be that one the second `increment`.
+We constructed a new procedure: `call increment (\_ increment)`, which should execute `increment` twice. Does it work?
 
 ```
 $ funkycmd call.fn
@@ -671,6 +671,8 @@ func partition : Int -> Int -> Proc Vars Int =
     array <- swap ii hi;
     return ii
 ```
+
+> **Details.** The `swap` function has type `Int -> Int -> Array a -> Array a` and does the obvious: evaluates to an array with the corresponding elements swapped.
 
 It's definitely a little longer than the pseudocode. Most of the extra lines are from the lambdas and getting the current value of `i`. But otherwise, it reads just like the pseudocode.
 

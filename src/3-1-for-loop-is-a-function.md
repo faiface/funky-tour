@@ -27,7 +27,7 @@ func one-two-three : List Int = 1 :: 2 :: 3 :: one-two-three
 
 This doesn't enter an infinite loop because Funky is a [lazily evaluated language](https://en.wikipedia.org/wiki/Lazy_evaluation).
 
-Of course, typing colons all the time would be tiresome, and so Funky provides a nice syntax suggar with the usual square brackets.
+Of course, typing colons all the time would be tiresome, and so Funky provides a nice syntax sugar with the usual square brackets.
 
 ```funky
 ["a", "b", "c", "d"]
@@ -45,7 +45,7 @@ Expands to:
 ('a' :: empty) :: ('b' :: empty) :: ('c' :: empty) :: ('d' :: empty) :: empty
 ```
 
-After seeing this, I'm sure you're way more grateful for all the string and list syntax suggar than you've ever been before.
+After seeing this, I'm sure you're way more grateful for all the string and list syntax sugar than you've ever been before.
 
 ## All the _"cool functional stuff"_
 

@@ -1,6 +1,6 @@
 # Yield it all!
 
-You though vertical code was just for `IO`? You were wrong! Vertical code (the one that spans vertically and can be read top to bottom) is quite universal in Funky. In this part, we'll see how it can be applied to lists and their generation.
+You thought vertical code was just for `IO`? You were wrong! Vertical code (the one that spans vertically and can be read top to bottom) is quite universal in Funky. In this part, we'll see how it can be applied to lists and their generation.
 
 ## The `yield` function
 
