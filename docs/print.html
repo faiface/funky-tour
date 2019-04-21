@@ -1668,9 +1668,10 @@ func my-reverse : List a -&gt; List a =
 <pre><code class="language-funky">func average : Proc Average Int =
     sum -&gt; \s
     count -&gt; \c
+    if (zero? c) (return 0);
     return (s / c)
 </code></pre>
-<p>Simple as that.</p>
+<p>Simple as that. Need to make sure to handle the case when the <code>count</code> is 0.</p>
 <p>Using <code>add</code> and <code>average</code>, we can compose an imperative algorithm for calculating the average of a list:</p>
 <pre><code class="language-funky">func average : List Int -&gt; Int =
     \numbers
@@ -1866,6 +1867,78 @@ algorithm partition(A, lo, hi) is
 </code></pre>
 <p>It worked perfectly!</p>
 <p>So, as you can see, we can write imperative algorithms quite straightforwardly in Funky!</p>
+<a class="header" href="#mixing-procedures-with-io" id="mixing-procedures-with-io"><h2>Mixing procedures with IO</h2></a>
+<p>Forget <a href="https://en.wikibooks.org/wiki/Haskell/Monad_transformers">monad transformers</a> (if you've used Haskell), mixing procedures with IO isn't such a big deal. I'll show you how to do it.</p>
+<p>So, we have this code:</p>
+<pre><code class="language-funky">func main : IO =
+    let (
+        start-with (Vars (empty 0) 0);
+        for-pair (enumerate [2, 6, 1, 0, 4, 3, 5, 9, 7, 8])
+            (\i \x (array . at i) := x);
+        call (quicksort 0 9);
+        return array
+    ) \arr
+    for (range 0 9) (
+        \i \next
+        println (string; at i arr);
+        next
+    );
+    quit
+</code></pre>
+<p>But the <code>let</code> is in fact not needed. Remember, there's an overloaded version of <code>return</code> (which we are in fact using in this code) with this type:</p>
+<pre><code class="language-funky">func return : (s -&gt; a) -&gt; Proc s a
+</code></pre>
+<p>How about we used it rather differently than we already have? What if we passed it a function of type <code>Vars -&gt; IO</code>? Something like this:</p>
+<pre><code class="language-funky">func main : IO =
+    start-with (Vars (empty 0) 0);
+    for-pair (enumerate [2, 6, 1, 0, 4, 3, 5, 9, 7, 8])
+        (\i \x (array . at i) := x);
+    call (quicksort 0 9);
+    return \vars                              # &lt;
+    for (range 0 9) (                         # &lt;
+        \i \next                              # &lt;
+        println (string; at i (array vars));  # &lt;
+        next                                  # &lt;
+    );                                        # &lt;
+    quit                                      # &lt;
+</code></pre>
+<p>I marked the function which we passed to <code>return</code>. It took <code>vars</code>, which is the whole state of the above procedure and made some <code>IO</code> out of it. The whole procedure now has type <code>Proc Vars IO</code> and so <code>start-with</code> turns it into just <code>IO</code>. Everything works:</p>
+<pre><code>$ funkycmd quicksort.fn
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+</code></pre>
+<p><strong>That's how we switch from <code>Proc</code> to <code>IO</code>!</strong> How do we switch back? Just <code>start-with</code> again! You have the last state, reuse it. We need to make sure, though, that we return some <code>IO</code> at the end.</p>
+<p>Here's a simple program that reads 10 numbers from the input and prints out the average after each one (uses the <code>Average</code> record we defined earlier):</p>
+<pre><code class="language-funky">func main : IO =
+    start-with (Average 0 0);
+
+    for (range 1 10) (
+        \i \next
+        call average \avg
+        return \a
+        println (&quot;Current average is &quot; ++ string avg ++ &quot;.&quot;);
+        print (&quot;Number #&quot; ++ string i ++ &quot;: &quot;);
+        scanln; int |&gt; \x
+        start-with a;
+        call (add x);
+        next
+    );
+
+    call average \avg
+    return \a
+    println (&quot;Final average is &quot; ++ string avg ++ &quot;.&quot;);
+    quit
+</code></pre>
+<p>I'm sure we could shave off some lines in a true imperative language, but so what! It's not bad for a purely functional one.</p>
+<p>That's all for this part. In the next part, we'll shine some light on <em>&quot;exception&quot; handling</em>.</p>
 <a class="header" href="#maybe-some-pairs" id="maybe-some-pairs"><h1>Maybe some pairs</h1></a>
 <a class="header" href="#appendix-a-list-of-useful-functions" id="appendix-a-list-of-useful-functions"><h1>Appendix: a list of useful functions</h1></a>
 
