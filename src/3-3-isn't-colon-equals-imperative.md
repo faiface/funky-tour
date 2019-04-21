@@ -173,22 +173,22 @@ is the same as:
 f x
 ```
 
-So, with `|>`, we can rewrite the previos expression like this:
+So, with `|>`, we can rewrite the previos expression like this, but we need to pass the arguments in a seemingly reverse order:
 
 ```funky
 1 |> 0 |> recur \fibs \a \b
 a :: fibs b (a + b)
 ```
 
+> **Explanation.** The above code works, we pass `0` for `a` and `1` for `b`, not the other way around. This is because `y |> x |> f` is the same as `y |> (x |> f)`, which reduces to `y |> f x`, and finally `f x y`.
+
 This whole expression evaluates to just `[0, 1, 1, 2, 3, 5, 8, 13, 21, ...]`, the infinite Fibonacci sequence.
 
-Now, since we're passing the arguments from the left, we need to pass them in the reversed order (actually, we're passing them in the correct order, but it reads as if it was reversed). I admit, this may all look kinda confusing to you, but don't worry, you'll get used it. It's very versatile, and the whole thing didn't require a single language addition.
+I admit, the whole thing about passing the arguments in a seemingly reverse order may look kinda confusing to you, but don't worry, you'll get used it. It's very versatile, and the whole thing didn't require a single language addition.
 
 ### Back to reversing lists
 
-So, how can we use `recur` to get rid of the extra `my-reverse-algo` function?
-
-If you can, try figure it out yourself.
+Can we use `recur` to get rid of the extra `my-reverse-algo` function?
 
 For the reminder, here's how it looks with the extra function:
 
@@ -203,7 +203,7 @@ func my-reverse : List a -> List a =
     my-reverse-algo list []
 ```
 
-And here's the solution. All we had to do was replace `my-reverse-algo` in the body of `my-reverse` with an anonymous definition:
+And here's the solution. All we have to do is replace `my-reverse-algo` in the body of `my-reverse` with an anonymous definition:
 
 ```funky
 func my-reverse : List a -> List a =
@@ -233,7 +233,7 @@ func my-reverse : List a -> List a =
     loop (rest! left) (first! left :: right)
 ```
 
-This is a little convention. In cases like this, we choose `loop` as the local name of the recursive function. It makes it immediately clear that we're using `recur` to simulate a simple stateful loop.
+**This is a little convention.** In cases like this, we choose `loop` as the local name of the recursive function. It makes it immediately clear that we're using `recur` to simulate a simple stateful loop.
 
 ## Procedures
 
@@ -278,12 +278,15 @@ func increment : Proc Int Int =
     return x
 ```
 
-First, we update the state using `(+ 1)` (which is the same as `(\x x + 1)`). Then we check the current (updated) state and return its value.
+First, we update the state using `(+ 1)` (which is the same as `(\x x + 1)`). Then we get the current (updated) state and return it.
 
-The **`return` function has an overloaded version** with this type:
+The **`return` function has an overloaded version**:
 
 ```funky
-func return : (s -> r) -> Proc s r
+func return : (s -> r) -> Proc s r =
+    \f
+    view \x
+    return (f x)
 ```
 
 It takes the current state and makes a return value from it using the supplied function. In our case, we just want to return the state directly, so we'll use `self` (which is the identity function: `\x x`):
@@ -321,56 +324,64 @@ $ funkycmd increment.fn
 What if we want to execute `increment` multiple times? We can do that using the `call` function:
 
 ```funky
-func call : Proc s a -> (a -> Proc s b) -> Proc s b
+func call : Proc s a -> Proc s b -> Proc s b
 ```
 
-This function is used for **executing one procedure inside another procedure**.
+This function is used for **executing one procedure inside another procedure**, discarding the return value of the first (we are able to get it, just wait a moment).
 
-It takes two arguments: the first is a procedure we'd like to execute. The second one is a function that receives the return value of the first procedure and results in another procedure. The whole thing then becomes this new procedure.
+It takes two procedures and produces a new procedure that executes them one after another, returning the result of the second one.
 
 ```funky
 func main : IO =
-    let (start-with 6 (call increment (\_ increment))) \x
+    let (start-with 6 (call increment increment)) \x
     println (string x);
     quit
 ```
 
-We constructed a new procedure: `call increment (\_ increment)`, which should execute `increment` twice. Does it work?
+Does it work?
 
 ```
 $ funkycmd call.fn
 8
 ```
 
-Yep, it works! The expression `call increment (\_ increment)` looks just awful, so let's reorganize it horizontally:
+Yep, it works! We can even reorganize it horizontally:
 
 ```funky
 func main : IO =
     let (
         start-with 6;
-        call increment \_
+        call increment;
         increment
     ) \x
     println (string x);
     quit
 ```
 
-Now that looks readable! Start with 6, then increment once, then go on to increment second time. We could even increment four times!
+We could even increment four times!
 
 ```funky
 func main : IO =
     let (
         start-with 6;
-        call increment \_
-        call increment \_
-        call increment \_
+        call increment;
+        call increment;
+        call increment;
         increment
     ) \x
     println (string x);
     quit
 ```
 
-And, just for fun, instead of finishing with a dull `increment`, let's gather all the return values from those three `increment`s above and return their sum:
+The `call` function has another version with this type:
+
+```funky
+func call : Proc s a -> (a -> Proc s b) -> Proc s b
+```
+
+It's the same as the first version, except that instead of taking just a procedure as the second argument, it accepts a function taking the return value of the first procedure. The usage is quite straightforward.
+
+Just for fun, let's gather all the return values from those three `increment`s using this new `call` version and return their sum:
 
 ```funky
 func main : IO =
@@ -398,7 +409,7 @@ That's because 7+8+9=24.
 
 Imperative algorithms usually work with **multiple variables**.
 
-For example, a simple algorithm to accumulate an average must store two variables: the sum and the count. The final average is then obtained by dividing one by the other. To add a number to the average, we add it to the sum and we increase the count by 1.
+For example, a simple algorithm to accumulate an average of a stream of numbers must store two variables: the sum and the count. The final average is then obtained by dividing one by the other. To add a number to the average, we add it to the sum and we increase the count by 1.
 
 A natural way to store these two variables in Funky is with a record:
 
@@ -422,7 +433,7 @@ We use the `Nothing` return type, which is a type with only a single possible va
 
 > **Note.** `Nothing` is the same type as `()` in Haskell or `Unit` in some other languages.
 
-This isn't so bad. But, trust me, writing `update (field ...)` over and over gets tiresome with longer procedures. Using records in procedures is so frequent that standard library provides some special care for them.
+This isn't so bad. But, trust me, writing `update (field ...)` over and over gets tiresome with longer procedures. Records are so frequent here that the standard library provides some special treatment for them.
 
 **The first function for this purpose is `<-`.** It's used to change a record field (or a nested field) in a procedure. Whenever you write this:
 
@@ -438,7 +449,7 @@ field <- function
 
 > **Note.** The `<-` function has type `((a -> a) -> s -> s) -> (a -> a) -> Proc s r -> Proc s r`.
 
-Therefore, we can rewrite our `add` function into this beautiful piece:
+Therefore, we can rewrite our `add` function into this beautiful piece of code:
 
 ```funky
 func add : Int -> Proc Average Nothing =
@@ -474,11 +485,11 @@ func average : List Int -> Int =
     return avg
 ```
 
-> **Note.** We overloaded the name `average` for two purposes here: one is the procedure and another is the function. No worries, Funky can always tell the difference.
+> **Note.** We overloaded the name `average` for two purposes here: one is the procedure and the other is the function. No worries, Funky can always tell the difference.
 
-Notice that this `average` function has no `Proc` in the type. All the procedure stuff is encapsulated inside it. To the outside world, it appears simply as another function.
+Notice that this `average` function has no `Proc` in the type. All the procedure stuff is encapsulated inside of it. To the outside world, it appears simply as another function.
 
-**The last function that the standard library defines for working with records in procedures is `:=`.** It's similar to `<-`, but instead of transforming the original value using a function, it simply overwrites it with a new value.
+**The last function for working with records in procedures is `:=`.** It's similar to `<-`, but instead of transforming the original value using a function, it simply overwrites it with a new value.
 
 In other words, you can always replace this:
 
@@ -492,7 +503,7 @@ with this:
 field := value
 ```
 
-Say we wanted to reset the average counter. The procedure for that could look like this:
+Say we wanted to reset the average counter. Here's what it would look like:
 
 ```funky
 func reset : Proc Average Nothing =
@@ -525,7 +536,7 @@ Yes, this usage was one of the motivations for naming it `self` instead of `id`.
 
 The last piece of puzzle before we can finally implement the quicksort algorithm is random-access arrays. 
 
-Arrays in Funky are a bit different than arrays in imperative language, because we aren't allowed to mutate anything. A function to change an element in an array must evaluate to a new array. But no full copies need to be performed. The new array will always share as much data as possible with the old one and thus the whole operation will be quite cheap.
+Arrays in Funky are a bit different than arrays in imperative language, because we aren't allowed to mutate anything. To change an element in an array we must make a new array. But no full copies need to be performed. The new array can always share as much data as possible with the old one and thus the whole operation will be quite cheap.
 
 > **Details.** Without cheating, there's really no such thing as in-place, mutable, [O(1)](https://en.wikipedia.org/wiki/Time_complexity#Constant_time) access arrays in pure functional programming. All data structures have to be primarily tree-based and persistent.
 >
@@ -543,30 +554,30 @@ It takes one argument, which is the default initial value for all elements. For 
 empty 0
 ```
 
-is an `Array Int` full of zeros. Then once we have an array, **we can use `at` to both get and update any element** in the array. Here are the two overloaded versions:
+is an `Array Int` full of zeros. **We use `at` to both get and update any element** in the array. Here are the two overloaded versions:
 
 ```funky
 func at : Int -> Array a -> a
 func at : Int -> (a -> a) -> Array a -> Array a
 ```
 
-As you have surely noticed, they both look very similar to getters and updaters in records, except that they take an additional index argument. For example:
+As you have surely noticed, they look very similar to getters and updaters in records, except that they take an additional `Int` argument - the index. For example:
 
 ```funky
 at 5 array
 ```
 
-gets the element at the index 5, while:
+**gets the element at the index 5**, while:
 
 ```funky
 at 5 (+ 3) array
 ```
 
-evaluates to a new array, where that element is increased by 3.
+evaluates to a **new array, where that element is increased by 3**.
 
 There are two more functions, namely `reset` and `swap`. We won't cover the first one, but we'll come back to the second one when we get to the quicksort.
 
-**That's basically all there is to arrays**, the interesting part comes when integrating them with procedures.
+That's basically all there is to arrays. **The interesting part comes when integrating them with procedures.**
 
 As we've already noticed, both version of `at` fit very well with the form of record accessors. And we can, in fact, use them the same way in procedures. For example:
 
@@ -589,7 +600,7 @@ func main : IO =
     quit
 ```
 
-We manually assign values to the elements of an array. Then in `main`, we loop over the indices from 0 to 4 and print the corresponding elements from the array. Does it work?
+We manually assign values to the elements of an array. Then, in `main`, we loop over the indices from 0 to 4 and print the corresponding elements from the array. Does it work?
 
 ```
 $ funkycmd array.fn
@@ -616,9 +627,9 @@ Now that we know arrays, let's get on to the quicksort!
 
 ### Quicksort
 
-If you've ever implemented quicksort, then unless you're a super brilliant genius, you must know that it's quite tricky to get it right. At least the first time.
+If you've ever implemented quicksort, you must know that it's quite tricky to get it right unless you're a super brilliant genius. At least the first time.
 
-Because of that, we'll make our job easier and **simply translate the [algorithm from Wikipedia](https://en.wikipedia.org/wiki/Quicksort#Algorithm)**:
+Because of that, we'll make our job easier and **simply translate [this algorithm from Wikipedia](https://en.wikipedia.org/wiki/Quicksort#Algorithm)**:
 
 ```
 algorithm quicksort(A, lo, hi) is
@@ -648,6 +659,8 @@ record Vars =
     i     : Int,
 ```
 
+> **Note.** The `partition` procedure also uses an index `j`, but we need not include it in the state.
+
 Okay, now let's try and translate `partition`. I won't do it step-by-step, this is more of a show-off than a tutorial, but I'm sure you'll be able to follow it. Here it is:
 
 ```funky
@@ -674,7 +687,7 @@ func partition : Int -> Int -> Proc Vars Int =
 
 > **Details.** The `swap` function has type `Int -> Int -> Array a -> Array a` and does the obvious: evaluates to an array with the corresponding elements swapped.
 
-It's definitely a little longer than the pseudocode. Most of the extra lines are from the lambdas and getting the current value of `i`. But otherwise, it reads just like the pseudocode.
+It's definitely a little longer than the pseudocode. Most of the extra lines are from the lambdas and getting the current value of `i`. But otherwise, it reads very similar.
 
 Now onto the `quicksort` procedure:
 
@@ -684,8 +697,8 @@ func quicksort : Int -> Int -> Proc Vars Nothing =
     if (lo >= hi)
         (return nothing);
     call (partition lo hi) \p
-    call (quicksort lo (p - 1)) \_
-    call (quicksort (p + 1) hi) \_
+    call (quicksort lo (p - 1));
+    call (quicksort (p + 1) hi);
     return nothing
 ```
 
@@ -699,7 +712,7 @@ func main : IO =
         start-with (Vars (empty 0) 0);
         for-pair (enumerate [2, 6, 1, 0, 4, 3, 5, 9, 7, 8])
             (\i \x (array . at i) := x);
-        call (quicksort 0 9) \_
+        call (quicksort 0 9);
         return array
     ) \arr
     for (range 0 9) (
@@ -726,6 +739,6 @@ $ funkycmd quicksort.fn
 9
 ```
 
-It does work perfectly!
+It worked perfectly!
 
 So, as you can see, we can write imperative algorithms quite straightforwardly in Funky!
