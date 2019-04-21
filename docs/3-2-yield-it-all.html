@@ -137,7 +137,7 @@
                 <div id="content" class="content">
                     <main>
                         <a class="header" href="#yield-it-all" id="yield-it-all"><h1>Yield it all!</h1></a>
-<p>You though vertical code was just for <code>IO</code>? You were wrong! Vertical code (the one that spans vertically and can be read top to bottom) is quite universal in Funky. In this part, we'll see how it can be applied to lists and their generation.</p>
+<p>You thought vertical code was just for <code>IO</code>? You were wrong! Vertical code (the one that spans vertically and can be read top to bottom) is quite universal in Funky. In this part, we'll see how it can be applied to lists and their generation.</p>
 <a class="header" href="#the-yield-function" id="the-yield-function"><h2>The <code>yield</code> function</h2></a>
 <p>The basic list constructor, the double colon, is an infix function. That makes it unusable for vertical code. However, the standard library defines a synonym of <code>::</code> called <code>yield</code>:</p>
 <pre><code class="language-funky">func yield : a -&gt; List a -&gt; List a = (::)

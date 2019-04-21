@@ -252,15 +252,17 @@ a :: fibs b (a + b)) 0 1
 <p>is the same as:</p>
 <pre><code class="language-funky">f x
 </code></pre>
-<p>So, with <code>|&gt;</code>, we can rewrite the previos expression like this:</p>
+<p>So, with <code>|&gt;</code>, we can rewrite the previos expression like this, but we need to pass the arguments in a seemingly reverse order:</p>
 <pre><code class="language-funky">1 |&gt; 0 |&gt; recur \fibs \a \b
 a :: fibs b (a + b)
 </code></pre>
+<blockquote>
+<p><strong>Explanation.</strong> The above code works, we pass <code>0</code> for <code>a</code> and <code>1</code> for <code>b</code>, not the other way around. This is because <code>y |&gt; x |&gt; f</code> is the same as <code>y |&gt; (x |&gt; f)</code>, which reduces to <code>y |&gt; f x</code>, and finally <code>f x y</code>.</p>
+</blockquote>
 <p>This whole expression evaluates to just <code>[0, 1, 1, 2, 3, 5, 8, 13, 21, ...]</code>, the infinite Fibonacci sequence.</p>
-<p>Now, since we're passing the arguments from the left, we need to pass them in the reversed order (actually, we're passing them in the correct order, but it reads as if it was reversed). I admit, this may all look kinda confusing to you, but don't worry, you'll get used it. It's very versatile, and the whole thing didn't require a single language addition.</p>
+<p>I admit, the whole thing about passing the arguments in a seemingly reverse order may look kinda confusing to you, but don't worry, you'll get used it. It's very versatile, and the whole thing didn't require a single language addition.</p>
 <a class="header" href="#back-to-reversing-lists" id="back-to-reversing-lists"><h3>Back to reversing lists</h3></a>
-<p>So, how can we use <code>recur</code> to get rid of the extra <code>my-reverse-algo</code> function?</p>
-<p>If you can, try figure it out yourself.</p>
+<p>Can we use <code>recur</code> to get rid of the extra <code>my-reverse-algo</code> function?</p>
 <p>For the reminder, here's how it looks with the extra function:</p>
 <pre><code class="language-funky">func my-reverse-algo : List a -&gt; List a -&gt; List a =
     \left \right
@@ -271,7 +273,7 @@ func my-reverse : List a -&gt; List a =
     \list
     my-reverse-algo list []
 </code></pre>
-<p>And here's the solution. All we had to do was replace <code>my-reverse-algo</code> in the body of <code>my-reverse</code> with an anonymous definition:</p>
+<p>And here's the solution. All we have to do is replace <code>my-reverse-algo</code> in the body of <code>my-reverse</code> with an anonymous definition:</p>
 <pre><code class="language-funky">func my-reverse : List a -&gt; List a =
     \list
     (recur \my-reverse-algo \left \right
@@ -292,42 +294,45 @@ func my-reverse : List a -&gt; List a =
     if (empty? left) right;
     loop (rest! left) (first! left :: right)
 </code></pre>
-<p>This is a little convention. In cases like this, we choose <code>loop</code> as the local name of the recursive function. It makes it immediately clear that we're using <code>recur</code> to simulate a simple stateful loop.</p>
+<p><strong>This is a little convention.</strong> In cases like this, we choose <code>loop</code> as the local name of the recursive function. It makes it immediately clear that we're using <code>recur</code> to simulate a simple stateful loop.</p>
 <a class="header" href="#procedures" id="procedures"><h2>Procedures</h2></a>
 <p>Sometimes, simple loops like the above aren't powerful enough. Of course, we prefer them whenever possible. But some algorithms require a more nuanced expression.</p>
 <p>A good example is the <strong>imperative version of the <a href="https://en.wikipedia.org/wiki/Quicksort">quicksort algorithm</a></strong>, i.e. quicksort on random-access arrays. That's a little too tough for the start, but we'll come back to it by the end of this part.</p>
-<p>First, we need to learn how to express imperative algorithms. The standard library offers a type specifically for this purpose: <code>Proc</code>. That's a short for <em>procedure</em>. It's a simple union, here's its definition:</p>
+<p>First, we need to learn how to express imperative algorithms. The standard library offers a type specifically for this purpose: <code>Proc</code>. That's short for <em>procedure</em>. It's a simple union with this definition:</p>
 <pre><code class="language-funky">union Proc s r =
     view (s -&gt; Proc s r)       |
     update (s -&gt; s) (Proc s r) |
     return r                   |
 </code></pre>
 <blockquote>
-<p><strong>Note.</strong> <code>Proc</code> is an equivalent of the <a href="https://wiki.haskell.org/State_Monad"><code>State</code> monad</a> from Haskell (and was initially called the same). But Funky's syntax, overloading capabilities, and composable record accessors make it more enjoyable to use.</p>
+<p><strong>Note.</strong> <code>Proc</code> is an equivalent of the <a href="https://wiki.haskell.org/State_Monad"><code>State</code> monad</a> from Haskell and was initially called the same.</p>
 </blockquote>
-<p>So, what's <code>Proc</code> all about? You can think of it as a description of a stateful procedure that runs in some stateful context, (usually) changes it, and results in some return value. Let's take a close look!</p>
+<p>So, what's <code>Proc</code> all about? You can think of it as a description of a procedure that runs in some stateful context, (usually) changes it, and results in some return value. Let's take a close look!</p>
 <p>First, it has <strong>two type variables</strong>:</p>
 <ul>
 <li><strong><code>s</code></strong>. This is the type of the state context the procedure will run in. For example, if <code>s</code> is <code>Int</code>, then the procedure will begin its execution with some initial <code>Int</code>, say <code>4</code>, be able to change it and check its current value during its execution.</li>
-<li><strong><code>r</code></strong>. This it the return type. When a procedure finishes, it returns some value. Just like procedures in imperative languages.</li>
+<li><strong><code>r</code></strong>. This it the return type. When a procedure finishes, it returns some value, just like procedures in imperative languages.</li>
 </ul>
-<p>Second, it's a union with <strong>three alternatives</strong>, or <strong>three commands</strong>:</p>
+<p>Second, it's a union with <strong>three alternatives or commands</strong>:</p>
 <ul>
 <li><strong><code>view</code></strong>. Used to check the current value of the state. Notice that its signature resembles the signature of <code>scanln</code> and similar functions. It's used the same way.</li>
-<li><strong><code>update</code></strong>. This one is used to change the state. It takes a function of type <code>s -&gt; s</code>. When running the procedure, the current state will be mapped through this function. The second argument is a contination - tells what should be done next. The <code>update</code> function is used in the same way as <code>println</code> and similar functions.</li>
+<li><strong><code>update</code></strong>. This one is used to change the state. It takes a function of type <code>s -&gt; s</code>. When executing the procedure, the current state will be mapped through this function. The second argument is a contination - tells what should be done next. The <code>update</code> function is used in the same way as <code>println</code> and similar functions.</li>
 <li><strong><code>return</code></strong>. Marks the end of the procedure and specifies the return value.</li>
 </ul>
 <p>Using these three instructions together with our already acquired battle-tested tools, like <code>if</code> and <code>for</code>, we can make descriptions of stateful procedures.</p>
-<p>Let's see it in action!</p>
-<p>Our first trivial example will be a procedure who's state context is an <code>Int</code> and which returns an <code>Int</code>. When executed, it will increment the number in the state by 1 and return its new value.</p>
+<p>Let's see that in action!</p>
+<p>Our first trivial example will be a procedure who's state context is just an <code>Int</code> and which returns an <code>Int</code> as well. When executed, it will increment the number in the state by 1 and return its new value.</p>
 <pre><code class="language-funky">func increment : Proc Int Int =
     update (+ 1);
     view \x
     return x
 </code></pre>
-<p>First, we update the state using <code>(+ 1)</code> (which is the same as <code>(\x x + 1)</code>). Then we check the current (updated) state and return its value.</p>
-<p>The <strong><code>return</code> function has an overloaded version</strong> with this type:</p>
-<pre><code class="language-funky">func return : (s -&gt; r) -&gt; Proc s r
+<p>First, we update the state using <code>(+ 1)</code> (which is the same as <code>(\x x + 1)</code>). Then we get the current (updated) state and return it.</p>
+<p>The <strong><code>return</code> function has an overloaded version</strong>:</p>
+<pre><code class="language-funky">func return : (s -&gt; r) -&gt; Proc s r =
+    \f
+    view \x
+    return (f x)
 </code></pre>
 <p>It takes the current state and makes a return value from it using the supplied function. In our case, we just want to return the state directly, so we'll use <code>self</code> (which is the identity function: <code>\x x</code>):</p>
 <pre><code class="language-funky">func increment : Proc Int Int =
@@ -349,42 +354,46 @@ func my-reverse : List a -&gt; List a =
 7
 </code></pre>
 <p>What if we want to execute <code>increment</code> multiple times? We can do that using the <code>call</code> function:</p>
-<pre><code class="language-funky">func call : Proc s a -&gt; (a -&gt; Proc s b) -&gt; Proc s b
+<pre><code class="language-funky">func call : Proc s a -&gt; Proc s b -&gt; Proc s b
 </code></pre>
-<p>This function is used for <strong>executing one procedure inside another procedure</strong>.</p>
-<p>It takes two arguments: the first is a procedure we'd like to execute. The second one is a function that receives the return value of the first procedure and results in another procedure. The whole thing then becomes this new procedure.</p>
+<p>This function is used for <strong>executing one procedure inside another procedure</strong>, discarding the return value of the first (we are able to get it, just wait a moment).</p>
+<p>It takes two procedures and produces a new procedure that executes them one after another, returning the result of the second one.</p>
 <pre><code class="language-funky">func main : IO =
-    let (start-with 6 (call increment (\_ increment))) \x
+    let (start-with 6 (call increment increment)) \x
     println (string x);
     quit
 </code></pre>
-<p>We constructed a new procedure: <code>call increment (\_ increment)</code>. According to how we described <code>call</code>, it first executes one <code>increment</code>, then is passes its return value to the lambda (which ignores it) and executes the procedure there, which is another <code>increment</code>. Therefore, <code>increment</code> should get executed twice and the final return value should be that one the second <code>increment</code>.</p>
+<p>Does it work?</p>
 <pre><code>$ funkycmd call.fn
 8
 </code></pre>
-<p>Yep, it works! The expression <code>call increment (\_ increment)</code> looks just awful, so let's reorganize it horizontally:</p>
+<p>Yep, it works! We can even reorganize it horizontally:</p>
 <pre><code class="language-funky">func main : IO =
     let (
         start-with 6;
-        call increment \_
+        call increment;
         increment
     ) \x
     println (string x);
     quit
 </code></pre>
-<p>Now that looks readable! Start with 6, then increment once, then go on to increment second time. We could even increment four times!</p>
+<p>We could even increment four times!</p>
 <pre><code class="language-funky">func main : IO =
     let (
         start-with 6;
-        call increment \_
-        call increment \_
-        call increment \_
+        call increment;
+        call increment;
+        call increment;
         increment
     ) \x
     println (string x);
     quit
 </code></pre>
-<p>And, just for fun, instead of finishing with a dull <code>increment</code>, let's gather all the return values from those three <code>increment</code>s above and return their sum:</p>
+<p>The <code>call</code> function has another version with this type:</p>
+<pre><code class="language-funky">func call : Proc s a -&gt; (a -&gt; Proc s b) -&gt; Proc s b
+</code></pre>
+<p>It's the same as the first version, except that instead of taking just a procedure as the second argument, it accepts a function taking the return value of the first procedure. The usage is quite straightforward.</p>
+<p>Just for fun, let's gather all the return values from those three <code>increment</code>s using this new <code>call</code> version and return their sum:</p>
 <pre><code class="language-funky">func main : IO =
     let (
         start-with 6;
@@ -403,7 +412,7 @@ func my-reverse : List a -&gt; List a =
 <p>That's because 7+8+9=24.</p>
 <a class="header" href="#records-as-state-contexts-----and-" id="records-as-state-contexts-----and-"><h3>Records as state contexts (<code>&lt;-</code>, <code>-&gt;</code>, and <code>:=</code>)</h3></a>
 <p>Imperative algorithms usually work with <strong>multiple variables</strong>.</p>
-<p>For example, a simple algorithm to accumulate an average must store two variables: the sum and the count. The final average is then obtained by dividing one by the other. To add a number to the average, we add it to the sum and we increase the count by 1.</p>
+<p>For example, a simple algorithm to accumulate an average of a stream of numbers must store two variables: the sum and the count. The final average is then obtained by dividing one by the other. To add a number to the average, we add it to the sum and we increase the count by 1.</p>
 <p>A natural way to store these two variables in Funky is with a record:</p>
 <pre><code class="language-funky">record Average =
     sum   : Int,
@@ -420,7 +429,7 @@ func my-reverse : List a -&gt; List a =
 <blockquote>
 <p><strong>Note.</strong> <code>Nothing</code> is the same type as <code>()</code> in Haskell or <code>Unit</code> in some other languages.</p>
 </blockquote>
-<p>This isn't so bad. But, trust me, writing <code>update (field ...)</code> over and over gets tiresome with longer procedures. Using records in procedures is so frequent that standard library provides some special care for them.</p>
+<p>This isn't so bad. But, trust me, writing <code>update (field ...)</code> over and over gets tiresome with longer procedures. Records are so frequent here that the standard library provides some special treatment for them.</p>
 <p><strong>The first function for this purpose is <code>&lt;-</code>.</strong> It's used to change a record field (or a nested field) in a procedure. Whenever you write this:</p>
 <pre><code class="language-funky">update (field function)
 </code></pre>
@@ -430,7 +439,7 @@ func my-reverse : List a -&gt; List a =
 <blockquote>
 <p><strong>Note.</strong> The <code>&lt;-</code> function has type <code>((a -&gt; a) -&gt; s -&gt; s) -&gt; (a -&gt; a) -&gt; Proc s r -&gt; Proc s r</code>.</p>
 </blockquote>
-<p>Therefore, we can rewrite our <code>add</code> function into this beautiful piece:</p>
+<p>Therefore, we can rewrite our <code>add</code> function into this beautiful piece of code:</p>
 <pre><code class="language-funky">func add : Int -&gt; Proc Average Nothing =
     \number
     sum &lt;- + number;
@@ -455,17 +464,17 @@ func my-reverse : List a -&gt; List a =
     return avg
 </code></pre>
 <blockquote>
-<p><strong>Note.</strong> We overloaded the name <code>average</code> for two purposes here: one is the procedure and another is the function. No worries, Funky can always tell the difference.</p>
+<p><strong>Note.</strong> We overloaded the name <code>average</code> for two purposes here: one is the procedure and the other is the function. No worries, Funky can always tell the difference.</p>
 </blockquote>
-<p>Notice that this <code>average</code> function has no <code>Proc</code> in the type. All the procedure stuff is encapsulated inside it. To the outside world, it appears simply as another function.</p>
-<p><strong>The last function that the standard library defines for working with records in procedures is <code>:=</code>.</strong> It's similar to <code>&lt;-</code>, but instead of transforming the original value using a function, it simply overwrites it with a new value.</p>
+<p>Notice that this <code>average</code> function has no <code>Proc</code> in the type. All the procedure stuff is encapsulated inside of it. To the outside world, it appears simply as another function.</p>
+<p><strong>The last function for working with records in procedures is <code>:=</code>.</strong> It's similar to <code>&lt;-</code>, but instead of transforming the original value using a function, it simply overwrites it with a new value.</p>
 <p>In other words, you can always replace this:</p>
 <pre><code class="language-funky">field &lt;- const value
 </code></pre>
 <p>with this:</p>
 <pre><code class="language-funky">field := value
 </code></pre>
-<p>Say we wanted to reset the average counter. The procedure for that could look like this:</p>
+<p>Say we wanted to reset the average counter. Here's what it would look like:</p>
 <pre><code class="language-funky">func reset : Proc Average Nothing =
     sum := 0;
     count := 0;
@@ -487,7 +496,7 @@ func my-reverse : List a -&gt; List a =
 <p>Yes, this usage was one of the motivations for naming it <code>self</code> instead of <code>id</code>.</p>
 <a class="header" href="#arrays" id="arrays"><h3>Arrays</h3></a>
 <p>The last piece of puzzle before we can finally implement the quicksort algorithm is random-access arrays.</p>
-<p>Arrays in Funky are a bit different than arrays in imperative language, because we aren't allowed to mutate anything. A function to change an element in an array must evaluate to a new array. But no full copies need to be performed. The new array will always share as much data as possible with the old one and thus the whole operation will be quite cheap.</p>
+<p>Arrays in Funky are a bit different than arrays in imperative language, because we aren't allowed to mutate anything. To change an element in an array we must make a new array. But no full copies need to be performed. The new array can always share as much data as possible with the old one and thus the whole operation will be quite cheap.</p>
 <blockquote>
 <p><strong>Details.</strong> Without cheating, there's really no such thing as in-place, mutable, <a href="https://en.wikipedia.org/wiki/Time_complexity#Constant_time">O(1)</a> access arrays in pure functional programming. All data structures have to be primarily tree-based and persistent.</p>
 <p>However, there are efficient ways of implementing persistant arrays with O(log n) access time.</p>
@@ -498,19 +507,19 @@ func my-reverse : List a -&gt; List a =
 <p>It takes one argument, which is the default initial value for all elements. For example:</p>
 <pre><code class="language-funky">empty 0
 </code></pre>
-<p>is an <code>Array Int</code> full of zeros. Then once we have an array, <strong>we can use <code>at</code> to both get and update any element</strong> in the array. Here are the two overloaded versions:</p>
+<p>is an <code>Array Int</code> full of zeros. <strong>We use <code>at</code> to both get and update any element</strong> in the array. Here are the two overloaded versions:</p>
 <pre><code class="language-funky">func at : Int -&gt; Array a -&gt; a
 func at : Int -&gt; (a -&gt; a) -&gt; Array a -&gt; Array a
 </code></pre>
-<p>As you have surely noticed, they both look very similar to getters and updaters in records, except that they take an additional index argument. For example:</p>
+<p>As you have surely noticed, they look very similar to getters and updaters in records, except that they take an additional <code>Int</code> argument - the index. For example:</p>
 <pre><code class="language-funky">at 5 array
 </code></pre>
-<p>gets the element at the index 5, while:</p>
+<p><strong>gets the element at the index 5</strong>, while:</p>
 <pre><code class="language-funky">at 5 (+ 3) array
 </code></pre>
-<p>evaluates to a new array, where that element is increased by 3.</p>
+<p>evaluates to a <strong>new array, where that element is increased by 3</strong>.</p>
 <p>There are two more functions, namely <code>reset</code> and <code>swap</code>. We won't cover the first one, but we'll come back to the second one when we get to the quicksort.</p>
-<p><strong>That's basically all there is to arrays</strong>, the interesting part comes when integrating them with procedures.</p>
+<p>That's basically all there is to arrays. <strong>The interesting part comes when integrating them with procedures.</strong></p>
 <p>As we've already noticed, both version of <code>at</code> fit very well with the form of record accessors. And we can, in fact, use them the same way in procedures. For example:</p>
 <pre><code class="language-funky">func some-array : Array Int =
     start-with (empty 0);
@@ -529,7 +538,7 @@ func main : IO =
     );
     quit
 </code></pre>
-<p>We manually assign values to the elements of an array. Then in <code>main</code>, we loop over the indices from 0 to 4 and print the corresponding elements from the array. Does it work?</p>
+<p>We manually assign values to the elements of an array. Then, in <code>main</code>, we loop over the indices from 0 to 4 and print the corresponding elements from the array. Does it work?</p>
 <pre><code>$ funkycmd array.fn
 7
 4
@@ -547,8 +556,8 @@ func main : IO =
 </code></pre>
 <p>Now that we know arrays, let's get on to the quicksort!</p>
 <a class="header" href="#quicksort" id="quicksort"><h3>Quicksort</h3></a>
-<p>If you've ever implemented quicksort, then unless you're a super brilliant genius, you must know that it's quite tricky to get it right. At least the first time.</p>
-<p>Because of that, we'll make our job easier and <strong>simply translate the <a href="https://en.wikipedia.org/wiki/Quicksort#Algorithm">algorithm from Wikipedia</a></strong>:</p>
+<p>If you've ever implemented quicksort, you must know that it's quite tricky to get it right unless you're a super brilliant genius. At least the first time.</p>
+<p>Because of that, we'll make our job easier and <strong>simply translate <a href="https://en.wikipedia.org/wiki/Quicksort#Algorithm">this algorithm from Wikipedia</a></strong>:</p>
 <pre><code>algorithm quicksort(A, lo, hi) is
     if lo &lt; hi then
         p := partition(A, lo, hi)
@@ -571,6 +580,9 @@ algorithm partition(A, lo, hi) is
     array : Array Int,
     i     : Int,
 </code></pre>
+<blockquote>
+<p><strong>Note.</strong> The <code>partition</code> procedure also uses an index <code>j</code>, but we need not include it in the state.</p>
+</blockquote>
 <p>Okay, now let's try and translate <code>partition</code>. I won't do it step-by-step, this is more of a show-off than a tutorial, but I'm sure you'll be able to follow it. Here it is:</p>
 <pre><code class="language-funky">func partition : Int -&gt; Int -&gt; Proc Vars Int =
     \lo \hi
@@ -592,15 +604,18 @@ algorithm partition(A, lo, hi) is
     array &lt;- swap ii hi;
     return ii
 </code></pre>
-<p>It's definitely a little longer than the pseudocode. Most of the extra lines are from the lambdas and getting the current value of <code>i</code>. But otherwise, it reads just like the pseudocode.</p>
+<blockquote>
+<p><strong>Details.</strong> The <code>swap</code> function has type <code>Int -&gt; Int -&gt; Array a -&gt; Array a</code> and does the obvious: evaluates to an array with the corresponding elements swapped.</p>
+</blockquote>
+<p>It's definitely a little longer than the pseudocode. Most of the extra lines are from the lambdas and getting the current value of <code>i</code>. But otherwise, it reads very similar.</p>
 <p>Now onto the <code>quicksort</code> procedure:</p>
 <pre><code class="language-funky">func quicksort : Int -&gt; Int -&gt; Proc Vars Nothing =
     \lo \hi
     if (lo &gt;= hi)
         (return nothing);
     call (partition lo hi) \p
-    call (quicksort lo (p - 1)) \_
-    call (quicksort (p + 1) hi) \_
+    call (quicksort lo (p - 1));
+    call (quicksort (p + 1) hi);
     return nothing
 </code></pre>
 <p>This one is very straightforward. The only thing we changed from the pseudocode is that we inverted the condition. The pseudocode <em>does</em> something when <code>lo &lt; hi</code>, we instead <em>halt</em> the procedure in the other case.</p>
@@ -610,7 +625,7 @@ algorithm partition(A, lo, hi) is
         start-with (Vars (empty 0) 0);
         for-pair (enumerate [2, 6, 1, 0, 4, 3, 5, 9, 7, 8])
             (\i \x (array . at i) := x);
-        call (quicksort 0 9) \_
+        call (quicksort 0 9);
         return array
     ) \arr
     for (range 0 9) (
@@ -633,7 +648,7 @@ algorithm partition(A, lo, hi) is
 8
 9
 </code></pre>
-<p>It does work perfectly!</p>
+<p>It worked perfectly!</p>
 <p>So, as you can see, we can write imperative algorithms quite straightforwardly in Funky!</p>
 
                     </main>

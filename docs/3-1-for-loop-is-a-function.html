@@ -152,7 +152,7 @@
 <pre><code class="language-funky">func one-two-three : List Int = 1 :: 2 :: 3 :: one-two-three
 </code></pre>
 <p>This doesn't enter an infinite loop because Funky is a <a href="https://en.wikipedia.org/wiki/Lazy_evaluation">lazily evaluated language</a>.</p>
-<p>Of course, typing colons all the time would be tiresome, and so Funky provides a nice syntax suggar with the usual square brackets.</p>
+<p>Of course, typing colons all the time would be tiresome, and so Funky provides a nice syntax sugar with the usual square brackets.</p>
 <pre><code class="language-funky">[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;]
 </code></pre>
 <p>Expands to:</p>
@@ -161,7 +161,7 @@
 <p><a href="https://www.urbandictionary.com/define.php?term=well%20actually">Well, actually</a>... since the <code>String</code> type is defined as <code>List Char</code>, the string literals must also get expanded to colons, right? Yep, so the full expansion actually is this monstrosity:</p>
 <pre><code class="language-funky">('a' :: empty) :: ('b' :: empty) :: ('c' :: empty) :: ('d' :: empty) :: empty
 </code></pre>
-<p>After seeing this, I'm sure you're way more grateful for all the string and list syntax suggar than you've ever been before.</p>
+<p>After seeing this, I'm sure you're way more grateful for all the string and list syntax sugar than you've ever been before.</p>
 <a class="header" href="#all-the-cool-functional-stuff" id="all-the-cool-functional-stuff"><h2>All the <em>&quot;cool functional stuff&quot;</em></h2></a>
 <p>With lists comes the legacy of tools, perfected and sharpened for long generations. Let me (re)introduce you to <code>map</code> and <code>filter</code>.</p>
 <p>The function <code>map</code> simply applies a function to all of the elements of the list:</p>
