@@ -469,10 +469,11 @@ For example, how about a procedure that returns the actual current average as an
 func average : Proc Average Int =
     sum -> \s
     count -> \c
+    if (zero? c) (return 0);
     return (s / c)
 ```
 
-Simple as that.
+Simple as that. Need to make sure to handle the case when the `count` is 0.
 
 Using `add` and `average`, we can compose an imperative algorithm for calculating the average of a list:
 
@@ -742,3 +743,95 @@ $ funkycmd quicksort.fn
 It worked perfectly!
 
 So, as you can see, we can write imperative algorithms quite straightforwardly in Funky!
+
+## Mixing procedures with IO
+
+Forget [monad transformers](https://en.wikibooks.org/wiki/Haskell/Monad_transformers) (if you've used Haskell), mixing procedures with IO isn't such a big deal. I'll show you how to do it.
+
+So, we have this code:
+
+```funky
+func main : IO =
+    let (
+        start-with (Vars (empty 0) 0);
+        for-pair (enumerate [2, 6, 1, 0, 4, 3, 5, 9, 7, 8])
+            (\i \x (array . at i) := x);
+        call (quicksort 0 9);
+        return array
+    ) \arr
+    for (range 0 9) (
+        \i \next
+        println (string; at i arr);
+        next
+    );
+    quit
+```
+
+But the `let` is in fact not needed. Remember, there's an overloaded version of `return` (which we are in fact using in this code) with this type:
+
+```funky
+func return : (s -> a) -> Proc s a
+```
+
+How about we used it rather differently than we already have? What if we passed it a function of type `Vars -> IO`? Something like this:
+
+```funky
+func main : IO =
+    start-with (Vars (empty 0) 0);
+    for-pair (enumerate [2, 6, 1, 0, 4, 3, 5, 9, 7, 8])
+        (\i \x (array . at i) := x);
+    call (quicksort 0 9);
+    return \vars                              # <
+    for (range 0 9) (                         # <
+        \i \next                              # <
+        println (string; at i (array vars));  # <
+        next                                  # <
+    );                                        # <
+    quit                                      # <
+```
+
+I marked the function which we passed to `return`. It took `vars`, which is the whole state of the above procedure and made some `IO` out of it. The whole procedure now has type `Proc Vars IO` and so `start-with` turns it into just `IO`. Everything works:
+
+```
+$ funkycmd quicksort.fn
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+```
+
+**That's how we switch from `Proc` to `IO`!** How do we switch back? Just `start-with` again! You have the last state, reuse it. We need to make sure, though, that we return some `IO` at the end.
+
+Here's a simple program that reads 10 numbers from the input and prints out the average after each one (uses the `Average` record we defined earlier):
+
+```funky
+func main : IO =
+    start-with (Average 0 0);
+
+    for (range 1 10) (
+        \i \next
+        call average \avg
+        return \a
+        println ("Current average is " ++ string avg ++ ".");
+        print ("Number #" ++ string i ++ ": ");
+        scanln; int |> \x
+        start-with a;
+        call (add x);
+        next
+    );
+
+    call average \avg
+    return \a
+    println ("Final average is " ++ string avg ++ ".");
+    quit
+```
+
+I'm sure we could shave off some lines in a true imperative language, but so what! It's not bad for a purely functional one.
+
+That's all for this part. In the next part, we'll shine some light on _"exception" handling_.
