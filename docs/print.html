@@ -1668,10 +1668,9 @@ func my-reverse : List a -&gt; List a =
 <pre><code class="language-funky">func average : Proc Average Int =
     sum -&gt; \s
     count -&gt; \c
-    if (zero? c) (return 0);
-    return (s / c)
+    return (if (zero? c) 0 (s / c))
 </code></pre>
-<p>Simple as that. Need to make sure to handle the case when the <code>count</code> is 0.</p>
+<p>Simple as that. We make sure to handle the case when the <code>count</code> is 0 using <code>if</code> as a ternary operator.</p>
 <p>Using <code>add</code> and <code>average</code>, we can compose an imperative algorithm for calculating the average of a list:</p>
 <pre><code class="language-funky">func average : List Int -&gt; Int =
     \numbers
