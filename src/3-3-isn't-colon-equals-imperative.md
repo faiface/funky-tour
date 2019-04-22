@@ -469,11 +469,10 @@ For example, how about a procedure that returns the actual current average as an
 func average : Proc Average Int =
     sum -> \s
     count -> \c
-    if (zero? c) (return 0);
-    return (s / c)
+    return (if (zero? c) 0 (s / c))
 ```
 
-Simple as that. Need to make sure to handle the case when the `count` is 0.
+Simple as that. We make sure to handle the case when the `count` is 0 using `if` as a ternary operator.
 
 Using `add` and `average`, we can compose an imperative algorithm for calculating the average of a list:
 
