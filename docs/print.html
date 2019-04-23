@@ -2009,7 +2009,7 @@ func let-some : Maybe a -&gt; (a -&gt; b) -&gt; Maybe b
 <pre><code class="language-funky">let-some (first nums) \x
 &quot;the first is &quot; ++ string x
 </code></pre>
-<p>The whole thing is a maybe. To turn it into a naked value, we handle the <code>none</code> case with <code>if-none</code>:</p>
+<p>The whole thing is a maybe. To turn it into a naked value, we handle the <code>none</code> case:</p>
 <pre><code class="language-funky">if-none &quot;nothing there&quot;;
 let-some (first nums) \x
 &quot;the first is &quot; ++ string x

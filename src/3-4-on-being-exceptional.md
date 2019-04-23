@@ -110,7 +110,7 @@ let-some (first nums) \x
 "the first is " ++ string x
 ```
 
-The whole thing is a maybe. To turn it into a naked value, we handle the `none` case with `if-none`:
+The whole thing is a maybe. To turn it into a naked value, we handle the `none` case:
 
 ```funky
 if-none "nothing there";
