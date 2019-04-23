@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Maybe some pairs - A Tour of Funky</title>
+        <title>On being exceptional - A Tour of Funky</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li><li><a href="2-2-records.html"><strong aria-hidden="true">2.2.</strong> Records</a></li><li><a href="2-3-unions.html"><strong aria-hidden="true">2.3.</strong> Unions</a></li><li><a href="2-4-aliases.html"><strong aria-hidden="true">2.4.</strong> Aliases</a></li></ol></li><li><a href="3-the-other-half-of-the-language.html"><strong aria-hidden="true">3.</strong> The other half of the language</a></li><li><ol class="section"><li><a href="3-1-for-loop-is-a-function.html"><strong aria-hidden="true">3.1.</strong> For loop is a function</a></li><li><a href="3-2-yield-it-all.html"><strong aria-hidden="true">3.2.</strong> Yield it all!</a></li><li><a href="3-3-isn't-colon-equals-imperative.html"><strong aria-hidden="true">3.3.</strong> Isn't := imperative?</a></li><li><a href="3-4-maybe-some-pairs.html" class="active"><strong aria-hidden="true">3.4.</strong> Maybe some pairs</a></li><li><a href="3-5-appendix-a-list-of-useful-functions.html"><strong aria-hidden="true">3.5.</strong> Appendix: a list of useful functions</a></li></ol></li></ol>
+            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li><li><a href="2-2-records.html"><strong aria-hidden="true">2.2.</strong> Records</a></li><li><a href="2-3-unions.html"><strong aria-hidden="true">2.3.</strong> Unions</a></li><li><a href="2-4-aliases.html"><strong aria-hidden="true">2.4.</strong> Aliases</a></li></ol></li><li><a href="3-the-other-half-of-the-language.html"><strong aria-hidden="true">3.</strong> The other half of the language</a></li><li><ol class="section"><li><a href="3-1-for-loop-is-a-function.html"><strong aria-hidden="true">3.1.</strong> For loop is a function</a></li><li><a href="3-2-yield-it-all.html"><strong aria-hidden="true">3.2.</strong> Yield it all!</a></li><li><a href="3-3-isn't-colon-equals-imperative.html"><strong aria-hidden="true">3.3.</strong> Isn't := imperative?</a></li><li><a href="3-4-on-being-exceptional.html" class="active"><strong aria-hidden="true">3.4.</strong> On being exceptional</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -136,7 +136,93 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="#maybe-some-pairs" id="maybe-some-pairs"><h1>Maybe some pairs</h1></a>
+                        <a class="header" href="#on-being-exceptional" id="on-being-exceptional"><h1>On being exceptional</h1></a>
+<p>What a better way to finish a tour than by talking about failing, right? Different languages solve the problem of failure differently. Many use the concept of <em><a href="https://en.wikipedia.org/wiki/Exception_handling">exceptions</a></em>: when an exception occurs, the program breaks in normal flow and starts back-tracking the calls until it finds an appropriate exception handler. Other languages, such as <a href="https://en.wikipedia.org/wiki/Go_(programming_language)">Go</a> do it differently, they employ error values that the programmer must manually check.</p>
+<p>In this part, we'll talk about how error handling can be done in Funky. Of course, just like pretty much anything else, error handling isn't built-in to the language but is a part of the standard library instead.</p>
+<p><strong>The standard library currently only implements the simplest form of error handling: the <code>Maybe</code> type.</strong> More sophisticated error types will be added when the need and specific use-cases arise.</p>
+<a class="header" href="#the-maybe-type" id="the-maybe-type"><h2>The <code>Maybe</code> type</h2></a>
+<p>Most functions always succeed. But some can also fail. To represent failure, we need a new type. The simple (and so far only) type for this purpose is <code>Maybe</code>:</p>
+<pre><code class="language-funky">union Maybe a = none | some a
+</code></pre>
+<p>It has two alternatives: <strong>none</strong> and <strong>some</strong>. The former is a failure. The latter is a success.</p>
+<p><strong>Do you remember the list manipulation functions <code>first!</code> and <code>rest!</code>?</strong> Well, they crash when the list is empty. Crashing the whole program isn't usually desirable and so there are non-crashing alternatives: <code>first</code> and <code>rest</code>. What do they return? A <code>Maybe</code> of course:</p>
+<pre><code class="language-funky">func first : List a -&gt; Maybe a
+func rest  : List a -&gt; Maybe (List a)
+</code></pre>
+<p>For example:</p>
+<pre><code class="language-funky">func main : IO =
+    let [1, 2, 3, 4] \nums
+    println (
+        switch first nums
+        case none
+            &quot;nothing there&quot;
+        case some \x
+            &quot;the first is &quot; ++ string x
+    );
+    quit
+</code></pre>
+<p>It works:</p>
+<pre><code>$ funkycmd maybe.fn
+the first is 1
+</code></pre>
+<p>If you don't wanna use the <code>switch</code>, you can use functions <code>none?</code> and <code>extract!</code> instead:</p>
+<pre><code class="language-funky">func main : IO =
+    let [1, 2, 3, 4] \nums
+    println (
+        let (first nums) \maybe-x
+        if (none? maybe-x) &quot;nothing there&quot;;
+        &quot;the first is &quot; ++ string (extract! maybe-x)
+    );
+    quit
+</code></pre>
+<blockquote>
+<p><strong>Note.</strong> The function <code>extract!</code> can crash, so use at your own risk.</p>
+</blockquote>
+<p>Another alternative would be to use <code>?</code> and <code>map</code>. They're quite simple. Here are their types:</p>
+<pre><code class="language-funky">func ?   : a -&gt; Maybe a -&gt; a
+func map : (a -&gt; b) -&gt; Maybe a -&gt; Maybe b
+</code></pre>
+<p>The <code>?</code> function takes a <em>default value</em> and a maybe and evaluates to the default value if the maybe is <code>none</code>. Otherwise it evaluates to the value inside the maybe. For example: <code>0 ? none</code> evaluates to <code>0</code>, while <code>0 ? some 3</code> evaluates to <code>3</code>.</p>
+<p>The <code>map</code> function transforms the value inside the a maybe using the supplied function. If the maybe is <code>none</code>, the result will be <code>none</code> as well. For example: <code>map (+ 1) none</code> results in <code>none</code>, while <code>map (+ 1) (some 3)</code> results in <code>some 4</code>.</p>
+<p>We can use the <code>map</code> function to turn the <code>Maybe Int</code> obtained from <code>first nums</code> into a <code>Maybe String</code> like this:</p>
+<pre><code class="language-funky">map (\x &quot;the first is &quot; ++ string x) (first nums)
+</code></pre>
+<p>Then we can use <code>?</code> to fill the case when the list is empty:</p>
+<pre><code class="language-funky">&quot;nothing there&quot; ? map (\x &quot;the first is &quot; ++ string x) (first nums)
+</code></pre>
+<p>And here's the final program:</p>
+<pre><code class="language-funky">func main : IO =
+    let [1, 2, 3, 4] \nums
+    println (&quot;nothing there&quot; ? map (\x &quot;the first is &quot; ++ string x) (first nums));
+    quit
+</code></pre>
+<p>That line is quite long. Too long!</p>
+<p>But, there's a solution! The functions <code>?</code> and <code>map</code> have synonyms that are suitable for vertical code. Namely: <code>if-none</code> and <code>let-some</code>.</p>
+<pre><code class="language-funky">func if-none  : a -&gt; Maybe a -&gt; a
+func let-some : Maybe a -&gt; (a -&gt; b) -&gt; Maybe b
+</code></pre>
+<p>The function <code>if-some</code> is a precise synonym of <code>?</code>. And the only difference between <code>let-some</code> and <code>map</code> is the order of arguments.</p>
+<p>We use <code>let-some</code> to safely extract the value from a maybe:</p>
+<pre><code class="language-funky">let-some (first nums) \x
+&quot;the first is &quot; ++ string x
+</code></pre>
+<p>The whole thing is a maybe. To turn it into a naked value, we handle the <code>none</code> case with <code>if-none</code>:</p>
+<pre><code class="language-funky">if-none &quot;nothing there&quot;;
+let-some (first nums) \x
+&quot;the first is &quot; ++ string x
+</code></pre>
+<p>And here's the whole thing:</p>
+<pre><code class="language-funky">func main : IO =
+    let [1, 2, 3, 4] \nums
+    println (
+        if-none &quot;nothing there&quot;;
+        let-some (first nums) \x
+        &quot;the first is &quot; ++ string x
+    );
+    quit
+</code></pre>
+<p>That's more readable!</p>
+<p>In this short refactoring exercise, we've seen most of the useful <code>Maybe</code> functions: <code>none?</code>, <code>extract!</code>, <code>?</code>, <code>map</code>, <code>if-none</code>, <code>let-some</code>.</p>
 
                     </main>
 
@@ -148,10 +234,6 @@
                             </a>
                         
 
-                        
-                            <a rel="next" href="3-5-appendix-a-list-of-useful-functions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
                         
 
                         <div style="clear: both"></div>
@@ -166,10 +248,6 @@
                     </a>
                 
 
-                
-                    <a href="3-5-appendix-a-list-of-useful-functions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
                 
             </nav>
 
