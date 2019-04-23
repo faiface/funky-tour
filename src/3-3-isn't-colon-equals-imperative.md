@@ -77,7 +77,7 @@ Could we somohow get rid of the helper `my-reverse-algo` function? It isn't real
 
 What would help would be some way to define recursive functions anonymously, i.e. without making a global `func` definition. That way we could define `my-reverse-algo` directly inside `my-reverse`.
 
-The function for this job is called `recur`, otherwise known as the [_fixpoint combinator_](https://en.wikipedia.org/wiki/Fixed-point_combinator), or the _Y combinator_. It's a pretty mind-blowing function. I won't explain how it works (it took me a long time to figure it out), but I'll explain how you can use it.
+The function for this job is called `recur`, otherwise known as the _[fixpoint combinator](https://en.wikipedia.org/wiki/Fixed-point_combinator)_, or the _Y combinator_. It's a pretty mind-blowing function. I won't explain how it works (it took me a long time to figure it out), but I'll explain how you can use it.
 
 Here's the type, but it won't help you figure out much:
 

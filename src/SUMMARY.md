@@ -16,5 +16,4 @@
     - [For loop is a function](3-1-for-loop-is-a-function.md)
     - [Yield it all!](3-2-yield-it-all.md)
     - [Isn't := imperative?](3-3-isn't-colon-equals-imperative.md)
-    - [Maybe some pairs](3-4-maybe-some-pairs.md)
-    - [Appendix: a list of useful functions](3-5-appendix-a-list-of-useful-functions.md)
+    - [On being exceptional](3-4-on-being-exceptional.md)
