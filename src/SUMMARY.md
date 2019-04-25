@@ -17,3 +17,6 @@
     - [Yield it all!](3-2-yield-it-all.md)
     - [Isn't := imperative?](3-3-isn't-colon-equals-imperative.md)
     - [On being exceptional](3-4-on-being-exceptional.md)
+- [Extras](4-extras.md)
+    - [Planned/considered/wanted features](4-1-planned-considered-wanted-features.md)
+    - [Building an own side-effect interpreter](4-2-building-an-own-side-effect-interpreter.md)
