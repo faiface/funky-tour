@@ -137,15 +137,15 @@
                 <div id="content" class="content">
                     <main>
                         <a class="header" href="#on-being-exceptional" id="on-being-exceptional"><h1>On being exceptional</h1></a>
-<p>What a better way to finish a tour than by talking about failing, right? Different languages solve the problem of failure differently. Many use the concept of <em><a href="https://en.wikipedia.org/wiki/Exception_handling">exceptions</a></em>: when an exception occurs, the program breaks in normal flow and starts back-tracking the calls until it finds an appropriate exception handler. Other languages, such as <a href="https://en.wikipedia.org/wiki/Go_(programming_language)">Go</a> do it differently, they employ error values that the programmer must manually check.</p>
+<p>What a better way to finish a tour than by talking about failing, right? Different languages solve the problem of failure differently. Many use the concept of <em><a href="https://en.wikipedia.org/wiki/Exception_handling">exceptions</a></em>: when an exception occurs, the program breaks its control flow and starts back-tracking the calls until it finds an appropriate exception handler. Other languages, such as <a href="https://en.wikipedia.org/wiki/Go_(programming_language)">Go</a> do it differently, they employ error values that the programmer must manually check.</p>
 <p>In this part, we'll talk about how error handling can be done in Funky. Of course, just like pretty much anything else, error handling isn't built-in to the language but is a part of the standard library instead.</p>
 <p><strong>The standard library currently only implements the simplest form of error handling: the <code>Maybe</code> type.</strong> More sophisticated error types will be added when the need and specific use-cases arise.</p>
 <a class="header" href="#the-maybe-type" id="the-maybe-type"><h2>The <code>Maybe</code> type</h2></a>
-<p>Most functions always succeed. But some can also fail. To represent failure, we need a new type. The simple (and so far only) type for this purpose is <code>Maybe</code>:</p>
+<p>Most functions always succeed. But some can also fail. To represent failure, we need a new type. The simplest (and so far only) type for this purpose is <code>Maybe</code>:</p>
 <pre><code class="language-funky">union Maybe a = none | some a
 </code></pre>
 <p>It has two alternatives: <strong>none</strong> and <strong>some</strong>. The former is a failure. The latter is a success.</p>
-<p><strong>Do you remember the list manipulation functions <code>first!</code> and <code>rest!</code>?</strong> Well, they crash when the list is empty. Crashing the whole program isn't usually desirable and so there are non-crashing alternatives: <code>first</code> and <code>rest</code>. What do they return? A <code>Maybe</code> of course:</p>
+<p>Do you remember the list manipulation functions <code>first!</code> and <code>rest!</code>? Well, they crash when the list is empty. Crashing the whole program isn't usually desirable and so there are non-crashing alternatives: <code>first</code> and <code>rest</code>. What do they return? A <code>Maybe</code> of course:</p>
 <pre><code class="language-funky">func first : List a -&gt; Maybe a
 func rest  : List a -&gt; Maybe (List a)
 </code></pre>
@@ -165,7 +165,7 @@ func rest  : List a -&gt; Maybe (List a)
 <pre><code>$ funkycmd maybe.fn
 the first is 1
 </code></pre>
-<p>If you don't wanna use the <code>switch</code>, you can use functions <code>none?</code> and <code>extract!</code> instead:</p>
+<p>If we don't wanna use the <code>switch</code>, we can use <code>none?</code> and <code>extract!</code> instead:</p>
 <pre><code class="language-funky">func main : IO =
     let [1, 2, 3, 4] \nums
     println (
@@ -178,12 +178,12 @@ the first is 1
 <blockquote>
 <p><strong>Note.</strong> The function <code>extract!</code> can crash, so use at your own risk.</p>
 </blockquote>
-<p>Another alternative would be to use <code>?</code> and <code>map</code>. They're quite simple. Here are their types:</p>
+<p>Yet another alternative would be to use <code>?</code> and <code>map</code>. They're quite simple, but I'll explain them. Here are their types:</p>
 <pre><code class="language-funky">func ?   : a -&gt; Maybe a -&gt; a
 func map : (a -&gt; b) -&gt; Maybe a -&gt; Maybe b
 </code></pre>
 <p>The <code>?</code> function takes a <em>default value</em> and a maybe and evaluates to the default value if the maybe is <code>none</code>. Otherwise it evaluates to the value inside the maybe. For example: <code>0 ? none</code> evaluates to <code>0</code>, while <code>0 ? some 3</code> evaluates to <code>3</code>.</p>
-<p>The <code>map</code> function transforms the value inside the a maybe using the supplied function. If the maybe is <code>none</code>, the result will be <code>none</code> as well. For example: <code>map (+ 1) none</code> results in <code>none</code>, while <code>map (+ 1) (some 3)</code> results in <code>some 4</code>.</p>
+<p>The <code>map</code> function transforms the value inside a maybe using the supplied function. If the maybe is <code>none</code>, the result will be <code>none</code> as well. For example: <code>map (+ 1) none</code> results in <code>none</code>, while <code>map (+ 1) (some 3)</code> results in <code>some 4</code>. It works very much like <code>map</code> for lists.</p>
 <p>We can use the <code>map</code> function to turn the <code>Maybe Int</code> obtained from <code>first nums</code> into a <code>Maybe String</code> like this:</p>
 <pre><code class="language-funky">map (\x &quot;the first is &quot; ++ string x) (first nums)
 </code></pre>
@@ -201,12 +201,12 @@ func map : (a -&gt; b) -&gt; Maybe a -&gt; Maybe b
 <pre><code class="language-funky">func if-none  : a -&gt; Maybe a -&gt; a
 func let-some : Maybe a -&gt; (a -&gt; b) -&gt; Maybe b
 </code></pre>
-<p>The function <code>if-some</code> is a precise synonym of <code>?</code>. And the only difference between <code>let-some</code> and <code>map</code> is the order of arguments.</p>
-<p>We use <code>let-some</code> to safely extract the value from a maybe:</p>
+<p>The function <code>if-none</code> is a precise synonym of <code>?</code>. And the only difference between <code>let-some</code> and <code>map</code> is the order of arguments.</p>
+<p>We use <code>let-some</code> to safely extract a value from a maybe:</p>
 <pre><code class="language-funky">let-some (first nums) \x
 &quot;the first is &quot; ++ string x
 </code></pre>
-<p>The whole thing is a maybe. To turn it into a naked value, we handle the <code>none</code> case:</p>
+<p>The whole thing becomes a new maybe. To turn it into a naked value, we handle the <code>none</code> case:</p>
 <pre><code class="language-funky">if-none &quot;nothing there&quot;;
 let-some (first nums) \x
 &quot;the first is &quot; ++ string x
@@ -222,7 +222,13 @@ let-some (first nums) \x
     quit
 </code></pre>
 <p>That's more readable!</p>
+<blockquote>
+<p><strong>Note.</strong> Of couse, there are many cases when <code>?</code> and <code>map</code> are the right choices. Perhaps this one is too. Depends on your personal preference.</p>
+</blockquote>
 <p>In this short refactoring exercise, we've seen most of the useful <code>Maybe</code> functions: <code>none?</code>, <code>extract!</code>, <code>?</code>, <code>map</code>, <code>if-none</code>, <code>let-some</code>.</p>
+<p>There are some more, like <code>some?</code>, <code>for-some</code>, <code>filter-some</code>, and <code>when-some</code>. You can try them out on your own.</p>
+<a class="header" href="#thank-you" id="thank-you"><h2>Thank you</h2></a>
+<p>You have reached the end of the tour. Thank you! I hope you find Funky interesting. It still needs a lot of work, but I'll do my best to make it as good as possible. If you'd like to get on that journey, you're more than welcome to join me on <a href="">TODO-CHAT-SERVICE</a>, or contribute on <a href="https://github.com/faiface/funky">GitHub</a>.</p>
 
                     </main>
 

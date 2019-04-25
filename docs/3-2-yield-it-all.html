@@ -267,6 +267,11 @@ next
     empty
 </code></pre>
 <p>And we're done! It's so nice and readable having this function expressed vertically.</p>
+<blockquote>
+<p><strong>Note.</strong> Actually, <code>list-&gt;string</code> can be done nicer in a functional style using the <code>join</code> function.</p>
+<p><code>&quot;[&quot; ++ join &quot;, &quot; (map str list) ++ &quot;]&quot;</code></p>
+<p>Functional solutions are often superior to imperative ones. We've done <code>list-&gt;string</code> imperatively just for the demonstration.</p>
+</blockquote>
 <p>Let's test it out! We'll print all the primes until 100. First, the prime testing function:</p>
 <pre><code class="language-funky">func prime? : Int -&gt; Bool =
     \n
