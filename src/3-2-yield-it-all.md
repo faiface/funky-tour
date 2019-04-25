@@ -204,6 +204,12 @@ func list->string : (a -> String) -> List a -> String =
 
 And we're done! It's so nice and readable having this function expressed vertically.
 
+> **Note.** Actually, `list->string` can be done nicer in a functional style using the `join` function.
+>
+> `"[" ++ join ", " (map str list) ++ "]"`
+>
+> Functional solutions are often superior to imperative ones. We've done `list->string` imperatively just for the demonstration.
+
 Let's test it out! We'll print all the primes until 100. First, the prime testing function:
 
 ```funky
