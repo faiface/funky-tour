@@ -21,6 +21,17 @@ Funky aims to be a general purpose language without forgetting about visualizati
 
 True power will come with the ability to use multiple side-effect interpreters in a single program. GUI & command line, concurrency & web, or all of them together. Not sure how to do it yet, but it's definitely something that wants to happen.
 
+## Improvements to `switch`/`case` _(planned)_
+
+The `switch`/`case` construct is kinda limited at the moment. You need to list all the alternatives in the same order they are defined.
+
+This construct will be improved to support:
+
+- Listing alternatives in any order.
+- A default case + ability to leave out alternatives.
+- Switching on multiple things simultaneously.
+- Switching on plain values using `==`.
+
 ## The `with` clause _(planned)_
 
 Currently, it's possible to make a `sum` function of this type:
