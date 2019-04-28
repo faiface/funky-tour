@@ -2054,6 +2054,15 @@ let-some (first nums) \x
 </ul>
 <a class="header" href="#ability-to-combine-multiple-interpreters-in-a-single-program-wanted" id="ability-to-combine-multiple-interpreters-in-a-single-program-wanted"><h2>Ability to combine multiple interpreters in a single program <em>(wanted)</em></h2></a>
 <p>True power will come with the ability to use multiple side-effect interpreters in a single program. GUI &amp; command line, concurrency &amp; web, or all of them together. Not sure how to do it yet, but it's definitely something that wants to happen.</p>
+<a class="header" href="#improvements-to-switchcase-planned" id="improvements-to-switchcase-planned"><h2>Improvements to <code>switch</code>/<code>case</code> <em>(planned)</em></h2></a>
+<p>The <code>switch</code>/<code>case</code> construct is kinda limited at the moment. You need to list all the alternatives in the same order they are defined.</p>
+<p>This construct will be improved to support:</p>
+<ul>
+<li>Listing alternatives in any order.</li>
+<li>A default case + ability to leave out alternatives.</li>
+<li>Switching on multiple things simultaneously.</li>
+<li>Switching on plain values using <code>==</code>.</li>
+</ul>
 <a class="header" href="#the-with-clause-planned" id="the-with-clause-planned"><h2>The <code>with</code> clause <em>(planned)</em></h2></a>
 <p>Currently, it's possible to make a <code>sum</code> function of this type:</p>
 <pre><code class="language-funky">func sum : List Int -&gt; Int
