@@ -137,8 +137,34 @@ That's more readable!
 
 In this short refactoring exercise, we've seen most of the useful `Maybe` functions: `none?`, `extract!`, `?`, `map`, `if-none`, `let-some`.
 
-There are some more, like `some?`, `for-some`, `filter-some`, and `when-some`. You can try them out on your own.
+There are some more, like `let-::`, `some?`, `for-some`, `filter-some`, and `when-some`. You can try them out on your own.
 
-## Thank you
+Just for the sake of giving another example, here's a simple function to get the third element of a list:
 
-You have reached the end of the tour. Thank you! I hope you find Funky interesting. It still needs a lot of work, but I'll do my best to make it as good as possible. If you'd like to get on that journey, you're more than welcome to join me on [TODO-CHAT-SERVICE](), or contribute on [GitHub](https://github.com/faiface/funky).
+```funky
+func third : List a -> Maybe a =
+    \list
+    let-some (rest list) \tail
+    let-some (rest tail) \tail
+    first tail
+```
+
+Or, here's a more complicated example that uses `let-::` (used for destructuring lists into the first element and the rest, otherwise very similar to `let-some`):
+
+```funky
+func merge : List Int -> List Int -> List Int =
+    \left \right
+    if-none (left ++ right);
+    let-:: left  \l \ls
+    let-:: right \r \rs
+    if (l < r) (l :: merge ls right);
+    r :: merge left rs
+
+func merge-sort : List Int -> List Int =
+    \list
+    let (length list) \len
+    if (len <= 1) list;
+    let (take (len / 2) list) \left
+    let (drop (len / 2) list) \right
+    merge (merge-sort left) (merge-sort right)
+```

@@ -9,3 +9,7 @@ What they meant was that while it's often easy to express a complex algorithm in
 I believe this is because some problems are just easier to express imperatively. I thus hope that by making imperative idioms easily expressible in Funky, we can have a language where difficult tasks are easy and easy tasks are easy alike. Really difficult tasks will remain difficult, I'm sorry.
 
 So, how does Funky support the _proper_ functional programming idioms? In this part, we'll focus on lists, the powerhouse of functional programming, and take a look at some really cool programs.
+
+## Thank you
+
+You have reached the end of the tour. Thank you! I hope you find Funky interesting. It still needs a lot of work, but I'll do my best to make it as good as possible. If you'd like to get on that journey, you're more than welcome to join me on [TODO-CHAT-SERVICE](), or contribute on [GitHub](https://github.com/faiface/funky).
