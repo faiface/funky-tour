@@ -47,9 +47,27 @@ Expands to:
 
 After seeing this, I'm sure you're way more grateful for all the string and list syntax sugar than you've ever been before.
 
-## All the _"cool functional stuff"_
+## Some basic list functions
 
-With lists comes the legacy of tools, perfected and sharpened for long generations. Let me (re)introduce you to `map` and `filter`.
+With lists comes the legacy of tools, perfected and sharpened for long generations.
+
+The most basic and important ones are `empty?`, `first!` and `rest!`:
+
+```
+$ funkycmd -types
+> empty?
+List a -> Bool
+> first!
+List a -> a
+> rest!
+List a -> List a
+```
+
+The REPL will print more version of the `empty?` function, but the one listed here is the important one. The functions are simple: `empty?` tells if a list is empty, `first!` returns the first element of the list, and `rest!` cuts off the first element and returns what remains. All other list functions can be implemented in terms of these three (or in terms of `switch`/`case`).
+
+> **Details.** Functions `first!` and `rest!` have the '!' symbol in them because they can crash: they crash when the list is empty. They have their non-crashing versions called `first` and `rest` that return a `Maybe`. We'll learn more about maybes in [another part](3-4-on-being-exceptional.md).
+
+Now, let me (re)introduce you to `map` and `filter`.
 
 The function `map` simply applies a function to all of the elements of the list:
 
@@ -75,15 +93,11 @@ zip (++) ["he", "wo"] ["llo", "rld"]  # => ["hello", "world"]
 The `zip` function enables this ultra cool hipster fibonacci one liner:
 
 ```funky
-func fibonacci : List Int =
-    0 :: 1 :: zip (+) fibonacci (rest! fibonacci)
+func fibs : List Int =
+    0 :: 1 :: zip (+) fibs (rest! fibs)
 ```
 
-> **Details.** The `rest!` function returns the list except its first element and crashes if the list is empty, therefore the `!` sign. For example, `rest! [1, 2, 3]` evaluates to `[2, 3]`. Similarly, there is a `first!` function that evaluates to the first element of the list.
->
-> These functions also have their non-crashing versions without the `!` signs that return `Maybe`s (optional values, we'll learn more about them). For example, `first ["a", "b", "c"]` evaluates to `some "a"`, while `first []` evaluates to `none`.
-
-There are  more list functions, like `fold<` and `fold>` (those are same as `foldr` and `foldl'` in Haskell), but we'll not give them too much attention, you can try them out on your own. For example, here's how you'd sum a list of numbers with `fold>`:
+There are more list functions, like `fold<` and `fold>` (those are same as `foldr` and `foldl'` in Haskell), but we'll not give them too much attention, you can try them out on your own. For example, here's how you'd sum a list of numbers with `fold>`:
 
 ```funky
 fold> (+) 0 (range 1 15)  # => 120
