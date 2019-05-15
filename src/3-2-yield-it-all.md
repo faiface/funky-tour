@@ -117,7 +117,7 @@ First, we gotta choose the type. What could it be? Perhaps this one?
 List a -> String
 ```
 
-Well, this is what it will be in the future, when the [`with` clause](TODO) gets implemented, but so far, we can't do it that way. Why? We're accepting `List a`: a list of any type. To convert it to string, we need to convert each of its elements to string. But, there's no general way of converting an arbitrary type to string - the `string` function is only implemented for a handful of types.
+Well, this is what it will be in the future, when the [`with` clause](4-2-planned-considered-wanted-features.md#the-with-clause-planned) gets implemented, but so far, we can't do it that way. Why? We're accepting `List a`: a list of any type. To convert it to string, we need to convert each of its elements to string. But, there's no general way of converting an arbitrary type to string - the `string` function is only implemented for a handful of types.
 
 This will do:
 

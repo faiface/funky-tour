@@ -155,4 +155,4 @@ Getters can be composed similarly, except in the opposite order:
 
 That's the Y coordinate of the last point.
 
-Getters and updaters also have a very important role when it comes to expressing state flow with the `State` type as we'll cover in the [TODO]() part. In short, they enable record fields to act as mutable variables in an imperative algorithm.
+Getters and updaters also have a very important role when it comes to expressing state flow with the `State` type as we'll cover in [the part about expressing imperative algorithms](3-3-isn't-colon-equals-imperative.md). In short, they enable record fields to act as mutable variables in an imperative algorithm.
