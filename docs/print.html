@@ -2077,10 +2077,98 @@ func merge-sort : List Int -&gt; List Int =
 <p>Someone once said: <em>Functional programming makes difficult tasks easy and easy tasks difficult.</em></p>
 <p>What they meant was that while it's often easy to express a complex algorithm in a few (or even one) lines of code, common things, like making a simple interacting command line program can be challenging and not elegant at all.</p>
 <p>I believe this is because some problems are just easier to express imperatively. I thus hope that by making imperative idioms easily expressible in Funky, we can have a language where difficult tasks are easy and easy tasks are easy alike. Really difficult tasks will remain difficult, I'm sorry.</p>
-<p>So, how does Funky support the <em>proper</em> functional programming idioms? In this part, we'll focus on lists, the powerhouse of functional programming, and take a look at some really cool programs.</p>
+<p>So, how does Funky support the <em>proper</em> functional programming idioms? In this part, we'll focus on those, particularly lists: the powerhouse of functional programming, and take a look at some really cool programs.</p>
+<a class="header" href="#pascals-triangle" id="pascals-triangle"><h2>Pascal's triangle</h2></a>
+<p>Our first problem will be to construct the <a href="https://en.wikipedia.org/wiki/Pascal%27s_triangle">Pascal's triangle</a> as it is called, although it was definitely not first discovered by <a href="https://en.wikipedia.org/wiki/Blaise_Pascal">Blaise Pascal</a>.</p>
+<p>It looks like this:</p>
+<pre><code>              1
+            1   1
+          1   2   1
+        1   3   3   1
+      1   4   6   4   1
+    1   5   10  10  5   1
+  1   6   15  20  15  6   1
+1   7   21  35  35  21  7   1
+</code></pre>
+<p>It's all ones on the edges, but other than that, each number is exactly the sum of the two numbers above it. Those are just the first eight rows, of course, there's infinite number of them. If you're not familiar with the properties of this triangle, I highly recommend checking out the <a href="https://en.wikipedia.org/wiki/Pascal%27s_triangle">Wikipedia page</a>, they're quite remarkable.</p>
+<p>Alright, so let's make Pascal's triangle. Since Funky is lazy, we can express it as an infinite list of rows. Each row of course is a list of integers:</p>
+<pre><code class="language-funky">func pascal's-triangle : List (List Int) =
+    # ???
+</code></pre>
+<p>Now, the first row is <code>[1]</code>. It would be nice if we make some function that can transform one row into the next one. Then we could use <code>iterate</code>, which works like this:</p>
+<pre><code class="language-funky">iterate f x = [x, f x, f (f x), f (f (f x)), ...]
+</code></pre>
+<p>to generate the whole list of rows.</p>
+<pre><code class="language-funky">func pascal's-triangle : List (List Int) =
+    iterate ??? [1]
+</code></pre>
+<p>What could be the function to transition from one row to the other? The function <code>adjacent</code> comes handy here. It works like this:</p>
+<pre><code class="language-funky">adjacent f [x, y, z, w, ...] = [f x y, f y z, f z w, ...]
+</code></pre>
+<p>It pairs each pair of adjacent elements in the list with the supplied function. That's almost exactly what we want. For example:</p>
+<pre><code class="language-funky">adjacent (+) [1, 3, 3, 1] =&gt; [4, 6, 4]
+</code></pre>
+<p>All that's missing are the ones at the edges. That's easy to fix:</p>
+<pre><code class="language-funky">[1] ++ adjacent (+) [1, 3, 3, 1] ++ [1] =&gt; [1, 4, 6, 4, 1]
+</code></pre>
+<p>And here's the final function:</p>
+<pre><code class="language-funky">func pascal's-triangle : List (List Int) =
+    iterate (\row [1] ++ adjacent (+) row ++ [1]) [1]
+</code></pre>
+<p>That's really elegant! Let's move on to another example.</p>
+<a class="header" href="#quick-sort" id="quick-sort"><h2>Quick-sort</h2></a>
+<p>You may have seen this one, but I have included it anyway, because it's so nice. The quick-sort algorithm is a sorting algorithm that works like this:</p>
+<ol>
+<li>We pick a single element out of the list, we call it a <em>pivot</em>.</li>
+<li>We divide the list into three groups: <em>less than</em> pivot, <em>more than</em> pivot, <em>equal to</em> pivot.</li>
+<li>We know the order in which these groups should appear in the final sorted list, so we sort the first two recursively, then put everything together.</li>
+</ol>
+<p>Here, we'll use the first element as the pivot for simplicity. The best choice would be the median, <a href="https://en.wikipedia.org/wiki/Median_of_medians">which can be found in O(n) time</a>. Choosing the first element may result in O(n^2) time for some lists, especially nearly sorted ones. However, it will be optimal for randomly ordered lists.</p>
+<p>The algorithm as described above can be translated to code nearly exactly (we use <code>List Int</code> for simplicity again, but this can be done generally by taking the <code>&lt;</code> function as another argument):</p>
+<pre><code class="language-funky">func quick-sort : List Int -&gt; List Int =
+    \nums
+    if (empty? nums) [];
+    let (first! nums)            \pivot
+    let (filter (&lt; pivot) nums)  \less
+    let (filter (== pivot) nums) \equal
+    let (filter (&gt; pivot) nums)  \more
+    quick-sort less ++ equal ++ quick-sort more
+</code></pre>
+<p>And that's it! The only little code smell is the use of <code>first!</code>, but that can be easily fixed:</p>
+<pre><code class="language-funky">func quick-sort : List Int -&gt; List Int =
+    \nums
+    if-none [];
+    let-some (first nums)        \pivot
+    let (filter (&lt; pivot) nums)  \less
+    let (filter (== pivot) nums) \equal
+    let (filter (&gt; pivot) nums)  \more
+    quick-sort less ++ equal ++ quick-sort more
+</code></pre>
+<p>Now it's perfect.</p>
+<a class="header" href="#integrating" id="integrating"><h2>Integrating</h2></a>
+<p>Calculating the <a href="https://en.wikipedia.org/wiki/Derivative">derivative</a> of a function is quite easy:</p>
+<pre><code class="language-funky">func differentiate : (Float -&gt; Float) -&gt; Float -&gt; Float =
+    \f \x
+    let 1e-8 \eps
+    (f (x + eps) - f (x - eps)) / (2.0 * eps)
+</code></pre>
+<p>Then, we can use it:</p>
+<pre><code class="language-funky">differentiate (\x x ^ 2.0)
+</code></pre>
+<p>The above results in a function that's almost equal to:</p>
+<pre><code class="language-funky">\x 2.0 * x
+</code></pre>
+<p>As it should be.</p>
+<p>So, how about calculating the <a href="https://en.wikipedia.org/wiki/Integral">integral</a>? A function like:</p>
+<pre><code class="language-funky">func integrate : (Float -&gt; Float) -&gt; Float -&gt; Float =
+    # ???
+</code></pre>
+<p>would be really nice.</p>
+<p>TODO</p>
 <a class="header" href="#thank-you" id="thank-you"><h2>Thank you</h2></a>
 <p>You have reached the end of the tour. Thank you! I hope you find Funky interesting. It still needs a lot of work, but I'll do my best to make it as good as possible. If you'd like to get on that journey, you're more than welcome to join me on <a href="">TODO-CHAT-SERVICE</a>, or contribute on <a href="https://github.com/faiface/funky">GitHub</a>.</p>
 <a class="header" href="#extras" id="extras"><h1>Extras</h1></a>
+<p><img src="extras.png" alt="Extras" /></p>
 <p>And now that you've learned about the language, here are a few articles about stuff that didn't fit in the tour itself.</p>
 <a class="header" href="#list-of-idioms" id="list-of-idioms"><h1>List of idioms</h1></a>
 <p>This is an article that lists most of the idioms frequently used in Funky code. Each idiom is introduced by a name with a link to the place in this tour that describes it, a short description and some schematic code examples.</p>
