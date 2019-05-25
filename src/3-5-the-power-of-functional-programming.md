@@ -148,7 +148,110 @@ func integrate : (Float -> Float) -> Float -> Float =
 
 would be really nice.
 
-TODO
+We are gonna use the standard method to compute the integral, which is to:
+
+1. Split the interval [0, x] into many equally-sized chunks.
+2. Create a rectangle above (under) each of the chunks who's height matches the value of the function at that point.
+3. Calculate the area of each of the rectangles.
+4. Sum up those areas.
+
+If you don't understand the algorithm, consider watching [this video](https://www.youtube.com/watch?v=dEAk0BHBYCM).
+
+We're gonna express the algorithm using the method of _threading_. Threading means passing an initial value through a series of transformations. It can be expressed very beautifully using the `|>` operator. As we know, the `|>` operator works like this:
+
+```funky
+(x |> f) = (f x)
+```
+
+Now, to pass a value through a series of functions, we would like to write something like this:
+
+```funky
+x |> f |> g
+```
+
+But, this would get parenthesised as:
+
+```funky
+x |> (f |> g)
+```
+
+which is not what we want.
+
+However, if you type the expression `x |> f |> g` in Funky, you find that it actually works! This is because `|>` has another version that works like the function composition operator:
+
+```funky
+(f |> g) = (g . f)
+```
+
+When threading, we usually write the code like this, for readability:
+
+```funky
+x
+|> f
+|> g
+```
+
+Now, let's get to the integral. First, we're gonna specify the width of each of the rectangles:
+
+```funky
+func integrate : (Float -> Float) -> Float -> Float =
+    \f \x
+    let 0.001 \w
+    # ...
+```
+
+The width we chose isn't very small, this is for performance reasons: a very small width would result in too many rectangles.
+
+Now we're gonna generate the positions of the individual rectangles:
+
+```funky
+func integrate : (Float -> Float) -> Float -> Float =
+    \f \x
+    let 0.001 \w
+    iterate (+ w) 0.0
+    |> take-while (<= x)
+    # ...
+```
+
+We generate an infinite list of `w`-separated numbers starting from zero, then we cut them at `x`. Now, we're gonna transform this list into the values of the function at those points:
+
+```funky
+func integrate : (Float -> Float) -> Float -> Float =
+    \f \x
+    let 0.001 \w
+    iterate (+ w) 0.0
+    |> take-while (<= x)
+    |> map f
+    # ...
+```
+
+Now we're gonna calculate the areas:
+
+```funky
+func integrate : (Float -> Float) -> Float -> Float =
+    \f \x
+    let 0.001 \w
+    iterate (+ w) 0.0
+    |> take-while (<= x)
+    |> map f
+    |> map (* w)
+    # ...
+```
+
+And finally, sum them all up:
+
+```funky
+func integrate : (Float -> Float) -> Float -> Float =
+    \f \x
+    let 0.001 \w
+    iterate (+ w) 0.0
+    |> take-while (<= x)
+    |> map f
+    |> map (* w)
+    |> sum
+```
+
+And that's all! The threading pattern is useful in many situations and usually results in a very readable code, so use it when appropriate.
 
 ## Thank you
 
