@@ -145,6 +145,9 @@
 <p><strong>A small warning.</strong> Funky was created from <em>scratch</em>. While the standard, battle-tested, functional core, like <code>map</code>, <code>filter</code>, <code>Maybe</code>, etc. will be familiar to all functional programmers, many things will surprise you. For example, as we'll soon discover, <code>let</code> and <code>if</code> are not built-in to the language. Instead, they're functions just like any other. Many more surprises await you in the tour.</p>
 </blockquote>
 <p>So, here we go!</p>
+<blockquote>
+<p><strong>Credit!</strong> All the beautiful art in this tour (including the picture above) have been crafted by the talented girl Tori Bane. You can check out her <a href="https://www.instagram.com/teplomilka/">Instagram</a> or buy her a <a href="https://ko-fi.com/toribane">Ko-fi</a>.</p>
+</blockquote>
 <a class="header" href="#installing" id="installing"><h1>Installing</h1></a>
 <blockquote>
 <p><strong>Note.</strong> These instructions are for Linux. If you're on another operating system, you can try to follow them doing analogous actions on your OS.</p>
@@ -2044,18 +2047,221 @@ let-some (first nums) \x
 <p><strong>Note.</strong> Of couse, there are many cases when <code>?</code> and <code>map</code> are the right choices. Perhaps this one is too. Depends on your personal preference.</p>
 </blockquote>
 <p>In this short refactoring exercise, we've seen most of the useful <code>Maybe</code> functions: <code>none?</code>, <code>extract!</code>, <code>?</code>, <code>map</code>, <code>if-none</code>, <code>let-some</code>.</p>
-<p>There are some more, like <code>some?</code>, <code>for-some</code>, <code>filter-some</code>, and <code>when-some</code>. You can try them out on your own.</p>
-<a class="header" href="#thank-you" id="thank-you"><h2>Thank you</h2></a>
-<p>You have reached the end of the tour. Thank you! I hope you find Funky interesting. It still needs a lot of work, but I'll do my best to make it as good as possible. If you'd like to get on that journey, you're more than welcome to join me on <a href="">TODO-CHAT-SERVICE</a>, or contribute on <a href="https://github.com/faiface/funky">GitHub</a>.</p>
+<p>There are some more, like <code>let-::</code>, <code>some?</code>, <code>for-some</code>, <code>filter-some</code>, and <code>when-some</code>. You can try them out on your own.</p>
+<p>Just for the sake of giving another example, here's a simple function to get the third element of a list:</p>
+<pre><code class="language-funky">func third : List a -&gt; Maybe a =
+    \list
+    let-some (rest list) \tail
+    let-some (rest tail) \tail
+    first tail
+</code></pre>
+<p>Or, here's a more complicated example that uses <code>let-::</code> (used for destructuring lists into the first element and the rest, otherwise very similar to <code>let-some</code>):</p>
+<pre><code class="language-funky">func merge : List Int -&gt; List Int -&gt; List Int =
+    \left \right
+    if-none (left ++ right);
+    let-:: left  \l \ls
+    let-:: right \r \rs
+    if (l &lt; r) (l :: merge ls right);
+    r :: merge left rs
+
+func merge-sort : List Int -&gt; List Int =
+    \list
+    let (length list) \len
+    if (len &lt;= 1) list;
+    let (take (len / 2) list) \left
+    let (drop (len / 2) list) \right
+    merge (merge-sort left) (merge-sort right)
+</code></pre>
 <a class="header" href="#the-power-of-functional-programming" id="the-power-of-functional-programming"><h1>The power of functional programming</h1></a>
 <p>Over the course of the last few parts, we've learned how to do for loops, Python-like generators, and imperative algorithms. What has that got to do with functional programming?</p>
 <p>Someone once said: <em>Functional programming makes difficult tasks easy and easy tasks difficult.</em></p>
 <p>What they meant was that while it's often easy to express a complex algorithm in a few (or even one) lines of code, common things, like making a simple interacting command line program can be challenging and not elegant at all.</p>
 <p>I believe this is because some problems are just easier to express imperatively. I thus hope that by making imperative idioms easily expressible in Funky, we can have a language where difficult tasks are easy and easy tasks are easy alike. Really difficult tasks will remain difficult, I'm sorry.</p>
 <p>So, how does Funky support the <em>proper</em> functional programming idioms? In this part, we'll focus on lists, the powerhouse of functional programming, and take a look at some really cool programs.</p>
+<a class="header" href="#thank-you" id="thank-you"><h2>Thank you</h2></a>
+<p>You have reached the end of the tour. Thank you! I hope you find Funky interesting. It still needs a lot of work, but I'll do my best to make it as good as possible. If you'd like to get on that journey, you're more than welcome to join me on <a href="">TODO-CHAT-SERVICE</a>, or contribute on <a href="https://github.com/faiface/funky">GitHub</a>.</p>
 <a class="header" href="#extras" id="extras"><h1>Extras</h1></a>
 <p>And now that you've learned about the language, here are a few articles about stuff that didn't fit in the tour itself.</p>
 <a class="header" href="#list-of-idioms" id="list-of-idioms"><h1>List of idioms</h1></a>
+<p>This is an article that lists most of the idioms frequently used in Funky code. Each idiom is introduced by a name with a link to the place in this tour that describes it, a short description and some schematic code examples.</p>
+<a class="header" href="#naming" id="naming"><h2>Naming</h2></a>
+<ul>
+<li>Dashes to separate words.
+<pre><code class="language-funky">yield-all right-pad format-table Priority-Queue
+</code></pre>
+</li>
+<li>Question marks at the end of predicates (functions that return <code>Bool</code>):
+<pre><code class="language-funky">even? odd? whitespace? empty? none? some?
+</code></pre>
+</li>
+<li>Exclamation marks at the end of partial functions (functions that can crash!):
+<pre><code class="language-funky">first! rest! extract! at!
+</code></pre>
+</li>
+<li>Special symbols where appropriate:
+<pre><code class="language-funky">+ - * / abs^2 let-::
+</code></pre>
+</li>
+</ul>
+<a class="header" href="#a-href1-4-semicolons-and-lambdashtmlvertical-functionsa" id="a-href1-4-semicolons-and-lambdashtmlvertical-functionsa"><h2><a href="1-4-semicolons-and-lambdas.html">Vertical functions</a></h2></a>
+<p>These are the building block of code that reads top to bottom. The example below show some, but not all of the common patterns of types these functions tend to have.</p>
+<pre><code class="language-funky">func semicolon-based-1 : V -&gt; V =
+    ...
+
+func semicolon-based-2 : A -&gt; V -&gt; V =
+    ...
+
+func lambda-based-1 : (B -&gt; V) -&gt; V =
+    ...
+
+func lambda-based-2 : C -&gt; (D -&gt; V) -&gt; V =
+    ...
+
+func lambda-based-3 : E -&gt; (F -&gt; G -&gt; V) -&gt; V =
+    ...
+
+func lambda-based-4 : I -&gt; (J -&gt; V -&gt; V) -&gt; V -&gt; V =
+    ...
+
+func usage : V =
+    semicolon-based-1;
+    semicolon-based-2 a;
+    lambda-based-1 \b
+    lambda-based-2 c \d
+    lambda-based-3 e \f \g
+    lambda-based-4 i (
+        \j \next
+        ...
+        next
+    );
+    ...
+</code></pre>
+<a class="header" href="#a-href1-4-semicolons-and-lambdashtmlthe-if-functionifa" id="a-href1-4-semicolons-and-lambdashtmlthe-if-functionifa"><h2><a href="1-4-semicolons-and-lambdas.html#the-if-function">If</a></h2></a>
+<p>The <code>if</code> function is used to choose from two alternatives based on a condition.</p>
+<a class="header" href="#conditional-expression-or-the-ternary-operator" id="conditional-expression-or-the-ternary-operator"><h3>Conditional expression (or the ternary operator)</h3></a>
+<pre><code class="language-funky">println (if condition then else);
+println (if (x &lt; y) x y);
+...
+</code></pre>
+<a class="header" href="#short-ifelse" id="short-ifelse"><h3>Short if/else</h3></a>
+<pre><code class="language-funky">if (n &lt;= 0) 1;
+n * factorial (n - 1)
+</code></pre>
+<pre><code class="language-funky">if (invalid? input)
+    (println &quot;invalid&quot;; quit);
+println &quot;correct!&quot;;
+...
+</code></pre>
+<a class="header" href="#long-ifelse" id="long-ifelse"><h3>Long if/else</h3></a>
+<pre><code class="language-funky">if (invalid? input) (
+    println &quot;your input is wrong!!!&quot;;
+    println &quot;now you will suffer.&quot;;
+    ...
+);
+...
+</code></pre>
+<a class="header" href="#ifelse-chain" id="ifelse-chain"><h3>If/else chain</h3></a>
+<pre><code class="language-funky">if (op == &quot;+&quot;) ...;
+if (op == &quot;-&quot;) ...;
+if (op == &quot;*&quot;) ...;
+if (op == &quot;/&quot;) ...;
+if (op == &quot;^&quot;) ...;
+&quot;invalid operator&quot;
+</code></pre>
+<a class="header" href="#a-href3-2-yield-it-allhtmlthe-when-functionwhena" id="a-href3-2-yield-it-allhtmlthe-when-functionwhena"><h2><a href="3-2-yield-it-all.html#the-when-function">When</a></h2></a>
+<p>The <code>when</code> function is used to conditionally apply/execute a function unlike <code>if</code> which is used to choose between two alternative branches. The imperative analog of <code>when</code> is an <code>if</code> without an <code>else</code>.</p>
+<a class="header" href="#short-when" id="short-when"><h3>Short when</h3></a>
+<pre><code class="language-funky">when condition function;
+...
+</code></pre>
+<pre><code class="language-funky">when (total-price cart &lt; euro 30.0)
+    (println &quot;The shipping will not be free.&quot;);
+...
+</code></pre>
+<pre><code class="language-funky">when (p x) (x ::) (filter xs)
+</code></pre>
+<a class="header" href="#long-when" id="long-when"><h3>Long when</h3></a>
+<pre><code class="language-funky">when condition (
+    \next
+    ...
+    next
+);
+...
+</code></pre>
+<a class="header" href="#a-href1-4-semicolons-and-lambdashtmlthe-let-functionleta" id="a-href1-4-semicolons-and-lambdashtmlthe-let-functionleta"><h2><a href="1-4-semicolons-and-lambdas.html#the-let-function">Let</a></h2></a>
+<p>Binding values to variables is not a built-in construct in Funky.</p>
+<a class="header" href="#single-binding" id="single-binding"><h3>Single binding</h3></a>
+<pre><code class="language-funky">let (reverse; range 1 1000000) \numbers
+...
+</code></pre>
+<a class="header" href="#multiple-bindings" id="multiple-bindings"><h3>Multiple bindings</h3></a>
+<pre><code class="language-funky">let (filter (&lt; pivot) nums)  \left
+let (filter (== pivot) nums) \middle
+let (filter (&gt; pivot) nums)  \right
+...
+</code></pre>
+<a class="header" href="#pair-binding-not-mentioned-in-the-tour" id="pair-binding-not-mentioned-in-the-tour"><h3>Pair binding (not mentioned in the tour)</h3></a>
+<pre><code class="language-funky">let-pair (pair &quot;A&quot; 4) \s \x
+...
+</code></pre>
+<a class="header" href="#long-binding" id="long-binding"><h3>Long binding</h3></a>
+<pre><code class="language-funky">let (
+    ...
+) \variable
+...
+</code></pre>
+<a class="header" href="#a-href3-4-on-being-exceptionalhtmlmaybe-bindinga" id="a-href3-4-on-being-exceptionalhtmlmaybe-bindinga"><h3><a href="3-4-on-being-exceptional.html">Maybe binding</a></h3></a>
+<p>Both of the expressions have type <code>Maybe Int</code>.</p>
+<pre><code class="language-funky">let-some (some 7) \x
+x + 10
+</code></pre>
+<pre><code class="language-funky">let-some none \x
+x + 10
+</code></pre>
+<a class="header" href="#a-href3-4-on-being-exceptionalhtmllist-bindinga" id="a-href3-4-on-being-exceptionalhtmllist-bindinga"><h3><a href="3-4-on-being-exceptional.html">List binding</a></h3></a>
+<p>Both of the expressions have type <code>Maybe something</code> (<code>something</code> is just a placeholder depending on the type of <code>...</code>).</p>
+<pre><code class="language-funky">let-:: [1, 2, 3, 4, 5] \x \xs  # x=1 and xs=[2,3,4,5]
+...
+</code></pre>
+<pre><code class="language-funky">let-:: [] \x \xs  # the whole expression is none
+...
+</code></pre>
+<a class="header" href="#a-href3-1-for-loop-is-a-functionhtmlfora" id="a-href3-1-for-loop-is-a-functionhtmlfora"><h2><a href="3-1-for-loop-is-a-function.html">For</a></h2></a>
+<p>The <code>for</code> function is used to loop over a list of elements. It is functionally equivalent to <code>fold&lt;</code>.</p>
+<a class="header" href="#a-href3-1-for-loop-is-a-functionhtmlhow-to-print-a-list-meet-the-for-loopshort-for-loopa" id="a-href3-1-for-loop-is-a-functionhtmlhow-to-print-a-list-meet-the-for-loopshort-for-loopa"><h3><a href="3-1-for-loop-is-a-function.html#how-to-print-a-list-meet-the-for-loop">Short for loop</a></h3></a>
+<pre><code class="language-funky">for list function;
+...
+</code></pre>
+<pre><code class="language-funky">for [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;] println;
+quit
+</code></pre>
+<pre><code class="language-funky">for (range 1 10)
+    (println . string);
+quit
+</code></pre>
+<a class="header" href="#a-href3-1-for-loop-is-a-functionhtmlhow-to-put-more-things-in-a-bodylong-for-loopa" id="a-href3-1-for-loop-is-a-functionhtmlhow-to-put-more-things-in-a-bodylong-for-loopa"><h3><a href="3-1-for-loop-is-a-function.html#how-to-put-more-things-in-a-body">Long for loop</a></h3></a>
+<pre><code class="language-funky">for list (
+    \x \next
+    ...
+    next
+);
+...
+</code></pre>
+<a class="header" href="#a-href3-2-yield-it-allhtmlformatting-listslooping-over-pairsa" id="a-href3-2-yield-it-allhtmlformatting-listslooping-over-pairsa"><h3><a href="3-2-yield-it-all.html#formatting-lists">Looping over pairs</a></h3></a>
+<pre><code class="language-funky">for-pair list-of-pairs (
+    \x \y \next
+    ...
+    next
+);
+...
+</code></pre>
+<pre><code class="language-funky">for-pair (enumerate names) (
+    \i \name \next
+    println (&quot;#&quot; ++ string i ++ &quot;: &quot; ++ name);
+    next
+);
+quit
+</code></pre>
 <a class="header" href="#plannedconsideredwanted-features" id="plannedconsideredwanted-features"><h1>Planned/considered/wanted features</h1></a>
 <a class="header" href="#a-packagemodule-system-wanted" id="a-packagemodule-system-wanted"><h2>A package/module system <em>(wanted)</em></h2></a>
 <p>The current idea is that identifiers prefixed with <code>_</code> will be unexported and importing would work similarly to Go's package system. All files in a single directory would be a part of a single package.</p>

@@ -226,9 +226,31 @@ let-some (first nums) \x
 <p><strong>Note.</strong> Of couse, there are many cases when <code>?</code> and <code>map</code> are the right choices. Perhaps this one is too. Depends on your personal preference.</p>
 </blockquote>
 <p>In this short refactoring exercise, we've seen most of the useful <code>Maybe</code> functions: <code>none?</code>, <code>extract!</code>, <code>?</code>, <code>map</code>, <code>if-none</code>, <code>let-some</code>.</p>
-<p>There are some more, like <code>some?</code>, <code>for-some</code>, <code>filter-some</code>, and <code>when-some</code>. You can try them out on your own.</p>
-<a class="header" href="#thank-you" id="thank-you"><h2>Thank you</h2></a>
-<p>You have reached the end of the tour. Thank you! I hope you find Funky interesting. It still needs a lot of work, but I'll do my best to make it as good as possible. If you'd like to get on that journey, you're more than welcome to join me on <a href="">TODO-CHAT-SERVICE</a>, or contribute on <a href="https://github.com/faiface/funky">GitHub</a>.</p>
+<p>There are some more, like <code>let-::</code>, <code>some?</code>, <code>for-some</code>, <code>filter-some</code>, and <code>when-some</code>. You can try them out on your own.</p>
+<p>Just for the sake of giving another example, here's a simple function to get the third element of a list:</p>
+<pre><code class="language-funky">func third : List a -&gt; Maybe a =
+    \list
+    let-some (rest list) \tail
+    let-some (rest tail) \tail
+    first tail
+</code></pre>
+<p>Or, here's a more complicated example that uses <code>let-::</code> (used for destructuring lists into the first element and the rest, otherwise very similar to <code>let-some</code>):</p>
+<pre><code class="language-funky">func merge : List Int -&gt; List Int -&gt; List Int =
+    \left \right
+    if-none (left ++ right);
+    let-:: left  \l \ls
+    let-:: right \r \rs
+    if (l &lt; r) (l :: merge ls right);
+    r :: merge left rs
+
+func merge-sort : List Int -&gt; List Int =
+    \list
+    let (length list) \len
+    if (len &lt;= 1) list;
+    let (take (len / 2) list) \left
+    let (drop (len / 2) list) \right
+    merge (merge-sort left) (merge-sort right)
+</code></pre>
 
                     </main>
 

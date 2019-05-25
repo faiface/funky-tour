@@ -137,6 +137,185 @@
                 <div id="content" class="content">
                     <main>
                         <a class="header" href="#list-of-idioms" id="list-of-idioms"><h1>List of idioms</h1></a>
+<p>This is an article that lists most of the idioms frequently used in Funky code. Each idiom is introduced by a name with a link to the place in this tour that describes it, a short description and some schematic code examples.</p>
+<a class="header" href="#naming" id="naming"><h2>Naming</h2></a>
+<ul>
+<li>Dashes to separate words.
+<pre><code class="language-funky">yield-all right-pad format-table Priority-Queue
+</code></pre>
+</li>
+<li>Question marks at the end of predicates (functions that return <code>Bool</code>):
+<pre><code class="language-funky">even? odd? whitespace? empty? none? some?
+</code></pre>
+</li>
+<li>Exclamation marks at the end of partial functions (functions that can crash!):
+<pre><code class="language-funky">first! rest! extract! at!
+</code></pre>
+</li>
+<li>Special symbols where appropriate:
+<pre><code class="language-funky">+ - * / abs^2 let-::
+</code></pre>
+</li>
+</ul>
+<a class="header" href="#a-href1-4-semicolons-and-lambdashtmlvertical-functionsa" id="a-href1-4-semicolons-and-lambdashtmlvertical-functionsa"><h2><a href="1-4-semicolons-and-lambdas.html">Vertical functions</a></h2></a>
+<p>These are the building block of code that reads top to bottom. The example below show some, but not all of the common patterns of types these functions tend to have.</p>
+<pre><code class="language-funky">func semicolon-based-1 : V -&gt; V =
+    ...
+
+func semicolon-based-2 : A -&gt; V -&gt; V =
+    ...
+
+func lambda-based-1 : (B -&gt; V) -&gt; V =
+    ...
+
+func lambda-based-2 : C -&gt; (D -&gt; V) -&gt; V =
+    ...
+
+func lambda-based-3 : E -&gt; (F -&gt; G -&gt; V) -&gt; V =
+    ...
+
+func lambda-based-4 : I -&gt; (J -&gt; V -&gt; V) -&gt; V -&gt; V =
+    ...
+
+func usage : V =
+    semicolon-based-1;
+    semicolon-based-2 a;
+    lambda-based-1 \b
+    lambda-based-2 c \d
+    lambda-based-3 e \f \g
+    lambda-based-4 i (
+        \j \next
+        ...
+        next
+    );
+    ...
+</code></pre>
+<a class="header" href="#a-href1-4-semicolons-and-lambdashtmlthe-if-functionifa" id="a-href1-4-semicolons-and-lambdashtmlthe-if-functionifa"><h2><a href="1-4-semicolons-and-lambdas.html#the-if-function">If</a></h2></a>
+<p>The <code>if</code> function is used to choose from two alternatives based on a condition.</p>
+<a class="header" href="#conditional-expression-or-the-ternary-operator" id="conditional-expression-or-the-ternary-operator"><h3>Conditional expression (or the ternary operator)</h3></a>
+<pre><code class="language-funky">println (if condition then else);
+println (if (x &lt; y) x y);
+...
+</code></pre>
+<a class="header" href="#short-ifelse" id="short-ifelse"><h3>Short if/else</h3></a>
+<pre><code class="language-funky">if (n &lt;= 0) 1;
+n * factorial (n - 1)
+</code></pre>
+<pre><code class="language-funky">if (invalid? input)
+    (println &quot;invalid&quot;; quit);
+println &quot;correct!&quot;;
+...
+</code></pre>
+<a class="header" href="#long-ifelse" id="long-ifelse"><h3>Long if/else</h3></a>
+<pre><code class="language-funky">if (invalid? input) (
+    println &quot;your input is wrong!!!&quot;;
+    println &quot;now you will suffer.&quot;;
+    ...
+);
+...
+</code></pre>
+<a class="header" href="#ifelse-chain" id="ifelse-chain"><h3>If/else chain</h3></a>
+<pre><code class="language-funky">if (op == &quot;+&quot;) ...;
+if (op == &quot;-&quot;) ...;
+if (op == &quot;*&quot;) ...;
+if (op == &quot;/&quot;) ...;
+if (op == &quot;^&quot;) ...;
+&quot;invalid operator&quot;
+</code></pre>
+<a class="header" href="#a-href3-2-yield-it-allhtmlthe-when-functionwhena" id="a-href3-2-yield-it-allhtmlthe-when-functionwhena"><h2><a href="3-2-yield-it-all.html#the-when-function">When</a></h2></a>
+<p>The <code>when</code> function is used to conditionally apply/execute a function unlike <code>if</code> which is used to choose between two alternative branches. The imperative analog of <code>when</code> is an <code>if</code> without an <code>else</code>.</p>
+<a class="header" href="#short-when" id="short-when"><h3>Short when</h3></a>
+<pre><code class="language-funky">when condition function;
+...
+</code></pre>
+<pre><code class="language-funky">when (total-price cart &lt; euro 30.0)
+    (println &quot;The shipping will not be free.&quot;);
+...
+</code></pre>
+<pre><code class="language-funky">when (p x) (x ::) (filter xs)
+</code></pre>
+<a class="header" href="#long-when" id="long-when"><h3>Long when</h3></a>
+<pre><code class="language-funky">when condition (
+    \next
+    ...
+    next
+);
+...
+</code></pre>
+<a class="header" href="#a-href1-4-semicolons-and-lambdashtmlthe-let-functionleta" id="a-href1-4-semicolons-and-lambdashtmlthe-let-functionleta"><h2><a href="1-4-semicolons-and-lambdas.html#the-let-function">Let</a></h2></a>
+<p>Binding values to variables is not a built-in construct in Funky.</p>
+<a class="header" href="#single-binding" id="single-binding"><h3>Single binding</h3></a>
+<pre><code class="language-funky">let (reverse; range 1 1000000) \numbers
+...
+</code></pre>
+<a class="header" href="#multiple-bindings" id="multiple-bindings"><h3>Multiple bindings</h3></a>
+<pre><code class="language-funky">let (filter (&lt; pivot) nums)  \left
+let (filter (== pivot) nums) \middle
+let (filter (&gt; pivot) nums)  \right
+...
+</code></pre>
+<a class="header" href="#pair-binding-not-mentioned-in-the-tour" id="pair-binding-not-mentioned-in-the-tour"><h3>Pair binding (not mentioned in the tour)</h3></a>
+<pre><code class="language-funky">let-pair (pair &quot;A&quot; 4) \s \x
+...
+</code></pre>
+<a class="header" href="#long-binding" id="long-binding"><h3>Long binding</h3></a>
+<pre><code class="language-funky">let (
+    ...
+) \variable
+...
+</code></pre>
+<a class="header" href="#a-href3-4-on-being-exceptionalhtmlmaybe-bindinga" id="a-href3-4-on-being-exceptionalhtmlmaybe-bindinga"><h3><a href="3-4-on-being-exceptional.html">Maybe binding</a></h3></a>
+<p>Both of the expressions have type <code>Maybe Int</code>.</p>
+<pre><code class="language-funky">let-some (some 7) \x
+x + 10
+</code></pre>
+<pre><code class="language-funky">let-some none \x
+x + 10
+</code></pre>
+<a class="header" href="#a-href3-4-on-being-exceptionalhtmllist-bindinga" id="a-href3-4-on-being-exceptionalhtmllist-bindinga"><h3><a href="3-4-on-being-exceptional.html">List binding</a></h3></a>
+<p>Both of the expressions have type <code>Maybe something</code> (<code>something</code> is just a placeholder depending on the type of <code>...</code>).</p>
+<pre><code class="language-funky">let-:: [1, 2, 3, 4, 5] \x \xs  # x=1 and xs=[2,3,4,5]
+...
+</code></pre>
+<pre><code class="language-funky">let-:: [] \x \xs  # the whole expression is none
+...
+</code></pre>
+<a class="header" href="#a-href3-1-for-loop-is-a-functionhtmlfora" id="a-href3-1-for-loop-is-a-functionhtmlfora"><h2><a href="3-1-for-loop-is-a-function.html">For</a></h2></a>
+<p>The <code>for</code> function is used to loop over a list of elements. It is functionally equivalent to <code>fold&lt;</code>.</p>
+<a class="header" href="#a-href3-1-for-loop-is-a-functionhtmlhow-to-print-a-list-meet-the-for-loopshort-for-loopa" id="a-href3-1-for-loop-is-a-functionhtmlhow-to-print-a-list-meet-the-for-loopshort-for-loopa"><h3><a href="3-1-for-loop-is-a-function.html#how-to-print-a-list-meet-the-for-loop">Short for loop</a></h3></a>
+<pre><code class="language-funky">for list function;
+...
+</code></pre>
+<pre><code class="language-funky">for [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;] println;
+quit
+</code></pre>
+<pre><code class="language-funky">for (range 1 10)
+    (println . string);
+quit
+</code></pre>
+<a class="header" href="#a-href3-1-for-loop-is-a-functionhtmlhow-to-put-more-things-in-a-bodylong-for-loopa" id="a-href3-1-for-loop-is-a-functionhtmlhow-to-put-more-things-in-a-bodylong-for-loopa"><h3><a href="3-1-for-loop-is-a-function.html#how-to-put-more-things-in-a-body">Long for loop</a></h3></a>
+<pre><code class="language-funky">for list (
+    \x \next
+    ...
+    next
+);
+...
+</code></pre>
+<a class="header" href="#a-href3-2-yield-it-allhtmlformatting-listslooping-over-pairsa" id="a-href3-2-yield-it-allhtmlformatting-listslooping-over-pairsa"><h3><a href="3-2-yield-it-all.html#formatting-lists">Looping over pairs</a></h3></a>
+<pre><code class="language-funky">for-pair list-of-pairs (
+    \x \y \next
+    ...
+    next
+);
+...
+</code></pre>
+<pre><code class="language-funky">for-pair (enumerate names) (
+    \i \name \next
+    println (&quot;#&quot; ++ string i ++ &quot;: &quot; ++ name);
+    next
+);
+quit
+</code></pre>
 
                     </main>
 
