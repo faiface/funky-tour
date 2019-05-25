@@ -2164,7 +2164,77 @@ func merge-sort : List Int -&gt; List Int =
     # ???
 </code></pre>
 <p>would be really nice.</p>
-<p>TODO</p>
+<p>We are gonna use the standard method to compute the integral, which is to:</p>
+<ol>
+<li>Split the interval [0, x] into many equally-sized chunks.</li>
+<li>Create a rectangle above (under) each of the chunks who's height matches the value of the function at that point.</li>
+<li>Calculate the area of each of the rectangles.</li>
+<li>Sum up those areas.</li>
+</ol>
+<p>If you don't understand the algorithm, consider watching <a href="https://www.youtube.com/watch?v=dEAk0BHBYCM">this video</a>.</p>
+<p>We're gonna express the algorithm using the method of <em>threading</em>. Threading means passing an initial value through a series of transformations. It can be expressed very beautifully using the <code>|&gt;</code> operator. As we know, the <code>|&gt;</code> operator works like this:</p>
+<pre><code class="language-funky">(x |&gt; f) = (f x)
+</code></pre>
+<p>Now, to pass a value through a series of functions, we would like to write something like this:</p>
+<pre><code class="language-funky">x |&gt; f |&gt; g
+</code></pre>
+<p>But, this would get parenthesised as:</p>
+<pre><code class="language-funky">x |&gt; (f |&gt; g)
+</code></pre>
+<p>which is not what we want.</p>
+<p>However, if you type the expression <code>x |&gt; f |&gt; g</code> in Funky, you find that it actually works! This is because <code>|&gt;</code> has another version that works like the function composition operator:</p>
+<pre><code class="language-funky">(f |&gt; g) = (g . f)
+</code></pre>
+<p>When threading, we usually write the code like this, for readability:</p>
+<pre><code class="language-funky">x
+|&gt; f
+|&gt; g
+</code></pre>
+<p>Now, let's get to the integral. First, we're gonna specify the width of each of the rectangles:</p>
+<pre><code class="language-funky">func integrate : (Float -&gt; Float) -&gt; Float -&gt; Float =
+    \f \x
+    let 0.001 \w
+    # ...
+</code></pre>
+<p>The width we chose isn't very small, this is for performance reasons: a very small width would result in too many rectangles.</p>
+<p>Now we're gonna generate the positions of the individual rectangles:</p>
+<pre><code class="language-funky">func integrate : (Float -&gt; Float) -&gt; Float -&gt; Float =
+    \f \x
+    let 0.001 \w
+    iterate (+ w) 0.0
+    |&gt; take-while (&lt;= x)
+    # ...
+</code></pre>
+<p>We generate an infinite list of <code>w</code>-separated numbers starting from zero, then we cut them at <code>x</code>. Now, we're gonna transform this list into the values of the function at those points:</p>
+<pre><code class="language-funky">func integrate : (Float -&gt; Float) -&gt; Float -&gt; Float =
+    \f \x
+    let 0.001 \w
+    iterate (+ w) 0.0
+    |&gt; take-while (&lt;= x)
+    |&gt; map f
+    # ...
+</code></pre>
+<p>Now we're gonna calculate the areas:</p>
+<pre><code class="language-funky">func integrate : (Float -&gt; Float) -&gt; Float -&gt; Float =
+    \f \x
+    let 0.001 \w
+    iterate (+ w) 0.0
+    |&gt; take-while (&lt;= x)
+    |&gt; map f
+    |&gt; map (* w)
+    # ...
+</code></pre>
+<p>And finally, sum them all up:</p>
+<pre><code class="language-funky">func integrate : (Float -&gt; Float) -&gt; Float -&gt; Float =
+    \f \x
+    let 0.001 \w
+    iterate (+ w) 0.0
+    |&gt; take-while (&lt;= x)
+    |&gt; map f
+    |&gt; map (* w)
+    |&gt; sum
+</code></pre>
+<p>And that's all! The threading pattern is useful in many situations and usually results in a very readable code, so use it when appropriate.</p>
 <a class="header" href="#thank-you" id="thank-you"><h2>Thank you</h2></a>
 <p>You have reached the end of the tour. Thank you! I hope you find Funky interesting. It still needs a lot of work, but I'll do my best to make it as good as possible. If you'd like to get on that journey, you're more than welcome to join me on <a href="">TODO-CHAT-SERVICE</a>, or contribute on <a href="https://github.com/faiface/funky">GitHub</a>.</p>
 <a class="header" href="#extras" id="extras"><h1>Extras</h1></a>
