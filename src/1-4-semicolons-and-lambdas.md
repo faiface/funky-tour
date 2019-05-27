@@ -12,7 +12,7 @@ We can omit the parentheses and use the semicolon instead:
 string; sqrt 4.0 + sqrt 9.0
 ```
 
-> **Note.** If you're familiar with Haskell, you'll notice that the semicolon is just like Haskell's `$` operator. That's correct. Funky uses the semicolon instead of the dollar to avoid clutter because it's used very frequently.
+> **Note.** If you're familiar with Haskell, you'll notice that the semicolon is just like Haskell's `$` operator. That's correct. Funky uses the semicolon instead of the dollar to avoid visual clutter because it's used very frequently.
 
 The semicolon becomes very useful when structuring code. We could write this:
 
@@ -59,7 +59,7 @@ Now that's cool! It's got lines, it's got semicolons, looks just like an imperat
 
 ## The `if` function
 
-**Booleans** have type `Bool`, two values - `true` and `false` - and a handy `if` function for making a choice. What's its type? The beloved types sandbox comes to rescue:
+**Booleans** have type `Bool`, two values - `true` and `false` - and a handy `if` function for making a choice. What's its type? The beloved types sandbox comes to the rescue:
 
 ```
 $ funkycmd -types
