@@ -1,6 +1,6 @@
 # Yield it all!
 
-You thought vertical code was just for `IO`? You were wrong! Vertical code (the one that spans vertically and can be read top to bottom) is quite universal in Funky. In this part, we'll see how it can be applied to lists and their generation.
+You thought the vertical code was just for `IO`? You were wrong! Vertical code (the one that spans vertically and can be read top to bottom) is quite universal in Funky. In this part, we'll see how it can be applied to lists and their generation.
 
 ## The `yield` function
 
@@ -41,7 +41,7 @@ empty
 
 Beautiful!
 
-To get to know `yield` a little better, let's use it to rewrite some well known functions. How would the `map` function look like using `yield`? Something like this:
+To get to know `yield` a little better, let's use it to rewrite some well-known functions. How would the `map` function look like using `yield`? Something like this:
 
 ```funky
 func my-map : (a -> b) -> List a -> List b =
@@ -90,7 +90,7 @@ For example:
 when (x > 7) (1 +) x
 ```
 
-This expression evaluates to `x + 1` if `x` is more than 7, otherwise it evaluates to `x`.
+This expression evaluates to `x + 1` if `x` is more than 7, otherwise, it evaluates to `x`.
 
 So, let's use `when` to implement `my-filter`!
 
@@ -109,7 +109,7 @@ That's it! Here, we can't easily compress the loop body into some stunning compo
 
 ## Formatting lists
 
-Structuring list generation vertically comes very handy when dealing with complex list generating functions. One of the best examples is a function to format lists so that we can print them with one `println`. Such function isn't currently present in the standard library. But we'll make our own!
+Structuring list generation vertically comes very handily when dealing with complex list generating functions. One of the best examples is a function to format lists so that we can print them with one `println`. Such a function isn't currently present in the standard library. But we'll make our own!
 
 First, we gotta choose the type. What could it be? Perhaps this one?
 
@@ -117,7 +117,7 @@ First, we gotta choose the type. What could it be? Perhaps this one?
 List a -> String
 ```
 
-Well, this is what it will be in the future, when the [`with` clause](4-2-planned-considered-wanted-features.md#the-with-clause-planned) gets implemented, but so far, we can't do it that way. Why? We're accepting `List a`: a list of any type. To convert it to string, we need to convert each of its elements to string. But, there's no general way of converting an arbitrary type to string - the `string` function is only implemented for a handful of types.
+Well, this is what it will be in the future when the [`with` clause](4-2-planned-considered-wanted-features.md#the-with-clause-planned) gets implemented, but so far, we can't do it that way. Why? We're accepting `List a`: a list of any type. To convert it to a string, we need to convert each of its elements to a string. But, there's no general way of converting an arbitrary type to string - the `string` function is only implemented for a handful of types.
 
 This will do:
 
@@ -236,7 +236,7 @@ func main : IO =
     quit
 ```
 
-> **Details.** The `take-while` function is different from `filter`. While `filter` takes _all_ the elements that satisfy a predicate, `take-while` takes elements from the list, but _stops_ taking them the moment it encounters the first element to not satisfy the predicate. That's important here. Had we used `filter`, the program wouldn't halt. It would continue searching the infinite list of primes for another element less than 100, but it would never find one. Using `take-while` makes the program halt, because we never search beyond the first wrong one.
+> **Details.** The `take-while` function is different from `filter`. While `filter` takes _all_ the elements that satisfy a predicate, `take-while` takes elements from the list, but _stops_ taking them the moment it encounters the first element to not satisfy the predicate. That's important here. Had we used `filter`, the program wouldn't halt. It would continue searching the infinite list of primes for another element less than 100, but it would never find one. Using `take-while` makes the program halt because we never search beyond the first wrong one.
 
 Let's run it!
 

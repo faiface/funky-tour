@@ -8,7 +8,7 @@ Therefore, the first step is to install the Go language either from the [officia
 
 Go uses `$GOPATH` directory to download packages and install Go programs. If you installed a recent version of Go, you don't have to set it up, it defaults to `~/go`.
 
-Next you need to download Funky. You do that with the Go package manager:
+Next, you need to download Funky. You do that with the Go package manager:
 
 ```
 $ go get -u github.com/faiface/funky/...
@@ -23,7 +23,7 @@ To make the binaries easily runnable from the command line, you need to add `$GO
 export PATH=$PATH:$GOPATH/bin
 ```
 
-Now, one last thing. Funky uses the `$FUNKY` environment variable to indentify the location of the standard library. Add this to your `.bashrc` file:
+Now, one last thing. Funky uses the `$FUNKY` environment variable to identify the location of the standard library. Add this to your `.bashrc` file:
 
 ```
 export FUNKY=$GOPATH/src/github.com/faiface/funky/stdlib

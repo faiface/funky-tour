@@ -12,7 +12,7 @@ We can omit the parentheses and use the semicolon instead:
 string; sqrt 4.0 + sqrt 9.0
 ```
 
-> **Note.** If you're familiar with Haskell, you'll notice that the semicolon is just like Haskell's `$` operator. That's correct. Funky uses the semicolon instead of the dollar to avoid clutter, because it's used very frequently.
+> **Note.** If you're familiar with Haskell, you'll notice that the semicolon is just like Haskell's `$` operator. That's correct. Funky uses the semicolon instead of the dollar to avoid clutter because it's used very frequently.
 
 The semicolon becomes very useful when structuring code. We could write this:
 
@@ -34,7 +34,7 @@ C
 >
 > The type of the `println` function is `String -> IO -> IO`. That means that `println` takes two arguments, a `String` and an `IO`, and evaluates to an `IO`. The resulting `IO` describes a program that first prints the provided string, then does whatever the second argument says.
 >
-> Let's look at the inner-most (last) usage of `println` in the above code: `println "C" quit`. This expression of type `IO` describes a program that prints the string `"C"` and then quits. Since it is an `IO`, we can pass it as the second argument to another `println` and we get `println "B" (println "C" quit)`. And using the same technique once again, we end up with the code above.
+> Let's look at the innermost (last) usage of `println` in the above code: `println "C" quit`. This expression of type `IO` describes a program that prints the string `"C"` and then quits. Since it is an `IO`, we can pass it as the second argument to another `println` and we get `println "B" (println "C" quit)`. And using the same technique once again, we end up with the code above.
 
 But, we have a lot of parentheses there! Let's get rid of them with those semicolons:
 
@@ -45,7 +45,7 @@ func main : IO =
 
 > **Note.** We technically don't need the last semicolon as `quit` is just a single word, but we'll leave it there for _style_.
 
-And finally, we can split it into mutliple lines:
+And finally, we can split it into multiple lines:
 
 ```funky
 func main : IO =
@@ -78,7 +78,7 @@ Int
 List Char
 ```
 
-> **Note.** Comments start with the `#` symbol. Also notice that `String` and `List Char` are synonyms.
+> **Note.** Comments start with the `#` symbol. Also, notice that `String` and `List Char` are synonyms.
 
 Combining the `if` function with the semicolon, we create an _if, else if, else_ chain:
 
@@ -88,7 +88,7 @@ if (guess < correct) "More.";
 "Correct!"
 ```
 
-Isn't this beautiful? A single function suitable both for a one-line choices and for a series of mutually exclusive branches.
+Isn't that beautiful? A single function suitable both for a one-line choice and for a series of mutually exclusive branches.
 
 ## Lambdas
 
@@ -98,11 +98,11 @@ Funky has a very concise syntax for anonymous functions. That's crucial because 
 \variable result
 ```
 
-That's it. A backslash, the name the variable, and an expression to evaluate to.
+That's it. A backslash, a name for the variable, and an expression to evaluate to.
 
 > **Important.** All identifiers in Funky are allowed to contain almost arbitrary Unicode characters. That's because tokens are generally separated by whitespace. The only exceptions are the symbols `(`, `)`, `[`, `]`, `{`, `}`, `,`, `;`, `\`, and `#` that are always parsed as separate tokens.
 >
-> Therefore, **idiomatic naming** in Funky is very similar to the one in LISP. Dashes `are-used` instead `of_underscores`, functions returning `Bool` (predicates) usually end with the `?` symbol, and partial functions (those that can crash) end with the `!` symbol.
+> Therefore, **idiomatic naming** in Funky is very similar to the one in LISP. Dashes `are-used` instead `of_underscores`, functions returning `Bool` (predicates) usually end with the `?` symbol and partial functions (those that can crash) end with the `!` symbol.
 
 Functions of multiple arguments are just functions that take the first argument and return a function taking the rest of the arguments (currying):
 

@@ -1,4 +1,4 @@
-# For loop is a function
+# For-loop is a function
 
 _Lists_. They are the butter and bread of functional programming and possibly my favorite data structure ever.
 
@@ -10,7 +10,7 @@ union List a = empty | a :: List a
 
 It's a trivial linked list, which means you can't access elements randomly, you always have to traverse them in order.
 
-As you can see, lists can either be empty, or have a first element and a rest of the list. Using the `::` constructor repeatedly allows for creating longer and longer lists:
+As you can see, lists can either be empty or have a first element and a rest of the list. Using the `::` constructor repeatedly allows for creating longer and longer lists:
 
 ```funky
 empty
@@ -90,7 +90,7 @@ zip (*) [1, 2, 3] [2, 3, 4]           # => [2, 6, 12]
 zip (++) ["he", "wo"] ["llo", "rld"]  # => ["hello", "world"]
 ```
 
-The `zip` function enables this ultra cool hipster fibonacci one liner:
+The `zip` function enables this ultra cool hipster Fibonacci one-liner:
 
 ```funky
 func fibs : List Int =
@@ -105,9 +105,9 @@ fold> (+) 0 (range 1 15)  # => 120
 
 Other list functions include `reverse`, `take`, `drop`, `any`, `all`, `iterate`, and so on. The usual ones.
 
-## How to print a list? Meet the for loop
+## How to print a list? Meet the for-loop
 
-Now, all that stuff is cool, but if we can't print a list, it's all useless, right? Well, this leads us to a very interesting function from the standard library called `for`. Yes, the name is intentionally chosen to match the name of the old imperative concept - the for loop. Of course, loops in imperative programming rely on mutation of the loop variables. We can't do that in functional programming, but our for loop will be just as ergonomic as the imperative one.
+Now, all that stuff is cool, but if we can't print a list, it's all useless, right? Well, this leads us to a very interesting function from the standard library called `for`. Yes, the name is intentionally chosen to match the name of the old imperative concept - the for-loop. Of course, loops in imperative programming rely on the mutation of the loop variables. We can't do that in functional programming, but our for-loop will be just as ergonomic as the imperative one.
 
 So, what's the type of this mighty `for` function?
 
@@ -123,7 +123,7 @@ It takes three arguments. Here's what they are and how you can think about them:
 - **Body** (type `a -> c -> c`). You can think of this as something we want to "do" for each element.
 - **Next** (type `c`). This will get "done" after getting over with all the elements.
 
-Obviously, the descriptions above are rather innacurate. We can't _do_ anything, we can only make values and data structures.
+Obviously, the descriptions above are rather inaccurate. We can't _do_ anything, we can only make values and data structures.
 
 The best way to explain what `for` does is to start with an example. So, **let's print a list**:
 
@@ -193,9 +193,9 @@ for xs body;
 next
 ```
 
-The working of `for` can also be seen on the following diagram:
+The working of `for` can also be seen in the following diagram:
 
-![For loop diagram](for-loop-diagram.png)
+![For-loop diagram](for-loop-diagram.png)
 
 > **Note.** Yes, `for` is exactly the same function as `fold<`, except with a different order of arguments.
 
@@ -287,7 +287,7 @@ $ funkycmd for.fn
 
 ### How to put more things in a body?
 
-So far, we've only seen a simple function, or a composition of two functions as the body argument to `for`. What if we want to have a more elaborate loop body? Say a two `println`s for the start.
+So far, we've only seen a simple function or a composition of two functions as the body argument to `for`. What if we want to have a more elaborate loop body? Say a two `println`s for the start.
 
 You might be tempted to try this:
 
@@ -300,7 +300,7 @@ func main : IO =
 
 But that just doesn't work. We can't pass `println` as the second argument to `print`, that's just nonsense, it expects an `IO`, not `String -> IO -> IO`.
 
-**Here's what we need to do.** Let's start with the simple for loop on strings.
+**Here's what we need to do.** Let's start with the simple for-loop on strings.
 
 ```funky
 func main : IO =
@@ -321,7 +321,7 @@ func main : IO =
     quit
 ```
 
-The body of the `for` loop takes two arguments: the _element_ of type `String`, and the _continuation_ of type `IO`. We pass both of these to the `println` function, recreating the original, short for loop. This doesn't at all change the behavior of the program.
+The body of the `for` loop takes two arguments: the _element_ of type `String`, and the _continuation_ of type `IO`. We pass both of these to the `println` function, recreating the original, short for-loop. This doesn't at all change the behavior of the program.
 
 However, as you can surely see, it's very straightforward to add more "statements" to the body:
 

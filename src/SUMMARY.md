@@ -13,7 +13,7 @@
     - [Unions](2-3-unions.md)
     - [Aliases](2-4-aliases.md)
 - [The other half of the language](3-the-other-half-of-the-language.md)
-    - [For loop is a function](3-1-for-loop-is-a-function.md)
+    - [For-loop is a function](3-1-for-loop-is-a-function.md)
     - [Yield it all!](3-2-yield-it-all.md)
     - [Isn't := imperative?](3-3-isn't-colon-equals-imperative.md)
     - [On being exceptional](3-4-on-being-exceptional.md)

@@ -1,6 +1,6 @@
 # The power of functional programming
 
-Over the course of the last few parts, we've learned how to do for loops, Python-like generators, and imperative algorithms. What has that got to do with functional programming?
+Over the course of the last few parts, we've learned how to do for-loops, Python-like generators, and imperative algorithms. What has that got to do with functional programming?
 
 Someone once said: _Functional programming makes difficult tasks easy and easy tasks difficult._
 

@@ -9,7 +9,7 @@ $ funkycmd -types
 >
 ```
 
-> **Note.** `funkycmd -types` currenty doesn't implement convenient things like 'arrow up' to go back to the previous entry, and so on. To get those, I highly recommend using the `rlwrap` utility. Just install it and run `rlwrap funkycmd -types` and you'll get all those convenient features.
+> **Note.** `funkycmd -types` currently doesn't implement convenient things like 'arrow up' to go back to the previous entry, and so on. To get those, I highly recommend using the `rlwrap` utility. Just install it and run `rlwrap funkycmd -types` and you'll get all those convenient features.
 
 It opens up a little prompt where we can type expressions. Let's try it!
 
@@ -93,7 +93,7 @@ String -> IO -> IO
 
 Oh, so the `println` function only takes strings. Could've guessed that!
 
-> **Note.** Althought it might not seem like it at first, `println` is a completely pure function. It takes two arguments: a `String` and an `IO`. The `IO` is a continuation - it says what should be done after the string gets printed. In our case, the continuation is `quit` (which has the type `IO` itself). This _instructs_ the program to quit after printing the string. The precise workings of this will be explained soon.
+> **Note.** Although it might not seem like it at first, `println` is a completely pure function. It takes two arguments: a `String` and an `IO`. The `IO` is a continuation - it says what should be done after the string gets printed. In our case, the continuation is `quit` (which has the type `IO` itself). This _instructs_ the program to quit after printing the string. The precise workings of this will be explained soon.
 
 So, how do we convert an `Int` or a `Float` to a `String` so that we can print it?
 

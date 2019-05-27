@@ -26,7 +26,7 @@ For example, let's try and reverse `[1, 2, 3, 4, 5]`. Here's how the algorithm w
 
 At the end, the `left` list is empty and the `right` list contains the reversed version of the original input list.
 
-> **Note.** Adding/removing an element to/from the beginning of a list is efficient ([constant time](https://en.wikipedia.org/wiki/Time_complexity#Constant_time)). The whole algorithm therefore runs in time [linearly proportional](https://en.wikipedia.org/wiki/Time_complexity#Linear_time) to the size of the list.
+> **Note.** Adding/removing an element to/from the beginning of a list is efficient ([constant time](https://en.wikipedia.org/wiki/Time_complexity#Constant_time)). The whole algorithm, therefore, runs in time [linearly proportional](https://en.wikipedia.org/wiki/Time_complexity#Linear_time) to the size of the list.
 
 How could we implement such an algorithm in Funky?
 
@@ -73,7 +73,7 @@ Nice!
 
 ## The `recur` function
 
-Could we somohow get rid of the helper `my-reverse-algo` function? It isn't really useful on its own, it's just an implementation detail. It shouldn't be there.
+Could we somehow get rid of the helper `my-reverse-algo` function? It isn't really useful on its own, it's just an implementation detail. It shouldn't be there.
 
 What would help would be some way to define recursive functions anonymously, i.e. without making a global `func` definition. That way we could define `my-reverse-algo` directly inside `my-reverse`.
 
@@ -101,7 +101,7 @@ We can express the same recursive list using `recur` like this:
 recur \ones 1 :: ones
 ```
 
-The variable `ones` isn't a global definition in this case, it's just a local bindning. Does it work?
+The variable `ones` isn't a global definition, in this case, it's just a local binding. Does it work?
 
 ```funky
 func main : IO =
@@ -161,7 +161,7 @@ a :: fibs b (a + b)) 0 1
 
 Have you noticed them? The 0 and 1 that we passed in. They are right there, at the end of the expression. Perhaps you saw them, perhaps you didn't, but you surely must admit that it doesn't look very fashionable.
 
-Instead of simply passing the arguments as usual, we can use the `|>` function to pass them. It works like this:
+Instead of simply passing the arguments like usually, we can use the `|>` function to pass them. It works like this:
 
 ```funky
 x |> f
@@ -173,7 +173,7 @@ is the same as:
 f x
 ```
 
-So, with `|>`, we can rewrite the previos expression like this, but we need to pass the arguments in a seemingly reverse order:
+So, with `|>`, we can rewrite the previous expression like this, but we need to pass the arguments in seemingly reverse order:
 
 ```funky
 1 |> 0 |> recur \fibs \a \b
@@ -184,7 +184,7 @@ a :: fibs b (a + b)
 
 This whole expression evaluates to just `[0, 1, 1, 2, 3, 5, 8, 13, 21, ...]`, the infinite Fibonacci sequence.
 
-I admit, the whole thing about passing the arguments in a seemingly reverse order may look kinda confusing to you, but don't worry, you'll get used it. It's very versatile, and the whole thing didn't require a single language addition.
+I admit, the whole thing about passing the arguments in seemingly reverse order may look kinda confusing to you, but don't worry, you'll get used it. It's very versatile, and the whole thing didn't require a single language addition.
 
 ### Back to reversing lists
 
@@ -257,19 +257,19 @@ So, what's `Proc` all about? You can think of it as a description of a procedure
 First, it has **two type variables**:
 
 - **`s`**. This is the type of the state context the procedure will run in. For example, if `s` is `Int`, then the procedure will begin its execution with some initial `Int`, say `4`, be able to change it and check its current value during its execution.
-- **`r`**. This it the return type. When a procedure finishes, it returns some value, just like procedures in imperative languages.
+- **`r`**. This is the return type. When a procedure finishes, it returns some value, just like procedures in imperative languages.
 
 Second, it's a union with **three alternatives or commands**:
 
 - **`view`**. Used to check the current value of the state. Notice that its signature resembles the signature of `scanln` and similar functions. It's used the same way.
-- **`update`**. This one is used to change the state. It takes a function of type `s -> s`. When executing the procedure, the current state will be mapped through this function. The second argument is a contination - tells what should be done next. The `update` function is used in the same way as `println` and similar functions.
+- **`update`**. This one is used to change the state. It takes a function of type `s -> s`. When executing the procedure, the current state will be mapped through this function. The second argument is a continuation - tells what should be done next. The `update` function is used in the same way as `println` and similar functions.
 - **`return`**. Marks the end of the procedure and specifies the return value.
 
 Using these three instructions together with our already acquired battle-tested tools, like `if` and `for`, we can make descriptions of stateful procedures.
 
 Let's see that in action!
 
-Our first trivial example will be a procedure who's state context is just an `Int` and which returns an `Int` as well. When executed, it will increment the number in the state by 1 and return its new value.
+Our first trivial example will be a procedure whose state context is just an `Int` and which returns an `Int` as well. When executed, it will increment the number in the state by 1 and return its new value.
 
 ```funky
 func increment : Proc Int Int =
@@ -512,7 +512,7 @@ func reset : Proc Average Nothing =
     return nothing
 ```
 
-> **Details.** There's an overloaded version of `:=` which takes a function from the state instead of a direct value. It can be used to copy one part of the state into another. We could for example write: `sum := count`, even though that wouldn't make any sense. But, be careful. You **can't** write `sum := count * 2`, because `count` is a getter (a function) here, not a number. You could write `sum := (\s count s * 2)`, though.
+> **Details.** There's an overloaded version of `:=` which takes a function from the state instead of a direct value. It can be used to copy one part of the state into another. We could, for example, write: `sum := count`, even though that wouldn't make any sense. But, be careful. You **can't** write `sum := count * 2`, because `count` is a getter (a function) here, not a number. You could write `sum := (\s count s * 2)`, though.
 
 By the way, **the function `self`** acts as both a getter and an updater for the whole state. Remember this function?
 
@@ -534,13 +534,13 @@ Yes, this usage was one of the motivations for naming it `self` instead of `id`.
 
 ### Arrays
 
-The last piece of puzzle before we can finally implement the quicksort algorithm is random-access arrays. 
+The last piece of the puzzle before we can finally implement the quicksort algorithm is random-access arrays. 
 
-Arrays in Funky are a bit different than arrays in imperative language, because we aren't allowed to mutate anything. To change an element in an array we must make a new array. But no full copies need to be performed. The new array can always share as much data as possible with the old one and thus the whole operation will be quite cheap.
+Arrays in Funky are a bit different than arrays in imperative languages because we aren't allowed to mutate anything. To change an element in an array we must make a new array. But no full copies need to be performed. The new array can always share as much data as possible with the old one and thus the whole operation will be quite cheap.
 
-> **Details.** Without cheating, there's really no such thing as in-place, mutable, [O(1)](https://en.wikipedia.org/wiki/Time_complexity#Constant_time) access arrays in pure functional programming. All data structures have to be primarily tree-based and persistent.
+> **Details.** Without cheating, there's really no such thing as in-place, mutable, [O(1)](https://en.wikipedia.org/wiki/Time_complexity#Constant_time) access arrays in purely functional programming. All data structures have to be primarily tree-based and persistent.
 >
-> However, there are efficient ways of implementing persistant arrays with O(log n) access time.
+> However, there are efficient ways of implementing persistent arrays with O(log n) access time.
 
 Currently, the `Array` type in Funky implements an infinite array indexed by `Int`s (both positive and negative). **To create an empty array, we use the `empty` function**:
 
@@ -611,9 +611,9 @@ $ funkycmd array.fn
 2
 ```
 
-Sure enough it does!
+Sure enough, it does!
 
-We can even shorten `some-array` with a for loop:
+We can even shorten `some-array` with a for-loop:
 
 ```funky
 func some-array : Array Int =
@@ -649,7 +649,7 @@ algorithm partition(A, lo, hi) is
     return i
 ```
 
-That's a pseudocode. We'll try and translate it to Funky. We'll make two procedures: `quicksort` and `partition`.
+That's pseudocode. We'll try and translate it to Funky. We'll make two procedures: `quicksort` and `partition`.
 
 Since these are imperative, we'll need the array in their mutable state. The `partition` procedure also uses an index `i`, so we'll also need that in the state. This will be our state:
 
@@ -687,7 +687,7 @@ func partition : Int -> Int -> Proc Vars Int =
 
 > **Details.** The `swap` function has type `Int -> Int -> Array a -> Array a` and does the obvious: evaluates to an array with the corresponding elements swapped.
 
-It's definitely a little longer than the pseudocode. Most of the extra lines are from the lambdas and getting the current value of `i`. But otherwise, it reads very similar.
+It's definitely a little longer than the pseudocode. Most of the extra lines are from the lambdas and getting the current value of `i`. But otherwise, it reads very similarly.
 
 Now onto the `quicksort` procedure:
 

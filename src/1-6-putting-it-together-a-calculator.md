@@ -26,7 +26,7 @@ func main : IO =
     # TODO
 ```
 
-Good. Now, `x-str` and `y-str` are strings, because that's what `scan` gives us. In order to perform computations, we need to convert them to floats first.
+Good. Now, `x-str` and `y-str` are strings because that's what `scan` gives us. In order to perform computations, we need to convert them to floats first.
 
 ```
 $ funkycmd -types

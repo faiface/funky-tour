@@ -1,12 +1,12 @@
 # A bit more about IO
 
-Funky has an unusual approach to side-effects. There's no notion of them in the language itself. What looked like side-effecting functions in the previous sections (`println`, `quit`, etc.) were in fact data structure constructors. The `IO` type is _not magic_ at all. It's just a plain data structure defined in the Funky language itself. Here's its definition (you can also find it in the standard library in the `cmd` folder):
+Funky has an unusual approach to side-effects. There's no notion of them in the language itself. What looked like side-effecting functions in the previous sections (`println`, `quit`, etc.) were, in fact, data structure constructors. The `IO` type is _not magic_ at all. It's just a plain data structure defined in the Funky language itself. Here's its definition (you can also find it in the standard library in the `cmd` folder):
 
 ```funky
 union IO = quit | putc Char IO | getc (Char -> IO)
 ```
 
-We haven't covered `union` yet but think algebraic data types (e.g. `data` in Haskell). This `IO` data structure serves as a description of what the program should do. However, in contrast with the control flow of traditional imperative languages, the `IO` data structure can be arbitrarily manipulated - e.g. it's no problem to implement input/ouput encryption just by implementing a single `IO -> IO` function.
+We haven't covered `union` yet but think algebraic data types (e.g. `data` in Haskell). This `IO` data structure serves as a description of what the program should do. However, in contrast with the control flow of traditional imperative languages, the `IO` data structure can be arbitrarily manipulated - e.g. it's no problem to implement input/output encryption just by implementing a single `IO -> IO` function.
 
 > **Note.** The `IO` data structure is very limited. All it can express is printing and scanning characters. The thing we haven't talked about yet is that `funkycmd` is just one of the many possible _side-effect interpreters_. Specifically, `funkycmd` interprets (executes) the above `IO` data structure. There's another interpreter called `funkygame` that interprets an entirely different data structure which describes sprite-based games. You can actually make your own side-effect interpreter fairly easily. The specifics of that are explained in [another part](4-3-building-an-own-side-effect-interpreter.md).
 

@@ -67,7 +67,7 @@ func ?   : a -> Maybe a -> a
 func map : (a -> b) -> Maybe a -> Maybe b
 ```
 
-The `?` function takes a _default value_ and a maybe and evaluates to the default value if the maybe is `none`. Otherwise it evaluates to the value inside the maybe. For example: `0 ? none` evaluates to `0`, while `0 ? some 3` evaluates to `3`.
+The `?` function takes a _default value_ and a maybe and evaluates to the default value if the maybe is `none`. Otherwise, it evaluates to the value inside the maybe. For example: `0 ? none` evaluates to `0`, while `0 ? some 3` evaluates to `3`.
 
 The `map` function transforms the value inside a maybe using the supplied function. If the maybe is `none`, the result will be `none` as well. For example: `map (+ 1) none` results in `none`, while `map (+ 1) (some 3)` results in `some 4`. It works very much like `map` for lists.
 
@@ -133,7 +133,7 @@ func main : IO =
 
 That's more readable!
 
-> **Note.** Of couse, there are many cases when `?` and `map` are the right choices. Perhaps this one is too. Depends on your personal preference.
+> **Note.** Of course, there are many cases when `?` and `map` are the right choices. Perhaps this one is too. Depends on your personal preference.
 
 In this short refactoring exercise, we've seen most of the useful `Maybe` functions: `none?`, `extract!`, `?`, `map`, `if-none`, `let-some`.
 

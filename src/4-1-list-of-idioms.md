@@ -206,7 +206,7 @@ let-:: [] \x \xs  # the whole expression is none
 
 The `for` function is used to loop over a list of elements. It is functionally equivalent to `fold<`.
 
-### [Short for loop](3-1-for-loop-is-a-function.md#how-to-print-a-list-meet-the-for-loop)
+### [Short for-loop](3-1-for-loop-is-a-function.md#how-to-print-a-list-meet-the-for-loop)
 
 ```funky
 for list function;
@@ -224,7 +224,7 @@ for (range 1 10)
 quit
 ```
 
-### [Long for loop](3-1-for-loop-is-a-function.md#how-to-put-more-things-in-a-body)
+### [Long for-loop](3-1-for-loop-is-a-function.md#how-to-put-more-things-in-a-body)
 
 ```funky
 for list (

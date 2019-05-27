@@ -12,7 +12,7 @@ No side-effect interpreter is currently fully featured.
 
 Funky aims to be a general purpose language without forgetting about visualizations, GUI, games, and recreational programming. Here are some of the most wanted side-effect interpreters:
 
-- Command line applications with ability to replace shell scripts.
+- Command line applications with the ability to replace shell scripts.
 - GUI built for visualizations and games first, text editors second.
 - Web servers.
 - Erlang/Go-style concurrent distributed programs.
@@ -159,9 +159,9 @@ union Routine =
 
 Three commands are prefixed with `_`. This means that they're not meant to be used by the user of this library and the future package system will make sure they're unexported.
 
-The `Routine` type has also lost it's type variable. It doesn't need it anymore.
+The `Routine` type has also lost its type variable. It doesn't need it anymore.
 
-Now, this definition allows sending arbitrary values over arbitrary channels, but doesn't guarantee type-safety. However, if we define our own versions of those three commands, we get the type safety back:
+Now, this definition allows sending arbitrary values over arbitrary channels but doesn't guarantee type-safety. However, if we define our own versions of those three commands, we get the type safety back:
 
 ```funky
 record Chan a = _box : Box

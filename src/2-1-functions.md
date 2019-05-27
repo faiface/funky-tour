@@ -1,6 +1,6 @@
 # Functions
 
-So far, we've only seen one function defined: the `main` function. But even from that alone I'm sure you've already guessed how function definitions look. They're quite simple:
+So far, we've only seen one function defined: the `main` function. But even from that alone, I'm sure you've already guessed how function definitions look. They're quite simple:
 
 ```funky
 func name : type = body
@@ -10,7 +10,7 @@ That's it!
 
 The **name** can be any string of non-whitespace characters excluding keyword symbols like parentheses, a backslash, a semicolon, and a few others.
 
-The **type** specifies the type that the function name will aquire.
+The **type** specifies the type that the function name will acquire.
 
 The **body** is an arbitrary Funky expression, functions, lambda, etc. can be used. The only limitation is that it must conform to the type.
 
@@ -18,7 +18,7 @@ The **body** is an arbitrary Funky expression, functions, lambda, etc. can be us
 >
 > As we've already learned, there are three built-in types: `Int`, `Float`, and `Char`. There are also a few types from the standard library, such as `Bool`, or `String`.
 >
-> Then there are types that take other types as arguments - a types that are, so called, generic. The _most important_ of such generic types is the function type. This is also actually built-in, but since it's a type constructor, rather than a full, distinct type, I haven't included it among the built-in types previously.
+> Then there are types that take other types as arguments - types that are, so-called, generic. The _most important_ of such generic types is the function type. This is also actually built-in, but since it's a type constructor, rather than a full, distinct type, I haven't included it among the built-in types previously.
 >
 > The function type constructor is called 'the arrow', written as: `->`. It takes two arguments, the input type on the left and the output type on the right. For example, `Int -> Bool` is a function that takes an `Int` and evaluates to a `Bool`.
 
@@ -80,7 +80,7 @@ Furthermore, the parentheses in the type `Int -> (Int -> Bool)` aren't needed ei
 >
 > Applications of prefix functions are automatically parenthesized from the left if no explicit parenthesis are present. In all cases, `f x y` is the same as `(f x) y`.
 >
-> Applications of infix functions are, however, automatically parenthesized from the right. All of them have the same precedence. This is to simplify programmer's life: when defining own infix functions, you won't be bothered by specifying precedence levels or associativity. So, `3 * 2 + 1` is equivalent to `3 * (2 + 1)`.
+> Applications of infix functions are, however, automatically parenthesized from the right. All of them have the same precedence. This is to simplify the programmer's life: when defining own infix functions, you won't be bothered by specifying precedence levels or associativity. So, `3 * 2 + 1` is equivalent to `3 * (2 + 1)`.
 
 After learning about automatic parentheses (also called left/right-associativity), here's the definition of `divides`:
 
@@ -96,7 +96,7 @@ We could've also called the function `/?`, in which case it would be an infix fu
 
 **Function types may also contain type variables**. These are distinguished from actual types by being all lower-case. Actual types must contain an upper-case character - type variables must not.
 
-When a function has a type variable in its type, that means that this function is fine with whatever type instead of that variable. For example, there's this (probably controversialy named function, usually it's called `id`) function called `self`:
+When a function has a type variable in its type, that means that this function is fine with whatever type instead of that variable. For example, there's this (probably controversially named function, usually it's called `id`) function called `self`:
 
 ```
 $ funkycmd -types
@@ -110,7 +110,7 @@ It doesn't do anything. It just returns whatever it was passed. For example, `se
 
 Words in natural language usually don't have just one meaning: "If only there was a _way_ we could continue that _way_, we could've been _way_ ahead of them, but in a _way_, we haven't done so bad." The previous sentence used four different meanings of the word 'way'.
 
-Using same words for different, or slightly different meanings in different contexts allows for very concise and expressive speach. Imagine that we'd have to invent a brand new word every time we'd like to add a new meaning to an existing word. That would be cumbersome and unnatural.
+Using the same words for different, or slightly different meanings in different contexts allows for very concise and expressive speech. Imagine that we'd have to invent a brand new word every time we'd like to add a new meaning to an existing word. That would be cumbersome and unnatural.
 
 Programming is no different. When designing Funky, I realized that support for function overloading brings so many benefits that I couldn't ignore it despite the initial difficulty of implementation.
 
@@ -179,7 +179,7 @@ $ funkycmd zeros.fn
 0
 ```
 
-Well, okay, those two `zero` functions are distinguishible by their type. But what if we put the same type?
+Well, okay, those two `zero` functions are distinguishable by their type. But what if we put the same type?
 
 ```funky
 func lucky-number : Int = 7
@@ -190,7 +190,7 @@ func main : IO =
     quit
 ```
 
-Which one gets printed? `7` or `3`? Make your guesses, ladies and gentlement...
+Which one gets printed? `7` or `3`? Make your guesses, ladies, and gentlemen...
 
 Here's what happens:
 
