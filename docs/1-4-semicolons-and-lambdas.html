@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html" class="active"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li><li><a href="2-2-records.html"><strong aria-hidden="true">2.2.</strong> Records</a></li><li><a href="2-3-unions.html"><strong aria-hidden="true">2.3.</strong> Unions</a></li><li><a href="2-4-aliases.html"><strong aria-hidden="true">2.4.</strong> Aliases</a></li></ol></li><li><a href="3-the-other-half-of-the-language.html"><strong aria-hidden="true">3.</strong> The other half of the language</a></li><li><ol class="section"><li><a href="3-1-for-loop-is-a-function.html"><strong aria-hidden="true">3.1.</strong> For loop is a function</a></li><li><a href="3-2-yield-it-all.html"><strong aria-hidden="true">3.2.</strong> Yield it all!</a></li><li><a href="3-3-isn't-colon-equals-imperative.html"><strong aria-hidden="true">3.3.</strong> Isn't := imperative?</a></li><li><a href="3-4-on-being-exceptional.html"><strong aria-hidden="true">3.4.</strong> On being exceptional</a></li><li><a href="3-5-the-power-of-functional-programming.html"><strong aria-hidden="true">3.5.</strong> The power of functional programming</a></li></ol></li><li><a href="4-extras.html"><strong aria-hidden="true">4.</strong> Extras</a></li><li><ol class="section"><li><a href="4-1-list-of-idioms.html"><strong aria-hidden="true">4.1.</strong> List of idioms</a></li><li><a href="4-2-planned-considered-wanted-features.html"><strong aria-hidden="true">4.2.</strong> Planned/considered/wanted features</a></li><li><a href="4-3-building-an-own-side-effect-interpreter.html"><strong aria-hidden="true">4.3.</strong> Building an own side-effect interpreter</a></li></ol></li></ol>
+            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html" class="active"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li><li><a href="2-2-records.html"><strong aria-hidden="true">2.2.</strong> Records</a></li><li><a href="2-3-unions.html"><strong aria-hidden="true">2.3.</strong> Unions</a></li><li><a href="2-4-aliases.html"><strong aria-hidden="true">2.4.</strong> Aliases</a></li></ol></li><li><a href="3-the-other-half-of-the-language.html"><strong aria-hidden="true">3.</strong> The other half of the language</a></li><li><ol class="section"><li><a href="3-1-for-loop-is-a-function.html"><strong aria-hidden="true">3.1.</strong> For-loop is a function</a></li><li><a href="3-2-yield-it-all.html"><strong aria-hidden="true">3.2.</strong> Yield it all!</a></li><li><a href="3-3-isn't-colon-equals-imperative.html"><strong aria-hidden="true">3.3.</strong> Isn't := imperative?</a></li><li><a href="3-4-on-being-exceptional.html"><strong aria-hidden="true">3.4.</strong> On being exceptional</a></li><li><a href="3-5-the-power-of-functional-programming.html"><strong aria-hidden="true">3.5.</strong> The power of functional programming</a></li></ol></li><li><a href="4-extras.html"><strong aria-hidden="true">4.</strong> Extras</a></li><li><ol class="section"><li><a href="4-1-list-of-idioms.html"><strong aria-hidden="true">4.1.</strong> List of idioms</a></li><li><a href="4-2-planned-considered-wanted-features.html"><strong aria-hidden="true">4.2.</strong> Planned/considered/wanted features</a></li><li><a href="4-3-building-an-own-side-effect-interpreter.html"><strong aria-hidden="true">4.3.</strong> Building an own side-effect interpreter</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -144,7 +144,7 @@
 <pre><code class="language-funky">string; sqrt 4.0 + sqrt 9.0
 </code></pre>
 <blockquote>
-<p><strong>Note.</strong> If you're familiar with Haskell, you'll notice that the semicolon is just like Haskell's <code>$</code> operator. That's correct. Funky uses the semicolon instead of the dollar to avoid clutter, because it's used very frequently.</p>
+<p><strong>Note.</strong> If you're familiar with Haskell, you'll notice that the semicolon is just like Haskell's <code>$</code> operator. That's correct. Funky uses the semicolon instead of the dollar to avoid clutter because it's used very frequently.</p>
 </blockquote>
 <p>The semicolon becomes very useful when structuring code. We could write this:</p>
 <pre><code class="language-funky">func main : IO =
@@ -159,7 +159,7 @@ C
 <blockquote>
 <p><strong>Explanation.</strong> If you're having trouble understand the code above, here's an explanation. The <code>IO</code> is a data structure that describes what the program should do. The simplest <code>IO</code> value is <code>quit</code>. It simply instructs the program to quit.</p>
 <p>The type of the <code>println</code> function is <code>String -&gt; IO -&gt; IO</code>. That means that <code>println</code> takes two arguments, a <code>String</code> and an <code>IO</code>, and evaluates to an <code>IO</code>. The resulting <code>IO</code> describes a program that first prints the provided string, then does whatever the second argument says.</p>
-<p>Let's look at the inner-most (last) usage of <code>println</code> in the above code: <code>println &quot;C&quot; quit</code>. This expression of type <code>IO</code> describes a program that prints the string <code>&quot;C&quot;</code> and then quits. Since it is an <code>IO</code>, we can pass it as the second argument to another <code>println</code> and we get <code>println &quot;B&quot; (println &quot;C&quot; quit)</code>. And using the same technique once again, we end up with the code above.</p>
+<p>Let's look at the innermost (last) usage of <code>println</code> in the above code: <code>println &quot;C&quot; quit</code>. This expression of type <code>IO</code> describes a program that prints the string <code>&quot;C&quot;</code> and then quits. Since it is an <code>IO</code>, we can pass it as the second argument to another <code>println</code> and we get <code>println &quot;B&quot; (println &quot;C&quot; quit)</code>. And using the same technique once again, we end up with the code above.</p>
 </blockquote>
 <p>But, we have a lot of parentheses there! Let's get rid of them with those semicolons:</p>
 <pre><code class="language-funky">func main : IO =
@@ -168,7 +168,7 @@ C
 <blockquote>
 <p><strong>Note.</strong> We technically don't need the last semicolon as <code>quit</code> is just a single word, but we'll leave it there for <em>style</em>.</p>
 </blockquote>
-<p>And finally, we can split it into mutliple lines:</p>
+<p>And finally, we can split it into multiple lines:</p>
 <pre><code class="language-funky">func main : IO =
     println &quot;A&quot;;
     println &quot;B&quot;;
@@ -190,22 +190,22 @@ Int
 List Char
 </code></pre>
 <blockquote>
-<p><strong>Note.</strong> Comments start with the <code>#</code> symbol. Also notice that <code>String</code> and <code>List Char</code> are synonyms.</p>
+<p><strong>Note.</strong> Comments start with the <code>#</code> symbol. Also, notice that <code>String</code> and <code>List Char</code> are synonyms.</p>
 </blockquote>
 <p>Combining the <code>if</code> function with the semicolon, we create an <em>if, else if, else</em> chain:</p>
 <pre><code class="language-funky">if (guess &gt; correct) &quot;Less.&quot;;
 if (guess &lt; correct) &quot;More.&quot;;
 &quot;Correct!&quot;
 </code></pre>
-<p>Isn't this beautiful? A single function suitable both for a one-line choices and for a series of mutually exclusive branches.</p>
+<p>Isn't that beautiful? A single function suitable both for a one-line choice and for a series of mutually exclusive branches.</p>
 <a class="header" href="#lambdas" id="lambdas"><h2>Lambdas</h2></a>
 <p>Funky has a very concise syntax for anonymous functions. That's crucial because just like semicolons, anonymous functions are used all over the place. Here's how you write them:</p>
 <pre><code class="language-funky">\variable result
 </code></pre>
-<p>That's it. A backslash, the name the variable, and an expression to evaluate to.</p>
+<p>That's it. A backslash, a name for the variable, and an expression to evaluate to.</p>
 <blockquote>
 <p><strong>Important.</strong> All identifiers in Funky are allowed to contain almost arbitrary Unicode characters. That's because tokens are generally separated by whitespace. The only exceptions are the symbols <code>(</code>, <code>)</code>, <code>[</code>, <code>]</code>, <code>{</code>, <code>}</code>, <code>,</code>, <code>;</code>, <code>\</code>, and <code>#</code> that are always parsed as separate tokens.</p>
-<p>Therefore, <strong>idiomatic naming</strong> in Funky is very similar to the one in LISP. Dashes <code>are-used</code> instead <code>of_underscores</code>, functions returning <code>Bool</code> (predicates) usually end with the <code>?</code> symbol, and partial functions (those that can crash) end with the <code>!</code> symbol.</p>
+<p>Therefore, <strong>idiomatic naming</strong> in Funky is very similar to the one in LISP. Dashes <code>are-used</code> instead <code>of_underscores</code>, functions returning <code>Bool</code> (predicates) usually end with the <code>?</code> symbol and partial functions (those that can crash) end with the <code>!</code> symbol.</p>
 </blockquote>
 <p>Functions of multiple arguments are just functions that take the first argument and return a function taking the rest of the arguments (currying):</p>
 <pre><code class="language-funky">\x \y x + y

@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li><li><a href="2-2-records.html"><strong aria-hidden="true">2.2.</strong> Records</a></li><li><a href="2-3-unions.html"><strong aria-hidden="true">2.3.</strong> Unions</a></li><li><a href="2-4-aliases.html"><strong aria-hidden="true">2.4.</strong> Aliases</a></li></ol></li><li><a href="3-the-other-half-of-the-language.html"><strong aria-hidden="true">3.</strong> The other half of the language</a></li><li><ol class="section"><li><a href="3-1-for-loop-is-a-function.html"><strong aria-hidden="true">3.1.</strong> For loop is a function</a></li><li><a href="3-2-yield-it-all.html"><strong aria-hidden="true">3.2.</strong> Yield it all!</a></li><li><a href="3-3-isn't-colon-equals-imperative.html" class="active"><strong aria-hidden="true">3.3.</strong> Isn't := imperative?</a></li><li><a href="3-4-on-being-exceptional.html"><strong aria-hidden="true">3.4.</strong> On being exceptional</a></li><li><a href="3-5-the-power-of-functional-programming.html"><strong aria-hidden="true">3.5.</strong> The power of functional programming</a></li></ol></li><li><a href="4-extras.html"><strong aria-hidden="true">4.</strong> Extras</a></li><li><ol class="section"><li><a href="4-1-list-of-idioms.html"><strong aria-hidden="true">4.1.</strong> List of idioms</a></li><li><a href="4-2-planned-considered-wanted-features.html"><strong aria-hidden="true">4.2.</strong> Planned/considered/wanted features</a></li><li><a href="4-3-building-an-own-side-effect-interpreter.html"><strong aria-hidden="true">4.3.</strong> Building an own side-effect interpreter</a></li></ol></li></ol>
+            <ol class="chapter"><li><a href="1-taking-off-the-ground.html"><strong aria-hidden="true">1.</strong> Taking off the ground</a></li><li><ol class="section"><li><a href="1-1-installing.html"><strong aria-hidden="true">1.1.</strong> Installing</a></li><li><a href="1-2-hello-world.html"><strong aria-hidden="true">1.2.</strong> Hello, world!</a></li><li><a href="1-3-expressions-and-types.html"><strong aria-hidden="true">1.3.</strong> Expressions and types</a></li><li><a href="1-4-semicolons-and-lambdas.html"><strong aria-hidden="true">1.4.</strong> Semicolons and lambdas</a></li><li><a href="1-5-a-bit-more-about-io.html"><strong aria-hidden="true">1.5.</strong> A bit more about IO</a></li><li><a href="1-6-putting-it-together-a-calculator.html"><strong aria-hidden="true">1.6.</strong> Putting it together: a calculator</a></li></ol></li><li><a href="2-making-the-world-our-own.html"><strong aria-hidden="true">2.</strong> Making the world our own</a></li><li><ol class="section"><li><a href="2-1-functions.html"><strong aria-hidden="true">2.1.</strong> Functions</a></li><li><a href="2-2-records.html"><strong aria-hidden="true">2.2.</strong> Records</a></li><li><a href="2-3-unions.html"><strong aria-hidden="true">2.3.</strong> Unions</a></li><li><a href="2-4-aliases.html"><strong aria-hidden="true">2.4.</strong> Aliases</a></li></ol></li><li><a href="3-the-other-half-of-the-language.html"><strong aria-hidden="true">3.</strong> The other half of the language</a></li><li><ol class="section"><li><a href="3-1-for-loop-is-a-function.html"><strong aria-hidden="true">3.1.</strong> For-loop is a function</a></li><li><a href="3-2-yield-it-all.html"><strong aria-hidden="true">3.2.</strong> Yield it all!</a></li><li><a href="3-3-isn't-colon-equals-imperative.html" class="active"><strong aria-hidden="true">3.3.</strong> Isn't := imperative?</a></li><li><a href="3-4-on-being-exceptional.html"><strong aria-hidden="true">3.4.</strong> On being exceptional</a></li><li><a href="3-5-the-power-of-functional-programming.html"><strong aria-hidden="true">3.5.</strong> The power of functional programming</a></li></ol></li><li><a href="4-extras.html"><strong aria-hidden="true">4.</strong> Extras</a></li><li><ol class="section"><li><a href="4-1-list-of-idioms.html"><strong aria-hidden="true">4.1.</strong> List of idioms</a></li><li><a href="4-2-planned-considered-wanted-features.html"><strong aria-hidden="true">4.2.</strong> Planned/considered/wanted features</a></li><li><a href="4-3-building-an-own-side-effect-interpreter.html"><strong aria-hidden="true">4.3.</strong> Building an own side-effect interpreter</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -162,7 +162,7 @@
 </code></pre>
 <p>At the end, the <code>left</code> list is empty and the <code>right</code> list contains the reversed version of the original input list.</p>
 <blockquote>
-<p><strong>Note.</strong> Adding/removing an element to/from the beginning of a list is efficient (<a href="https://en.wikipedia.org/wiki/Time_complexity#Constant_time">constant time</a>). The whole algorithm therefore runs in time <a href="https://en.wikipedia.org/wiki/Time_complexity#Linear_time">linearly proportional</a> to the size of the list.</p>
+<p><strong>Note.</strong> Adding/removing an element to/from the beginning of a list is efficient (<a href="https://en.wikipedia.org/wiki/Time_complexity#Constant_time">constant time</a>). The whole algorithm, therefore, runs in time <a href="https://en.wikipedia.org/wiki/Time_complexity#Linear_time">linearly proportional</a> to the size of the list.</p>
 </blockquote>
 <p>How could we implement such an algorithm in Funky?</p>
 <p>Well, this one isn't particularly hard. We can utilize recursion to simulate the state flow. We create a function called <code>my-reverse-algo</code>, which has two arguments: <code>left</code> and <code>right</code>. Those represent the two variables used in the algorithm. If the <code>left</code> list is empty, <code>my-reverse-algo</code> simply returns the <code>right</code> list. Otherwise, it returns from a recursive call with the variables updated appropriately.</p>
@@ -195,7 +195,7 @@
 </code></pre>
 <p>Nice!</p>
 <a class="header" href="#the-recur-function" id="the-recur-function"><h2>The <code>recur</code> function</h2></a>
-<p>Could we somohow get rid of the helper <code>my-reverse-algo</code> function? It isn't really useful on its own, it's just an implementation detail. It shouldn't be there.</p>
+<p>Could we somehow get rid of the helper <code>my-reverse-algo</code> function? It isn't really useful on its own, it's just an implementation detail. It shouldn't be there.</p>
 <p>What would help would be some way to define recursive functions anonymously, i.e. without making a global <code>func</code> definition. That way we could define <code>my-reverse-algo</code> directly inside <code>my-reverse</code>.</p>
 <p>The function for this job is called <code>recur</code>, otherwise known as the <em><a href="https://en.wikipedia.org/wiki/Fixed-point_combinator">fixpoint combinator</a></em>, or the <em>Y combinator</em>. It's a pretty mind-blowing function. I won't explain how it works (it took me a long time to figure it out), but I'll explain how you can use it.</p>
 <p>Here's the type, but it won't help you figure out much:</p>
@@ -210,7 +210,7 @@
 <p>We can express the same recursive list using <code>recur</code> like this:</p>
 <pre><code class="language-funky">recur \ones 1 :: ones
 </code></pre>
-<p>The variable <code>ones</code> isn't a global definition in this case, it's just a local bindning. Does it work?</p>
+<p>The variable <code>ones</code> isn't a global definition, in this case, it's just a local binding. Does it work?</p>
 <pre><code class="language-funky">func main : IO =
     for (take 5; recur \ones 1 :: ones)
         (println . string);
@@ -246,13 +246,13 @@ a :: fibs b (a + b)
 a :: fibs b (a + b)) 0 1
 </code></pre>
 <p>Have you noticed them? The 0 and 1 that we passed in. They are right there, at the end of the expression. Perhaps you saw them, perhaps you didn't, but you surely must admit that it doesn't look very fashionable.</p>
-<p>Instead of simply passing the arguments as usual, we can use the <code>|&gt;</code> function to pass them. It works like this:</p>
+<p>Instead of simply passing the arguments like usually, we can use the <code>|&gt;</code> function to pass them. It works like this:</p>
 <pre><code class="language-funky">x |&gt; f
 </code></pre>
 <p>is the same as:</p>
 <pre><code class="language-funky">f x
 </code></pre>
-<p>So, with <code>|&gt;</code>, we can rewrite the previos expression like this, but we need to pass the arguments in a seemingly reverse order:</p>
+<p>So, with <code>|&gt;</code>, we can rewrite the previous expression like this, but we need to pass the arguments in seemingly reverse order:</p>
 <pre><code class="language-funky">1 |&gt; 0 |&gt; recur \fibs \a \b
 a :: fibs b (a + b)
 </code></pre>
@@ -260,7 +260,7 @@ a :: fibs b (a + b)
 <p><strong>Explanation.</strong> The above code works, we pass <code>0</code> for <code>a</code> and <code>1</code> for <code>b</code>, not the other way around. This is because <code>y |&gt; x |&gt; f</code> is the same as <code>y |&gt; (x |&gt; f)</code>, which reduces to <code>y |&gt; f x</code>, and finally <code>f x y</code>.</p>
 </blockquote>
 <p>This whole expression evaluates to just <code>[0, 1, 1, 2, 3, 5, 8, 13, 21, ...]</code>, the infinite Fibonacci sequence.</p>
-<p>I admit, the whole thing about passing the arguments in a seemingly reverse order may look kinda confusing to you, but don't worry, you'll get used it. It's very versatile, and the whole thing didn't require a single language addition.</p>
+<p>I admit, the whole thing about passing the arguments in seemingly reverse order may look kinda confusing to you, but don't worry, you'll get used it. It's very versatile, and the whole thing didn't require a single language addition.</p>
 <a class="header" href="#back-to-reversing-lists" id="back-to-reversing-lists"><h3>Back to reversing lists</h3></a>
 <p>Can we use <code>recur</code> to get rid of the extra <code>my-reverse-algo</code> function?</p>
 <p>For the reminder, here's how it looks with the extra function:</p>
@@ -311,17 +311,17 @@ func my-reverse : List a -&gt; List a =
 <p>First, it has <strong>two type variables</strong>:</p>
 <ul>
 <li><strong><code>s</code></strong>. This is the type of the state context the procedure will run in. For example, if <code>s</code> is <code>Int</code>, then the procedure will begin its execution with some initial <code>Int</code>, say <code>4</code>, be able to change it and check its current value during its execution.</li>
-<li><strong><code>r</code></strong>. This it the return type. When a procedure finishes, it returns some value, just like procedures in imperative languages.</li>
+<li><strong><code>r</code></strong>. This is the return type. When a procedure finishes, it returns some value, just like procedures in imperative languages.</li>
 </ul>
 <p>Second, it's a union with <strong>three alternatives or commands</strong>:</p>
 <ul>
 <li><strong><code>view</code></strong>. Used to check the current value of the state. Notice that its signature resembles the signature of <code>scanln</code> and similar functions. It's used the same way.</li>
-<li><strong><code>update</code></strong>. This one is used to change the state. It takes a function of type <code>s -&gt; s</code>. When executing the procedure, the current state will be mapped through this function. The second argument is a contination - tells what should be done next. The <code>update</code> function is used in the same way as <code>println</code> and similar functions.</li>
+<li><strong><code>update</code></strong>. This one is used to change the state. It takes a function of type <code>s -&gt; s</code>. When executing the procedure, the current state will be mapped through this function. The second argument is a continuation - tells what should be done next. The <code>update</code> function is used in the same way as <code>println</code> and similar functions.</li>
 <li><strong><code>return</code></strong>. Marks the end of the procedure and specifies the return value.</li>
 </ul>
 <p>Using these three instructions together with our already acquired battle-tested tools, like <code>if</code> and <code>for</code>, we can make descriptions of stateful procedures.</p>
 <p>Let's see that in action!</p>
-<p>Our first trivial example will be a procedure who's state context is just an <code>Int</code> and which returns an <code>Int</code> as well. When executed, it will increment the number in the state by 1 and return its new value.</p>
+<p>Our first trivial example will be a procedure whose state context is just an <code>Int</code> and which returns an <code>Int</code> as well. When executed, it will increment the number in the state by 1 and return its new value.</p>
 <pre><code class="language-funky">func increment : Proc Int Int =
     update (+ 1);
     view \x
@@ -481,7 +481,7 @@ func my-reverse : List a -&gt; List a =
     return nothing
 </code></pre>
 <blockquote>
-<p><strong>Details.</strong> There's an overloaded version of <code>:=</code> which takes a function from the state instead of a direct value. It can be used to copy one part of the state into another. We could for example write: <code>sum := count</code>, even though that wouldn't make any sense. But, be careful. You <strong>can't</strong> write <code>sum := count * 2</code>, because <code>count</code> is a getter (a function) here, not a number. You could write <code>sum := (\s count s * 2)</code>, though.</p>
+<p><strong>Details.</strong> There's an overloaded version of <code>:=</code> which takes a function from the state instead of a direct value. It can be used to copy one part of the state into another. We could, for example, write: <code>sum := count</code>, even though that wouldn't make any sense. But, be careful. You <strong>can't</strong> write <code>sum := count * 2</code>, because <code>count</code> is a getter (a function) here, not a number. You could write <code>sum := (\s count s * 2)</code>, though.</p>
 </blockquote>
 <p>By the way, <strong>the function <code>self</code></strong> acts as both a getter and an updater for the whole state. Remember this function?</p>
 <pre><code class="language-funky">func increment : Proc Int Int =
@@ -495,11 +495,11 @@ func my-reverse : List a -&gt; List a =
 </code></pre>
 <p>Yes, this usage was one of the motivations for naming it <code>self</code> instead of <code>id</code>.</p>
 <a class="header" href="#arrays" id="arrays"><h3>Arrays</h3></a>
-<p>The last piece of puzzle before we can finally implement the quicksort algorithm is random-access arrays.</p>
-<p>Arrays in Funky are a bit different than arrays in imperative language, because we aren't allowed to mutate anything. To change an element in an array we must make a new array. But no full copies need to be performed. The new array can always share as much data as possible with the old one and thus the whole operation will be quite cheap.</p>
+<p>The last piece of the puzzle before we can finally implement the quicksort algorithm is random-access arrays.</p>
+<p>Arrays in Funky are a bit different than arrays in imperative languages because we aren't allowed to mutate anything. To change an element in an array we must make a new array. But no full copies need to be performed. The new array can always share as much data as possible with the old one and thus the whole operation will be quite cheap.</p>
 <blockquote>
-<p><strong>Details.</strong> Without cheating, there's really no such thing as in-place, mutable, <a href="https://en.wikipedia.org/wiki/Time_complexity#Constant_time">O(1)</a> access arrays in pure functional programming. All data structures have to be primarily tree-based and persistent.</p>
-<p>However, there are efficient ways of implementing persistant arrays with O(log n) access time.</p>
+<p><strong>Details.</strong> Without cheating, there's really no such thing as in-place, mutable, <a href="https://en.wikipedia.org/wiki/Time_complexity#Constant_time">O(1)</a> access arrays in purely functional programming. All data structures have to be primarily tree-based and persistent.</p>
+<p>However, there are efficient ways of implementing persistent arrays with O(log n) access time.</p>
 </blockquote>
 <p>Currently, the <code>Array</code> type in Funky implements an infinite array indexed by <code>Int</code>s (both positive and negative). <strong>To create an empty array, we use the <code>empty</code> function</strong>:</p>
 <pre><code class="language-funky">func empty : a -&gt; Array a
@@ -546,8 +546,8 @@ func main : IO =
 5
 2
 </code></pre>
-<p>Sure enough it does!</p>
-<p>We can even shorten <code>some-array</code> with a for loop:</p>
+<p>Sure enough, it does!</p>
+<p>We can even shorten <code>some-array</code> with a for-loop:</p>
 <pre><code class="language-funky">func some-array : Array Int =
     start-with (empty 0);
     for-pair (enumerate [7, 4, 9, 5, 2])
@@ -574,7 +574,7 @@ algorithm partition(A, lo, hi) is
     swap A[i] with A[hi]
     return i
 </code></pre>
-<p>That's a pseudocode. We'll try and translate it to Funky. We'll make two procedures: <code>quicksort</code> and <code>partition</code>.</p>
+<p>That's pseudocode. We'll try and translate it to Funky. We'll make two procedures: <code>quicksort</code> and <code>partition</code>.</p>
 <p>Since these are imperative, we'll need the array in their mutable state. The <code>partition</code> procedure also uses an index <code>i</code>, so we'll also need that in the state. This will be our state:</p>
 <pre><code class="language-funky">record Vars =
     array : Array Int,
@@ -607,7 +607,7 @@ algorithm partition(A, lo, hi) is
 <blockquote>
 <p><strong>Details.</strong> The <code>swap</code> function has type <code>Int -&gt; Int -&gt; Array a -&gt; Array a</code> and does the obvious: evaluates to an array with the corresponding elements swapped.</p>
 </blockquote>
-<p>It's definitely a little longer than the pseudocode. Most of the extra lines are from the lambdas and getting the current value of <code>i</code>. But otherwise, it reads very similar.</p>
+<p>It's definitely a little longer than the pseudocode. Most of the extra lines are from the lambdas and getting the current value of <code>i</code>. But otherwise, it reads very similarly.</p>
 <p>Now onto the <code>quicksort</code> procedure:</p>
 <pre><code class="language-funky">func quicksort : Int -&gt; Int -&gt; Proc Vars Nothing =
     \lo \hi
