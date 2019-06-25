@@ -285,7 +285,7 @@ String -&gt; String
 <pre><code class="language-funky">string; sqrt 4.0 + sqrt 9.0
 </code></pre>
 <blockquote>
-<p><strong>Note.</strong> If you're familiar with Haskell, you'll notice that the semicolon is just like Haskell's <code>$</code> operator. That's correct. Funky uses the semicolon instead of the dollar to avoid clutter because it's used very frequently.</p>
+<p><strong>Note.</strong> If you're familiar with Haskell, you'll notice that the semicolon is just like Haskell's <code>$</code> operator. That's correct. Funky uses the semicolon instead of the dollar to avoid visual clutter because it's used very frequently.</p>
 </blockquote>
 <p>The semicolon becomes very useful when structuring code. We could write this:</p>
 <pre><code class="language-funky">func main : IO =
@@ -318,7 +318,7 @@ C
 </code></pre>
 <p>Now that's cool! It's got lines, it's got semicolons, looks just like an imperative code! Of course, I'm joking a bit here, but it's not that bad, is it?</p>
 <a class="header" href="#the-if-function" id="the-if-function"><h2>The <code>if</code> function</h2></a>
-<p><strong>Booleans</strong> have type <code>Bool</code>, two values - <code>true</code> and <code>false</code> - and a handy <code>if</code> function for making a choice. What's its type? The beloved types sandbox comes to rescue:</p>
+<p><strong>Booleans</strong> have type <code>Bool</code>, two values - <code>true</code> and <code>false</code> - and a handy <code>if</code> function for making a choice. What's its type? The beloved types sandbox comes to the rescue:</p>
 <pre><code>$ funkycmd -types
 &gt; if
 Bool -&gt; a -&gt; a -&gt; a
@@ -534,6 +534,7 @@ if (op == &quot;/&quot;) (string; x / y);
 </code></pre>
 <p><strong>And that's it!</strong> Now go and experiment yourself! When you come back, we'll start learning about making our own functions and types.</p>
 <a class="header" href="#making-the-world-our-own" id="making-the-world-our-own"><h1>Making the world our own</h1></a>
+<p><img src="rocket.png" alt="Rocket" /></p>
 <p>Until now, you've been learning about a few established functions and concepts in the Funky programming language. <strong>Now we'll learn how to create our own!</strong></p>
 <a class="header" href="#functions" id="functions"><h1>Functions</h1></a>
 <p>So far, we've only seen one function defined: the <code>main</code> function. But even from that alone, I'm sure you've already guessed how function definitions look. They're quite simple:</p>

@@ -144,7 +144,7 @@
 <pre><code class="language-funky">string; sqrt 4.0 + sqrt 9.0
 </code></pre>
 <blockquote>
-<p><strong>Note.</strong> If you're familiar with Haskell, you'll notice that the semicolon is just like Haskell's <code>$</code> operator. That's correct. Funky uses the semicolon instead of the dollar to avoid clutter because it's used very frequently.</p>
+<p><strong>Note.</strong> If you're familiar with Haskell, you'll notice that the semicolon is just like Haskell's <code>$</code> operator. That's correct. Funky uses the semicolon instead of the dollar to avoid visual clutter because it's used very frequently.</p>
 </blockquote>
 <p>The semicolon becomes very useful when structuring code. We could write this:</p>
 <pre><code class="language-funky">func main : IO =
@@ -177,7 +177,7 @@ C
 </code></pre>
 <p>Now that's cool! It's got lines, it's got semicolons, looks just like an imperative code! Of course, I'm joking a bit here, but it's not that bad, is it?</p>
 <a class="header" href="#the-if-function" id="the-if-function"><h2>The <code>if</code> function</h2></a>
-<p><strong>Booleans</strong> have type <code>Bool</code>, two values - <code>true</code> and <code>false</code> - and a handy <code>if</code> function for making a choice. What's its type? The beloved types sandbox comes to rescue:</p>
+<p><strong>Booleans</strong> have type <code>Bool</code>, two values - <code>true</code> and <code>false</code> - and a handy <code>if</code> function for making a choice. What's its type? The beloved types sandbox comes to the rescue:</p>
 <pre><code>$ funkycmd -types
 &gt; if
 Bool -&gt; a -&gt; a -&gt; a
