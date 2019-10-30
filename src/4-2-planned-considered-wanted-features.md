@@ -118,6 +118,62 @@ This is to avoid confusion and ambiguity.
 
 This feature has a potential for abuse, that's why it's only considered and not planned yet.
 
+## Automatic lifting of monads _(highly considered)_
+
+Instead of the previous feature (implicit functions), I am now considering a more specific approach and that is to lift values and functions so that they are automatically usable for values of container types supporting certain (monadic) operations.
+
+The goal is to be able to do stuff like this:
+
+```funky
+# Maybe is a monadic container
+let (some 3)  \mx
+let (some 5)  \my
+mx + my  # => some 8
+
+# Functions are monadic containers, too
+record Person = name : String, age : Int
+
+func adults : List Person -> List Person =
+    filter (age >= 18)  # => (age >= 18) gets automatically transformed to (\p age p > 18)
+```
+
+As you can see, we would be able to use containers like `Maybe a` as regular unboxed values and apply operations to them, getting containerized values back (`some 9 + none` would result in `none`).
+
+To implement this feature, a programmer would need to specify two functions for a monadic container type `M a`. Those two functions would have to have these types:
+
+```funky
+a -> M a
+M a -> (a -> M b) -> M b
+```
+
+For example:
+
+```funky
+some     : a -> Maybe a
+let-some : Maybe a -> (a -> Maybe b) -> Maybe b
+```
+
+Or:
+
+```funky
+return : a -> Proc s a
+call   : Proc s a -> (a -> Proc s b) -> Proc s b
+```
+
+The programmer would specify these two functions using a new `autolift` syntax:
+
+```funky
+autolift some, let-some
+union Maybe a = none | some a
+
+autolift return, call
+union Proc s a = return a | view (s -> Proc s a) | update (s -> s) (Proc s a)
+```
+
+The type-checker would then insert these two functions whenever necessary to lift plain values and functions.
+
+A few things still need to be figured out, namely the specific algorithm to insert the lifting functions, and implications for type collisions.
+
 ## The `Box`/`Any` type _(planned)_
 
 The `Box` type (could also be named `Any`) would be a built-in type with two built-in functions:
@@ -202,4 +258,29 @@ This syntax would make it possible to partially apply the second, third, or any 
 
 ```funky
 map _ [1, 2, 3, 4, 5]
+```
+
+## Explicit type parameters _(considered)_
+
+Funky current allows type annotations like this:
+
+```funky
+expression : type
+```
+
+And also like this:
+
+```funky
+some-function \(variable : type)
+rest-of-the-code
+```
+
+But this notation can be very cumbersome in many cases.
+
+TODO: examples
+
+The idea therefore is to add an option to accept an explicit type parameter. This can only be a parameter. The syntax would look like this:
+
+```funky
+func unpack : type a -> Box -> Maybe a
 ```
