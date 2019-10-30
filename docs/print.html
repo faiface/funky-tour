@@ -2491,6 +2491,42 @@ func int : String -&gt; Maybe Int
 </code></pre>
 <p>This is to avoid confusion and ambiguity.</p>
 <p>This feature has a potential for abuse, that's why it's only considered and not planned yet.</p>
+<a class="header" href="#automatic-lifting-of-monads-highly-considered" id="automatic-lifting-of-monads-highly-considered"><h2>Automatic lifting of monads <em>(highly considered)</em></h2></a>
+<p>Instead of the previous feature (implicit functions), I am now considering a more specific approach and that is to lift values and functions so that they are automatically usable for values of container types supporting certain (monadic) operations.</p>
+<p>The goal is to be able to do stuff like this:</p>
+<pre><code class="language-funky"># Maybe is a monadic container
+let (some 3)  \mx
+let (some 5)  \my
+mx + my  # =&gt; some 8
+
+# Functions are monadic containers, too
+record Person = name : String, age : Int
+
+func adults : List Person -&gt; List Person =
+    filter (age &gt;= 18)  # =&gt; (age &gt;= 18) gets automatically transformed to (\p age p &gt; 18)
+</code></pre>
+<p>As you can see, we would be able to use containers like <code>Maybe a</code> as regular unboxed values and apply operations to them, getting containerized values back (<code>some 9 + none</code> would result in <code>none</code>).</p>
+<p>To implement this feature, a programmer would need to specify two functions for a monadic container type <code>M a</code>. Those two functions would have to have these types:</p>
+<pre><code class="language-funky">a -&gt; M a
+M a -&gt; (a -&gt; M b) -&gt; M b
+</code></pre>
+<p>For example:</p>
+<pre><code class="language-funky">some     : a -&gt; Maybe a
+let-some : Maybe a -&gt; (a -&gt; Maybe b) -&gt; Maybe b
+</code></pre>
+<p>Or:</p>
+<pre><code class="language-funky">return : a -&gt; Proc s a
+call   : Proc s a -&gt; (a -&gt; Proc s b) -&gt; Proc s b
+</code></pre>
+<p>The programmer would specify these two functions using a new <code>autolift</code> syntax:</p>
+<pre><code class="language-funky">autolift some, let-some
+union Maybe a = none | some a
+
+autolift return, call
+union Proc s a = return a | view (s -&gt; Proc s a) | update (s -&gt; s) (Proc s a)
+</code></pre>
+<p>The type-checker would then insert these two functions whenever necessary to lift plain values and functions.</p>
+<p>A few things still need to be figured out, namely the specific algorithm to insert the lifting functions, and implications for type collisions.</p>
 <a class="header" href="#the-boxany-type-planned" id="the-boxany-type-planned"><h2>The <code>Box</code>/<code>Any</code> type <em>(planned)</em></h2></a>
 <p>The <code>Box</code> type (could also be named <code>Any</code>) would be a built-in type with two built-in functions:</p>
 <pre><code class="language-funky">func pack    : a -&gt; Box
@@ -2546,6 +2582,19 @@ func recv : Chan a -&gt; (a -&gt; Routine) -&gt; Routine =
 </code></pre>
 <p>This syntax would make it possible to partially apply the second, third, or any other argument without making a lambda:</p>
 <pre><code class="language-funky">map _ [1, 2, 3, 4, 5]
+</code></pre>
+<a class="header" href="#explicit-type-parameters-considered" id="explicit-type-parameters-considered"><h2>Explicit type parameters <em>(considered)</em></h2></a>
+<p>Funky current allows type annotations like this:</p>
+<pre><code class="language-funky">expression : type
+</code></pre>
+<p>And also like this:</p>
+<pre><code class="language-funky">some-function \(variable : type)
+rest-of-the-code
+</code></pre>
+<p>But this notation can be very cumbersome in many cases.</p>
+<p>TODO: examples</p>
+<p>The idea therefore is to add an option to accept an explicit type parameter. This can only be a parameter. The syntax would look like this:</p>
+<pre><code class="language-funky">func unpack : type a -&gt; Box -&gt; Maybe a
 </code></pre>
 <a class="header" href="#building-an-own-side-effect-interpreter" id="building-an-own-side-effect-interpreter"><h1>Building an own side-effect interpreter</h1></a>
 
